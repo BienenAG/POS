@@ -1,1 +1,221 @@
 
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verkaufsstatistik (MongoDB-Backend)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 1rem;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .text-blue-600 {
+            color: #2563eb;
+        }
+        .cancel-button {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        .cancel-button:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+        }
+        .cancelled-sale {
+            opacity: 0.6;
+        }
+        .cancelled-sale .sale-total {
+            text-decoration: line-through;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container">
+        <h1 class="text-3xl font-extrabold text-center my-6">Verkaufsstatistik</h1>
+
+        <!-- Gesamtumsatz-Anzeige -->
+        <div class="card text-center">
+            <h2 class="text-2xl font-bold mb-2">Gesamtumsatz</h2>
+            <p class="text-4xl font-extrabold text-blue-600" id="totalRevenue">0,00 €</p>
+        </div>
+
+        <!-- Liste der letzten Verkäufe -->
+        <div class="card">
+            <h2 class="text-2xl font-bold mb-4">Letzte Verkäufe</h2>
+            <div id="salesList" class="space-y-4">
+                <p class="text-center text-gray-500">Lade Verkäufe...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bestätigungsmodal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">Verkauf stornieren?</h3>
+            <p>Bist du sicher, dass du diesen Verkauf stornieren möchtest?</p>
+            <div class="modal-buttons">
+                <button id="confirmCancel" class="cancel-button">Ja, stornieren</button>
+                <button id="denyCancel" class="bg-gray-400 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-500 transition duration-200">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        const totalRevenueEl = document.getElementById('totalRevenue');
+        const salesListEl = document.getElementById('salesList');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmCancelButton = document.getElementById('confirmCancel');
+        const denyCancelButton = document.getElementById('denyCancel');
+
+        let saleToDeleteId = null;
+
+        // Funktion zum Abrufen und Anzeigen der Verkaufsdaten vom Backend-Server
+        async function fetchAndDisplaySales() {
+            try {
+                // Sende eine GET-Anfrage an die Backend-API
+                const response = await fetch('http://localhost:3000/api/sales');
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                }
+                const sales = await response.json();
+                
+                let totalRevenue = 0;
+                salesListEl.innerHTML = ''; // Liste leeren
+
+                if (sales && sales.length > 0) {
+                    // Sortiere Verkäufe absteigend nach Datum
+                    sales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                    sales.forEach(sale => {
+                        totalRevenue += sale.total;
+                        
+                        const saleItem = document.createElement('div');
+                        saleItem.className = 'bg-gray-50 p-4 rounded-md flex justify-between items-center';
+                        
+                        const date = new Date(sale.createdAt).toLocaleString('de-DE');
+                        const itemsHtml = '<ul>' + 
+                                          sale.items.map(item => `<li>${item.quantity}x ${item.name} (${item.price.toFixed(2)} € pro Stk.)</li>`).join('') +
+                                          '</ul>';
+                        
+                        saleItem.innerHTML = `
+                            <div>
+                                <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-200">
+                                    <span class="font-bold text-gray-700">Verkauf vom ${date}</span>
+                                    <span class="text-xl font-bold text-green-600 sale-total">${sale.total.toFixed(2)} €</span>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    ${itemsHtml}
+                                </div>
+                            </div>
+                            <div>
+                                <button class="cancel-button" data-sale-id="${sale._id}">Stornieren</button>
+                            </div>
+                        `;
+                        salesListEl.appendChild(saleItem);
+                    });
+
+                    totalRevenueEl.textContent = `${totalRevenue.toFixed(2)} €`;
+
+                } else {
+                    salesListEl.innerHTML = '<p class="text-center text-gray-500">Noch keine Verkäufe getätigt.</p>';
+                }
+            } catch (error) {
+                console.error("Fehler beim Abrufen der Verkaufsdaten:", error);
+                salesListEl.innerHTML = '<p class="text-center text-red-500">Ein Fehler ist aufgetreten. Bitte stellen Sie sicher, dass Ihr Backend-Server läuft.</p>';
+            }
+        }
+
+        // Event-Delegation für Stornierungs-Buttons
+        salesListEl.addEventListener('click', (event) => {
+            if (event.target.classList.contains('cancel-button')) {
+                saleToDeleteId = event.target.getAttribute('data-sale-id');
+                confirmationModal.style.display = 'block';
+            }
+        });
+
+        // Bestätigung für das Stornieren
+        confirmCancelButton.addEventListener('click', async () => {
+            if (saleToDeleteId) {
+                try {
+                    // Sende eine DELETE-Anfrage an die Backend-API
+                    const response = await fetch(`http://localhost:3000/api/sales/${saleToDeleteId}`, {
+                        method: 'DELETE',
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                    }
+                    console.log("Verkauf erfolgreich storniert.");
+                    fetchAndDisplaySales(); // Liste neu laden
+                } catch (error) {
+                    console.error("Fehler beim Stornieren des Verkaufs:", error);
+                }
+                saleToDeleteId = null;
+                confirmationModal.style.display = 'none';
+            }
+        });
+
+        // Abbrechen des Stornierens
+        denyCancelButton.addEventListener('click', () => {
+            saleToDeleteId = null;
+            confirmationModal.style.display = 'none';
+        });
+
+        // Seite beim Laden die Verkäufe abrufen
+        window.onload = fetchAndDisplaySales;
+
+    </script>
+</body>
+</html>
