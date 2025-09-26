@@ -1,6 +1,5 @@
 
-
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -542,6 +541,20 @@
         .product-edit-modal-content .save-product-button:hover {
             background-color: #16a34a;
         }
+        .management-link {
+            margin-left: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #6366f1;
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .management-link:hover {
+            background-color: #4f46e5;
+        }
     </style>
 </head>
 <body>
@@ -555,6 +568,9 @@
                     <i class="fas fa-cog"></i>
                 </button>
                 <div class="page-indicator-dots" id="dot-indicator"></div>
+                <a href="verwaltung.html" class="management-link">
+                    <i class="fas fa-chart-bar"></i> Verwaltung
+                </a>
             </div>
             <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #6b7280;">
                 <span>Aktuelle Warenkorb-ID dieser Kasse: </span>
@@ -586,6 +602,7 @@
         </div>
     </div>
 
+    <!-- Modals bleiben unverändert -->
     <div id="product-management-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -785,7 +802,7 @@
         }
         
         // Funktion zum Speichern des Warenkorbs in der API (verwendet currentCashRegisterCartId)
-        async function saveCartToApi(isCheckout = false, isFinished = false) { // Parameter für Checkout/Finished hinzugefügt
+        async function saveCartToApi(isCheckout = false, isFinished = false) {
             try {
                 if (!currentCashRegisterCartId) {
                     console.error("Warenkorb-ID der Kasse fehlt. Kann nicht speichern.");
@@ -805,10 +822,10 @@
                         cart: cart,
                         depositReturn: depositReturn,
                         receivedAmount: receivedAmount,
-                        subtotal: currentSubtotal, // Zwischensumme mitsenden
-                        total: currentTotal,       // Gesamtpreis mitsenden
-                        isCheckout: isCheckout,    // Checkout-Status mitsenden
-                        isFinished: isFinished     // Abschluss-Status mitsenden
+                        subtotal: currentSubtotal,
+                        total: currentTotal,
+                        isCheckout: isCheckout,
+                        isFinished: isFinished
                     }),
                 });
                 if (!response.ok) {
@@ -817,6 +834,27 @@
                 console.log("Warenkorb erfolgreich in der Datenbank gespeichert.");
             } catch (error) {
                 console.error("Fehler beim Speichern des Warenkorbs in der API.", error);
+            }
+        }
+
+        // === Neue Funktion zum Speichern von Verkäufen ===
+        async function saveSaleToApi(saleData) {
+            try {
+                const response = await fetch(`${window.location.origin}/api/sales`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(saleData),
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                }
+                const savedSale = await response.json();
+                console.log("Verkauf erfolgreich gespeichert:", savedSale);
+                return savedSale;
+            } catch (error) {
+                console.error("Fehler beim Speichern des Verkaufs:", error);
             }
         }
 
@@ -880,19 +918,22 @@
                     const tile = document.createElement("div");
                     tile.className = "product-tile";
                     tile.style.backgroundColor = product.color;
-                    tile.innerHTML = `<div><h4>${product.name}</h4><span>${product.price.toFixed(2)} €</span></div>`;
-                    tile.addEventListener("click", () => addToCart(product));
+                    tile.innerHTML = `
+                        <h4>${product.name}</h4>
+                        <span>${product.price.toFixed(2)} €</span>
+                    `;
+                    tile.onclick = () => addToCart(product);
                     grid.appendChild(tile);
                 });
             }
-            renderDots();
+
+            updateDotIndicator(totalPages);
         }
 
-        function renderDots() {
-            const dotContainer = document.getElementById("dot-indicator");
-            if (!dotContainer) return;
-            dotContainer.innerHTML = "";
-            const totalPages = Math.ceil(products.length / itemsPerPage);
+        function updateDotIndicator(totalPages) {
+            const dotIndicator = document.getElementById("dot-indicator");
+            if (!dotIndicator) return;
+            dotIndicator.innerHTML = "";
 
             for (let i = 0; i < totalPages; i++) {
                 const dot = document.createElement("div");
@@ -900,47 +941,42 @@
                 if (i === currentPage) {
                     dot.classList.add("active");
                 }
-                dotContainer.appendChild(dot);
-            }
-        }
-
-        function prevPage() {
-            if (currentPage > 0) {
-                currentPage--;
-                renderProducts();
-            }
-        }
-
-        function nextPage() {
-            const totalPages = Math.ceil(products.length / itemsPerPage);
-            if (currentPage < totalPages - 1) {
-                currentPage++;
-                renderProducts();
+                dotIndicator.appendChild(dot);
             }
         }
 
         // === Warenkorb-Logik ===
         function addToCart(product) {
-            const existing = cart.find(p => p.id === product.id);
-            if (existing) {
-                existing.quantity++;
+            const existingItem = cart.find(item => item.id === product.id);
+            if (existingItem) {
+                existingItem.quantity++;
             } else {
                 cart.push({ ...product, quantity: 1 });
             }
             renderCart();
-            saveCartToApi(); // Warenkorb in der API speichern
+            updateTotal();
+            saveCartToApi();
         }
 
-        function updateQuantity(id, change) {
-            const item = cart.find(p => p.id === id);
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            renderCart();
+            updateTotal();
+            saveCartToApi();
+        }
+
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
             if (item) {
                 item.quantity += change;
                 if (item.quantity <= 0) {
-                    cart = cart.filter(p => p.id !== id);
+                    removeFromCart(productId);
+                } else {
+                    renderCart();
+                    updateTotal();
+                    saveCartToApi();
                 }
             }
-            renderCart();
-            saveCartToApi(); // Warenkorb in der API speichern
         }
 
         function renderCart() {
@@ -949,57 +985,28 @@
             cartItems.innerHTML = "";
 
             if (cart.length === 0) {
-                cartItems.innerHTML = "<p style='text-align: center; color: #6b7280;'>Warenkorb ist leer.</p>";
+                cartItems.innerHTML = "<li>Warenkorb ist leer</li>";
             } else {
                 cart.forEach(item => {
-                    const wrapper = document.createElement("li");
-                    wrapper.className = "cart-item-wrapper";
-
-                    let touchStartX = 0;
-                    wrapper.addEventListener('touchstart', (e) => {
-                        touchStartX = e.touches[0].clientX;
-                        wrapper.style.transition = 'none';
-                    }, false);
-
-                    wrapper.addEventListener('touchmove', (e) => {
-                        const touchMoveX = e.touches[0].clientX;
-                        const diffX = touchMoveX - touchStartX;
-                        if (diffX < 0) {
-                             wrapper.style.transform = `translateX(${diffX}px)`;
-                        }
-                    }, false);
-
-                    wrapper.addEventListener('touchend', (e) => {
-                        const touchEndX = e.changedTouches[0].clientX;
-                        const diffX = touchEndX - touchStartX;
-                        wrapper.style.transition = 'transform 0.3s ease-in-out, opacity 0.3s ease-in-out';
-                        if (diffX < -150) {
-                            wrapper.style.transform = `translateX(-100%)`;
-                            wrapper.style.opacity = '0';
-                            setTimeout(() => {
-                                updateQuantity(item.id, -item.quantity);
-                            }, 300);
-                        } else {
-                            wrapper.style.transform = 'translateX(0)';
-                        }
-                    }, false);
-
-                    const li = document.createElement("div");
-                    li.className = "cart-item";
+                    const li = document.createElement("li");
+                    li.className = "cart-item-wrapper";
                     li.innerHTML = `
-                        <div class="cart-item-details">
-                            <h4>${item.name}</h4>
-                            <span>Menge: ${item.quantity}</span>
+                        <div class="cart-item">
+                            <div class="cart-item-details">
+                                <h4>${item.name}</h4>
+                                <span>${item.price.toFixed(2)} € pro Stück</span>
+                            </div>
+                            <div class="cart-item-controls">
+                                <button onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <span>${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                            </div>
+                            <div class="cart-item-price">
+                                ${(item.price * item.quantity).toFixed(2)} €
+                            </div>
                         </div>
-                        <div class="cart-item-controls">
-                            <button onclick="updateQuantity(${item.id}, -1)">-</button>
-                            <button onclick="updateQuantity(${item.id}, 1)">+</button>
-                        </div>
-                        <div class="cart-item-price">${(item.price * item.quantity).toFixed(2)} €</div>
                     `;
-
-                    wrapper.appendChild(li);
-                    cartItems.appendChild(wrapper);
+                    cartItems.appendChild(li);
                 });
             }
             updateTotal();
@@ -1039,7 +1046,7 @@
             depositReturn += count * DEPOSIT_VALUE;
             updateTotal();
             closeDepositMenu();
-            saveCartToApi(); // Warenkorb in der API speichern
+            saveCartToApi();
         }
 
         function resetTotalDeposit() {
@@ -1049,7 +1056,7 @@
             if(currentDepositDisplay) {
                 currentDepositDisplay.textContent = `0 Gläser`;
             }
-            saveCartToApi(); // Warenkorb in der API speichern
+            saveCartToApi();
         }
 
         // === Logik für den Bezahlvorgang ===
@@ -1089,28 +1096,48 @@
             if (receivedAmountDisplay) receivedAmountDisplay.textContent = receivedAmount.toFixed(2).replace('.', ',') + " €";
             if (changeDisplay) changeDisplay.textContent = change.toFixed(2).replace('.', ',') + " €";
 
-            // Hier wird der Warenkorb mit den Zahlungsdetails gesendet
-            saveCartToApi(true); // isCheckout auf true setzen
+            saveCartToApi(true);
         }
 
-        function finishCheckout() {
+        async function finishCheckout() {
             const totalEl = document.getElementById("total");
             const totalDue = totalEl ? parseFloat(totalEl.textContent.replace('€', '').replace(',', '.')) : 0;
 
             if (receivedAmount < totalDue) {
-                console.log("Nicht genug Geld erhalten!");
+                alert("Nicht genug Geld erhalten!");
                 return;
             }
 
+            // Verkaufsdaten für die API vorbereiten
+            const saleData = {
+                items: cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                })),
+                subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                depositReturn: depositReturn,
+                total: totalDue,
+                receivedAmount: receivedAmount,
+                cartId: currentCashRegisterCartId
+            };
+
+            // Verkauf in der Datenbank speichern
+            await saveSaleToApi(saleData);
+
             console.log("Bezahlung abgeschlossen.");
 
-            cart = []; // Warenkorb leeren
+            // Warenkorb zurücksetzen
+            cart = [];
             depositReturn = 0;
             receivedAmount = 0;
             updateTotal();
             renderCart();
             closeCheckoutMenu();
-            saveCartToApi(false, true); // isCheckout auf false, isFinished auf true setzen
+            
+            // Warenkorb als abgeschlossen markieren und leeren
+            await saveCartToApi(false, true);
         }
 
         // === Logik für den Nummernblock (manuelle Eingabe) ===
@@ -1183,7 +1210,7 @@
                 }
                 closeNumpad();
                 showDepositMenu();
-                saveCartToApi(); // Warenkorb in der API speichern
+                saveCartToApi();
             } else if (manualInputType === 'checkout') {
                 const amount = parseFloat(manualReceivedInput);
                 if (!isNaN(amount) && amount >= 0) {
@@ -1324,23 +1351,24 @@
                     }
                 }
 
-                await saveProducts(); // Produkte in der Datenbank speichern
+                await saveProducts();
                 renderProducts();
                 renderProductManagementList();
                 closeProductEditModal();
             } else {
-                console.log("Ungültige Eingabe. Name und Preis sind erforderlich.");
+                alert("Ungültige Eingabe. Name und Preis sind erforderlich.");
             }
         }
 
         async function deleteProduct(productId) {
-            products = products.filter(p => p.id !== productId);
-            await saveProducts(); // Änderungen in der Datenbank speichern
-            renderProducts();
-            renderProductManagementList();
+            if (confirm("Sind Sie sicher, dass Sie dieses Produkt löschen möchten?")) {
+                products = products.filter(p => p.id !== productId);
+                await saveProducts();
+                renderProducts();
+                renderProductManagementList();
+            }
         }
 
-        // === Neue Funktionen für das Verschieben von Produkten ===
         async function moveProductUp(productId, event) {
             event.stopPropagation();
             const index = products.findIndex(p => p.id === productId);
@@ -1348,7 +1376,7 @@
                 const productToMove = products[index];
                 products.splice(index, 1);
                 products.splice(index - 1, 0, productToMove);
-                await saveProducts(); // Änderungen in der Datenbank speichern
+                await saveProducts();
                 renderProducts();
                 renderProductManagementList();
             }
@@ -1361,13 +1389,13 @@
                 const productToMove = products[index];
                 products.splice(index, 1);
                 products.splice(index + 1, 0, productToMove);
-                await saveProducts(); // Änderungen in der Datenbank speichern
+                await saveProducts();
                 renderProducts();
                 renderProductManagementList();
             }
         }
         
-        // Funktion zum Laden des Warenkorbs von der API (für initiales Laden oder Verbinden)
+        // Funktion zum Laden des Warenkorbs von der API
         async function fetchCartFromApi(cartId) {
             try {
                 const response = await fetch(`${window.location.origin}/api/cart?cartId=${cartId}`);
@@ -1376,27 +1404,12 @@
                     cart = data.cart || [];
                     depositReturn = data.depositReturn || 0;
                     receivedAmount = data.receivedAmount || 0;
-                    // Stellen Sie sicher, dass subtotal und total aus den geladenen Daten übernommen werden
-                    // (obwohl sie im Kundendisplay neu berechnet werden könnten, ist es besser, sie direkt zu verwenden, wenn sie vom POS kommen)
-                    // Diese Zeilen sind hier nicht direkt notwendig, da die renderCart und updateTotal sie neu berechnen,
-                    // aber es schadet nicht, sie hier zu haben, falls sich die Logik ändert.
-                    // subtotal = data.subtotal || 0;
-                    // total = data.total || 0;
-                    renderCart();
-                    updateCheckoutDisplay(); // Aktualisiere auch die Checkout-Anzeige
-                } else if (response.status === 404) {
-                    console.log(`Warenkorb mit ID "${cartId}" nicht gefunden. Starte mit leerem Warenkorb.`);
-                    cart = [];
-                    depositReturn = 0;
-                    receivedAmount = 0;
-                    renderCart();
-                    updateCheckoutDisplay();
-                    saveCartToApi(); // Neuen, leeren Warenkorb speichern
+                    console.log("Warenkorb erfolgreich von der API geladen.");
                 } else {
-                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                    console.log("Kein bestehender Warenkorb gefunden, starte mit leerem Warenkorb.");
                 }
             } catch (error) {
-                console.error("Fehler beim Laden des Warenkorbs von der API.", error);
+                console.error("Fehler beim Laden des Warenkorbs von der API:", error);
             }
         }
     </script>
