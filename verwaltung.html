@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verkaufsstatistik (MongoDB-Backend)</title>
+    <title>Verkaufsstatistik - POS Verwaltung</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -15,7 +14,7 @@
             color: #1f2937;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: auto;
             padding: 1rem;
         }
@@ -29,6 +28,12 @@
         .text-blue-600 {
             color: #2563eb;
         }
+        .text-green-600 {
+            color: #059669;
+        }
+        .text-red-600 {
+            color: #dc2626;
+        }
         .cancel-button {
             background-color: #ef4444;
             color: white;
@@ -38,6 +43,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.2s;
+            border: none;
         }
         .cancel-button:hover {
             background-color: #dc2626;
@@ -45,9 +51,11 @@
         }
         .cancelled-sale {
             opacity: 0.6;
+            background-color: #fef2f2;
         }
         .cancelled-sale .sale-total {
             text-decoration: line-through;
+            color: #dc2626;
         }
         .modal {
             display: none;
@@ -79,24 +87,140 @@
             gap: 1rem;
             margin-top: 1rem;
         }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+        .stat-card.revenue {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .stat-card.sales-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .stat-card.avg-sale {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        .refresh-button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+            margin-bottom: 1rem;
+        }
+        .refresh-button:hover {
+            background-color: #2563eb;
+        }
+        .back-button {
+            background-color: #6b7280;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+        .back-button:hover {
+            background-color: #4b5563;
+        }
+        .sale-item {
+            border-left: 4px solid #10b981;
+            transition: all 0.2s;
+        }
+        .sale-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        .error {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .success {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
 
     <div class="container">
-        <h1 class="text-3xl font-extrabold text-center my-6">Verkaufsstatistik</h1>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-extrabold">Verkaufsstatistik & Verwaltung</h1>
+            <div>
+                <a href="index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Zurück zur Kasse
+                </a>
+                <button id="refreshButton" class="refresh-button">
+                    <i class="fas fa-sync-alt"></i> Aktualisieren
+                </button>
+            </div>
+        </div>
 
-        <!-- Gesamtumsatz-Anzeige -->
-        <div class="card text-center">
-            <h2 class="text-2xl font-bold mb-2">Gesamtumsatz</h2>
-            <p class="text-4xl font-extrabold text-blue-600" id="totalRevenue">0,00 €</p>
+        <!-- Fehlermeldungen und Erfolgsmeldungen -->
+        <div id="messageContainer"></div>
+
+        <!-- Statistik-Übersicht -->
+        <div class="stats-grid">
+            <div class="stat-card revenue">
+                <div class="stat-value" id="totalRevenue">0,00 €</div>
+                <div class="stat-label">Gesamtumsatz</div>
+            </div>
+            <div class="stat-card sales-count">
+                <div class="stat-value" id="totalSales">0</div>
+                <div class="stat-label">Anzahl Verkäufe</div>
+            </div>
+            <div class="stat-card avg-sale">
+                <div class="stat-value" id="avgSale">0,00 €</div>
+                <div class="stat-label">Durchschnittlicher Verkauf</div>
+            </div>
         </div>
 
         <!-- Liste der letzten Verkäufe -->
         <div class="card">
-            <h2 class="text-2xl font-bold mb-4">Letzte Verkäufe</h2>
+            <h2 class="text-2xl font-bold mb-4">Verkaufshistorie</h2>
             <div id="salesList" class="space-y-4">
-                <p class="text-center text-gray-500">Lade Verkäufe...</p>
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin text-2xl"></i>
+                    <p class="mt-2">Lade Verkaufsdaten...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -113,75 +237,144 @@
         </div>
     </div>
 
-    <script type="module">
+    <script>
         const totalRevenueEl = document.getElementById('totalRevenue');
+        const totalSalesEl = document.getElementById('totalSales');
+        const avgSaleEl = document.getElementById('avgSale');
         const salesListEl = document.getElementById('salesList');
         const confirmationModal = document.getElementById('confirmationModal');
         const confirmCancelButton = document.getElementById('confirmCancel');
         const denyCancelButton = document.getElementById('denyCancel');
+        const refreshButton = document.getElementById('refreshButton');
+        const messageContainer = document.getElementById('messageContainer');
 
         let saleToDeleteId = null;
 
-        // Funktion zum Abrufen und Anzeigen der Verkaufsdaten vom Backend-Server
+        // Funktion zum Anzeigen von Nachrichten
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error' : 'success';
+            messageDiv.innerHTML = `
+                <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}"></i>
+                ${message}
+            `;
+            messageContainer.appendChild(messageDiv);
+            
+            // Nachricht nach 5 Sekunden automatisch entfernen
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Funktion zum Abrufen und Anzeigen der Verkaufsdaten
         async function fetchAndDisplaySales() {
             try {
-                // Sende eine GET-Anfrage an die Backend-API
-                const response = await fetch('http://localhost:3000/api/sales');
+                salesListEl.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin text-2xl"></i>
+                        <p class="mt-2">Lade Verkaufsdaten...</p>
+                    </div>
+                `;
+
+                // Verkaufsdaten von der Vercel API abrufen
+                const response = await fetch(`${window.location.origin}/api/sales`);
                 if (!response.ok) {
                     throw new Error(`HTTP-Fehler! Status: ${response.status}`);
                 }
                 const sales = await response.json();
                 
                 let totalRevenue = 0;
-                salesListEl.innerHTML = ''; // Liste leeren
+                let activeSalesCount = 0;
+                salesListEl.innerHTML = '';
 
                 if (sales && sales.length > 0) {
                     // Sortiere Verkäufe absteigend nach Datum
                     sales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
                     sales.forEach(sale => {
-                        totalRevenue += sale.total;
+                        // Nur nicht-stornierte Verkäufe für Statistiken zählen
+                        if (!sale.cancelled) {
+                            totalRevenue += sale.total;
+                            activeSalesCount++;
+                        }
                         
                         const saleItem = document.createElement('div');
-                        saleItem.className = 'bg-gray-50 p-4 rounded-md flex justify-between items-center';
+                        saleItem.className = `sale-item bg-gray-50 p-4 rounded-md flex justify-between items-center ${sale.cancelled ? 'cancelled-sale' : ''}`;
                         
                         const date = new Date(sale.createdAt).toLocaleString('de-DE');
-                        const itemsHtml = '<ul>' + 
+                        const itemsHtml = '<ul class="text-sm text-gray-600 mt-2">' + 
                                           sale.items.map(item => `<li>${item.quantity}x ${item.name} (${item.price.toFixed(2)} € pro Stk.)</li>`).join('') +
                                           '</ul>';
                         
+                        const statusBadge = sale.cancelled ? 
+                            '<span class="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full ml-2">Storniert</span>' : 
+                            '<span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full ml-2">Aktiv</span>';
+
+                        const paymentInfo = sale.receivedAmount ? 
+                            `<div class="text-xs text-gray-500 mt-1">
+                                Erhalten: ${sale.receivedAmount.toFixed(2)} € | 
+                                Rückgeld: ${(sale.receivedAmount - sale.total).toFixed(2)} €
+                                ${sale.depositReturn > 0 ? ` | Pfand: ${sale.depositReturn.toFixed(2)} €` : ''}
+                            </div>` : '';
+                        
                         saleItem.innerHTML = `
-                            <div>
+                            <div class="flex-grow">
                                 <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-200">
-                                    <span class="font-bold text-gray-700">Verkauf vom ${date}</span>
-                                    <span class="text-xl font-bold text-green-600 sale-total">${sale.total.toFixed(2)} €</span>
+                                    <span class="font-bold text-gray-700">
+                                        Verkauf vom ${date}
+                                        ${statusBadge}
+                                    </span>
+                                    <span class="text-xl font-bold ${sale.cancelled ? 'text-red-600' : 'text-green-600'} sale-total">
+                                        ${sale.total.toFixed(2)} €
+                                    </span>
                                 </div>
                                 <div class="text-sm text-gray-600">
+                                    <strong>Warenkorb-ID:</strong> ${sale.cartId || 'Unbekannt'}
                                     ${itemsHtml}
+                                    ${paymentInfo}
                                 </div>
                             </div>
-                            <div>
-                                <button class="cancel-button" data-sale-id="${sale._id}">Stornieren</button>
+                            <div class="ml-4">
+                                ${!sale.cancelled ? 
+                                    `<button class="cancel-button" data-sale-id="${sale._id}">
+                                        <i class="fas fa-times"></i> Stornieren
+                                    </button>` : 
+                                    `<span class="text-gray-400 text-sm">Storniert am ${new Date(sale.cancelledAt).toLocaleString('de-DE')}</span>`
+                                }
                             </div>
                         `;
                         salesListEl.appendChild(saleItem);
                     });
 
+                    // Statistiken aktualisieren
                     totalRevenueEl.textContent = `${totalRevenue.toFixed(2)} €`;
+                    totalSalesEl.textContent = activeSalesCount.toString();
+                    avgSaleEl.textContent = activeSalesCount > 0 ? `${(totalRevenue / activeSalesCount).toFixed(2)} €` : '0,00 €';
 
                 } else {
-                    salesListEl.innerHTML = '<p class="text-center text-gray-500">Noch keine Verkäufe getätigt.</p>';
+                    salesListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Noch keine Verkäufe getätigt.</p>';
+                    totalRevenueEl.textContent = '0,00 €';
+                    totalSalesEl.textContent = '0';
+                    avgSaleEl.textContent = '0,00 €';
                 }
             } catch (error) {
                 console.error("Fehler beim Abrufen der Verkaufsdaten:", error);
-                salesListEl.innerHTML = '<p class="text-center text-red-500">Ein Fehler ist aufgetreten. Bitte stellen Sie sicher, dass Ihr Backend-Server läuft.</p>';
+                salesListEl.innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Fehler beim Laden der Verkaufsdaten:</strong> ${error.message}
+                        <br><small>Bitte stellen Sie sicher, dass die API erreichbar ist.</small>
+                    </div>
+                `;
+                showMessage('Fehler beim Laden der Verkaufsdaten. Bitte versuchen Sie es erneut.', 'error');
             }
         }
 
         // Event-Delegation für Stornierungs-Buttons
         salesListEl.addEventListener('click', (event) => {
-            if (event.target.classList.contains('cancel-button')) {
-                saleToDeleteId = event.target.getAttribute('data-sale-id');
+            if (event.target.closest('.cancel-button')) {
+                const button = event.target.closest('.cancel-button');
+                saleToDeleteId = button.getAttribute('data-sale-id');
                 confirmationModal.style.display = 'block';
             }
         });
@@ -190,17 +383,19 @@
         confirmCancelButton.addEventListener('click', async () => {
             if (saleToDeleteId) {
                 try {
-                    // Sende eine DELETE-Anfrage an die Backend-API
-                    const response = await fetch(`http://localhost:3000/api/sales/${saleToDeleteId}`, {
+                    // Stornierung an die Vercel API senden
+                    const response = await fetch(`${window.location.origin}/api/sales?id=${saleToDeleteId}`, {
                         method: 'DELETE',
                     });
                     if (!response.ok) {
                         throw new Error(`HTTP-Fehler! Status: ${response.status}`);
                     }
                     console.log("Verkauf erfolgreich storniert.");
+                    showMessage('Verkauf wurde erfolgreich storniert.', 'success');
                     fetchAndDisplaySales(); // Liste neu laden
                 } catch (error) {
                     console.error("Fehler beim Stornieren des Verkaufs:", error);
+                    showMessage('Fehler beim Stornieren des Verkaufs. Bitte versuchen Sie es erneut.', 'error');
                 }
                 saleToDeleteId = null;
                 confirmationModal.style.display = 'none';
@@ -213,8 +408,26 @@
             confirmationModal.style.display = 'none';
         });
 
+        // Aktualisieren-Button
+        refreshButton.addEventListener('click', () => {
+            fetchAndDisplaySales();
+        });
+
+        // Modal schließen bei Klick außerhalb
+        window.addEventListener('click', (event) => {
+            if (event.target === confirmationModal) {
+                confirmationModal.style.display = 'none';
+                saleToDeleteId = null;
+            }
+        });
+
         // Seite beim Laden die Verkäufe abrufen
-        window.onload = fetchAndDisplaySales;
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAndDisplaySales();
+            
+            // Automatische Aktualisierung alle 30 Sekunden
+            setInterval(fetchAndDisplaySales, 30000);
+        });
 
     </script>
 </body>
