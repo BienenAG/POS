@@ -13,7 +13,7 @@
             --secondary-bg: #ffffff; /* Weiß für Karten und Elemente */
             --text-color-dark: #212529; /* Dunkler Text für gute Lesbarkeit */
             --text-color-light: #6c757d; /* Hellerer Text für sekundäre Infos */
-            --accent-color: #28a745; /* Grüner Akzent für Preise und Erfolge */
+            --accent-color: #E5B80B; /* Goldener Akzent für Preise und Erfolge */
             --border-color: #e9ecef; /* Dezente Rahmenfarbe */
             --shadow-light: rgba(0, 0, 0, 0.08); /* Leichter Schatten */
             --shadow-medium: rgba(0, 0, 0, 0.12); /* Mittlerer Schatten */
@@ -55,7 +55,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            border: 1px solid var(--border-color);
+            border: none; /* Removed border as per user request */
             box-sizing: border-box;
             overflow: hidden;
         }
@@ -93,7 +93,7 @@
         }
 
         #cart-display-area h1 {
-            margin: 0 0 1rem 0;
+            margin: 0 0 0.5rem 0;
             text-align: center;
             color: var(--text-color-dark);
             font-size: 2.8rem;
@@ -110,8 +110,8 @@
 
         #cart-display-area #customer-summary {
             width: 100%;
-            padding-top: 1rem;
-            margin-top: 1rem;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
             box-sizing: border-box;
         }
 
@@ -126,7 +126,7 @@
         }
 
         h1, h2, h3 {
-            margin: 0 0 1rem 0;
+            margin: 0 0 0.5rem 0;
             text-align: center;
             color: var(--text-color-dark);
         }
@@ -173,7 +173,7 @@
             background-color: var(--primary-bg);
             border-radius: 0.75rem;
             box-shadow: 0 4px 12px var(--shadow-light);
-            border: 1px solid var(--border-color);
+            border: none; /* Removed border as per user request */
             text-align: left;
         }
         .item-details {
@@ -212,7 +212,7 @@
             font-weight: 800;
             margin-top: 1.5rem;
             color: var(--accent-color);
-            border-top: 2px solid var(--border-color);
+               border: none; /* Removed border as per user request */;
             padding-top: 1.5rem;
         }
         .message {
@@ -246,7 +246,7 @@
             width: 90%;
             max-width: 500px;
             color: var(--text-color-dark);
-            border: 1px solid var(--border-color);
+            border: none; /* Removed border as per user request */
         }
         .connection-modal-content h2 {
             color: var(--accent-color);
@@ -259,7 +259,7 @@
             padding: 1rem;
             margin-bottom: 1.8rem;
             border-radius: 0.5rem;
-            border: 1px solid var(--border-color);
+            border: none; /* Removed border as per user request */
             background-color: var(--primary-bg);
             color: var(--text-color-dark);
             font-size: 1.2rem;
@@ -308,7 +308,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border: 1px solid var(--border-color);
+            border: none; /* Removed border as per user request */
             box-sizing: border-box;
         }
 
@@ -317,7 +317,7 @@
             height: 100%;
             display: none;
             border-radius: 1rem;
-            object-fit: cover; /* Changed to cover to fill the space better */
+            object-fit: cover; /* Fill the container, cropping if necessary */
             background-color: var(--secondary-bg);
         }
         .banner-media.active {
@@ -327,7 +327,7 @@
         .welcome-banner-media {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Changed to cover */
+            object-fit: cover; /* Fill the container, cropping if necessary */
             background-color: var(--secondary-bg);
             display: none;
         }
