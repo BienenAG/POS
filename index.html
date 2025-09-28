@@ -168,7 +168,7 @@
         
         /* Delete background for swipe gesture */
         .cart-item-wrapper::before {
-            content: ";
+            content: "";
             position: absolute;
             top: 0;
             right: 0;
@@ -188,7 +188,7 @@
         
         /* Delete icon for swipe gesture */
         .cart-item-wrapper::after {
-            content: "; /* Remove trash can icon */
+            content: ""; /* Remove trash can icon */
             position: absolute;
             top: 50%;
             right: 20px;
@@ -498,7 +498,6 @@
         }
         .product-management-item-details h4 {
             margin: 0;
-            font-weight: bold;
         }
         .product-management-item-actions {
             display: flex;
@@ -781,6 +780,8 @@
         let manualDepositInput = "";
         let receivedAmount = 0;
         let manualReceivedInput = "";
+        let manualQuantityInput = "";
+        let editingCartItemId = null;
         let editingProductId = null;
         let editingProductColor = pastelColors[0];
         
@@ -1138,6 +1139,7 @@
                                 <button onclick="removeFromCart(${item.id})">-</button>
                                 <span>${item.quantity}</span>
                                 <button onclick="addToCart({id: ${item.id}, name: '${item.name}', price: ${item.price}, color: '${item.color}'})">+</button>
+                                <button onclick="showNumpadForQuantity(${item.id})" style="margin-left: 0.5rem; padding: 0.5rem 0.8rem; font-size: 1rem;"><i class="fas fa-keyboard"></i></button>
                             </div>
                             <div class="cart-item-price">
                                 ${(item.price * item.quantity).toFixed(2)} €
@@ -1279,6 +1281,20 @@
         }
 
         // === Logik für den Nummernblock (manuelle Eingabe) ===
+        function showNumpadForQuantity(itemId) {
+            closeDepositMenu();
+            closeCheckoutMenu();
+            const modal = document.getElementById("numpad-modal");
+            if (!modal) return;
+            modal.style.display = "flex";
+
+            const receivedInputDisplay = document.getElementById("received-input-display");
+            manualInputType = 'quantity';
+            manualQuantityInput = "";
+            editingCartItemId = itemId;
+            if(receivedInputDisplay) receivedInputDisplay.textContent = "0";
+        }
+
         function showNumpad(isDeposit) {
             closeDepositMenu();
             closeCheckoutMenu();
@@ -1338,6 +1354,17 @@
                     manualReceivedInput += value;
                 }
                 display.textContent = manualReceivedInput.replace('.', ',') === "" ? "0" : manualReceivedInput.replace('.', ',');
+            } else if (manualInputType === 'quantity') {
+                if (value === 'clear') {
+                    manualQuantityInput = "";
+                } else if (value === ',') {
+                    return;
+                } else if (manualQuantityInput === "" && value === "0") {
+                    return;
+                } else {
+                    manualQuantityInput += value;
+                }
+                display.textContent = manualQuantityInput === "" ? "0" : manualQuantityInput;
             }
         }
 
@@ -1359,6 +1386,22 @@
                 }
                 closeNumpad();
                 showCheckoutMenu();
+            } else if (manualInputType === 'quantity') {
+                const newQuantity = parseInt(manualQuantityInput, 10);
+                if (!isNaN(newQuantity) && newQuantity >= 0 && editingCartItemId !== null) {
+                    const itemIndex = cart.findIndex(item => item.id === editingCartItemId);
+                    if (itemIndex > -1) {
+                        if (newQuantity === 0) {
+                            cart.splice(itemIndex, 1);
+                        } else {
+                            cart[itemIndex].quantity = newQuantity;
+                        }
+                        renderCart();
+                        saveCartToApi();
+                    }
+                }
+                closeNumpad();
+                editingCartItemId = null;
             }
         }
 
@@ -1401,7 +1444,7 @@
                             <i class="fas fa-edit"></i>
                         </button>
                         <button title="Löschen" onclick="deleteProduct(${product.id})">
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
                 `;
@@ -1411,93 +1454,88 @@
         }
 
         function openProductEditModal(productId) {
-            editingProductId = productId;
             const modal = document.getElementById("product-edit-modal");
+            if (!modal) return;
+            modal.style.display = "flex";
+
             const title = document.getElementById("product-edit-title");
             const nameInput = document.getElementById("product-name-input");
             const priceInput = document.getElementById("product-price-input");
-            const colorPicker = document.getElementById("color-picker-grid");
+            const colorGrid = document.getElementById("color-picker-grid");
 
-            if (!modal || !title || !nameInput || !priceInput || !colorPicker) {
-                console.error("Ein oder mehrere Modal-Elemente wurden nicht gefunden.");
-                return;
-            }
-
-            colorPicker.innerHTML = '';
+            colorGrid.innerHTML = "";
             pastelColors.forEach(color => {
-                const button = document.createElement('button');
-                button.style.backgroundColor = color;
-                button.onclick = (e) => {
-                    e.preventDefault();
-                    document.querySelectorAll('#color-picker-grid button').forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
+                const colorButton = document.createElement("button");
+                colorButton.style.backgroundColor = color;
+                colorButton.onclick = () => {
                     editingProductColor = color;
+                    updateColorSelection();
                 };
-                colorPicker.appendChild(button);
+                colorGrid.appendChild(colorButton);
             });
 
             if (productId === 'new') {
-                title.textContent = "Neues Produkt hinzufügen";
+                editingProductId = null;
+                title.textContent = "Produkt hinzufügen";
                 nameInput.value = "";
                 priceInput.value = "";
                 editingProductColor = pastelColors[0];
-                const defaultColorButton = colorPicker.querySelector(`button[style*="${pastelColors[0]}"]`);
-                if(defaultColorButton) {
-                    defaultColorButton.classList.add('selected');
-                }
             } else {
+                editingProductId = productId;
                 const product = products.find(p => p.id === productId);
                 if (product) {
                     title.textContent = "Produkt bearbeiten";
                     nameInput.value = product.name;
                     priceInput.value = product.price.toFixed(2);
                     editingProductColor = product.color;
-                    const selectedColorButton = colorPicker.querySelector(`button[style*="${product.color}"]`);
-                    if (selectedColorButton) {
-                        selectedColorButton.classList.add('selected');
-                    }
                 }
             }
-            modal.style.display = "flex";
+            updateColorSelection();
         }
 
         function closeProductEditModal() {
             const modal = document.getElementById("product-edit-modal");
             if (!modal) return;
             modal.style.display = "none";
-            editingProductId = null;
-            editingProductColor = pastelColors[0];
+        }
+
+        function updateColorSelection() {
+            const colorGrid = document.getElementById("color-picker-grid");
+            Array.from(colorGrid.children).forEach(button => {
+                button.classList.toggle("selected", button.style.backgroundColor === editingProductColor);
+            });
         }
 
         async function saveProduct() {
             const nameInput = document.getElementById("product-name-input");
             const priceInput = document.getElementById("product-price-input");
-            if (!nameInput || !priceInput) return;
 
             const name = nameInput.value.trim();
             const price = parseFloat(priceInput.value);
 
-            if (name && !isNaN(price) && price >= 0) {
-                if (editingProductId === 'new') {
-                    const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                    const newProduct = { id: newId, name: name, price: price, color: editingProductColor };
-                    products.push(newProduct);
-                } else {
-                    const product = products.find(p => p.id === editingProductId);
-                    if (product) {
-                        product.name = name;
-                        product.price = price;
-                        product.color = editingProductColor;
-                    }
-                }
-
-                await saveProducts();
-                renderProducts();
-                renderProductManagementList();
-                closeProductEditModal();
-            } else {
-                alert("Ungültige Eingabe. Name und Preis sind erforderlich.");
+            if (!name || isNaN(price) || price < 0) {
+                alert("Bitte geben Sie einen gültigen Namen und Preis ein.");
+                return;
             }
+
+            if (editingProductId === null) {
+                // Neues Produkt
+                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                products.push({ id: newId, name, price, color: editingProductColor });
+            } else {
+                // Produkt bearbeiten
+                const product = products.find(p => p.id === editingProductId);
+                if (product) {
+                    product.name = name;
+                    product.price = price;
+                    product.color = editingProductColor;
+                }
+            }
+
+            await saveProducts();
+            renderProducts();
+            renderProductManagementList();
+            closeProductEditModal();
         }
 
         async function deleteProduct(productId) {
@@ -1509,53 +1547,41 @@
             }
         }
 
-        async function moveProductUp(productId, event) {
+        function moveProductUp(productId, event) {
             event.stopPropagation();
             const index = products.findIndex(p => p.id === productId);
             if (index > 0) {
-                const productToMove = products[index];
-                products.splice(index, 1);
-                products.splice(index - 1, 0, productToMove);
-                await saveProducts();
-                renderProducts();
+                [products[index - 1], products[index]] = [products[index], products[index - 1]];
                 renderProductManagementList();
+                saveProducts();
             }
         }
 
-        async function moveProductDown(productId, event) {
+        function moveProductDown(productId, event) {
             event.stopPropagation();
             const index = products.findIndex(p => p.id === productId);
             if (index < products.length - 1) {
-                const productToMove = products[index];
-                products.splice(index, 1);
-                products.splice(index + 1, 0, productToMove);
-                await saveProducts();
-                renderProducts();
+                [products[index], products[index + 1]] = [products[index + 1], products[index]];
                 renderProductManagementList();
+                saveProducts();
             }
         }
-        
-        // Funktion zum Laden des Warenkorbs von der API
+
         async function fetchCartFromApi(cartId) {
             try {
                 const response = await fetch(`${window.location.origin}/api/cart?cartId=${cartId}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
-                }
-                const cartData = await response.json();
-                
-                if (cartData && cartData.cart) {
-                    cart = cartData.cart;
-                    depositReturn = cartData.depositReturn || 0;
-                    receivedAmount = cartData.receivedAmount || 0;
-                    console.log("Warenkorb erfolgreich von der API geladen.");
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data) {
+                        cart = data.cart || [];
+                        depositReturn = data.depositReturn || 0;
+                        receivedAmount = data.receivedAmount || 0;
+                        renderCart();
+                        updateTotal();
+                    }
                 }
             } catch (error) {
                 console.error("Fehler beim Laden des Warenkorbs von der API.", error);
-                // Fallback: Leerer Warenkorb
-                cart = [];
-                depositReturn = 0;
-                receivedAmount = 0;
             }
         }
     </script>
