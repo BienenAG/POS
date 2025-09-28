@@ -1018,7 +1018,7 @@
             
             // Nur löschen wenn es wirklich ein Swipe war (Zeit und Distanz)
             if (cartIsSwiping && deltaX < -cartSwipeThreshold && timeDiff > 200) {
-                removeFromCart(itemId);
+                removeAllFromCart(itemId);
             } else {
                 // Andernfalls, bringe das Item zurück zur ursprünglichen Position
                 cartItem.style.transform = 'translateX(0)';
@@ -1085,6 +1085,15 @@
                 } else {
                     cart.splice(itemIndex, 1);
                 }
+                renderCart();
+                saveCartToApi();
+            }
+        }
+
+        function removeAllFromCart(productId) {
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex > -1) {
+                cart.splice(itemIndex, 1);
                 renderCart();
                 saveCartToApi();
             }
