@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -166,6 +165,42 @@
             touch-action: pan-y;
             transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
         }
+        
+        /* Delete background for swipe gesture */
+        .cart-item-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, #ef4444 50%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .cart-item-wrapper.swiping::before {
+            opacity: 1;
+        }
+        
+        /* Delete icon for swipe gesture */
+        .cart-item-wrapper::after {
+            content: '🗑️';
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .cart-item-wrapper.swiping::after {
+            opacity: 1;
+        }
+        
         .cart-item {
             display: flex;
             justify-content: space-between;
@@ -176,6 +211,7 @@
             position: relative;
             z-index: 10;
             transition: transform 0.3s ease-in-out;
+            border-radius: 0.5rem;
         }
         .cart-item-details {
             flex-grow: 1;
@@ -750,6 +786,13 @@
         let isSwiping = false;
         const swipeThreshold = 150;
 
+        // Variablen für die Warenkorb-Wischgeste
+        let cartTouchStartX = 0;
+        let cartTouchStartY = 0;
+        let cartIsSwiping = false;
+        let currentSwipingItem = null;
+        const cartSwipeThreshold = 100;
+
         // === Initiale Anzeige beim Laden der Seite ===
         document.addEventListener('DOMContentLoaded', async () => {
             // Generiere eine neue ID für diese Kassen-App
@@ -780,6 +823,14 @@
                 renderProducts();
             } catch (error) {
                 console.error("Fehler beim Laden der Produkte von der API.", error);
+                // Fallback zu lokalen Produkten für Demo-Zwecke
+                products = [
+                    { id: 1, name: "Kaffee", price: 2.50, color: "#FFB6C1" },
+                    { id: 2, name: "Tee", price: 2.00, color: "#FFDAB9" },
+                    { id: 3, name: "Kuchen", price: 3.50, color: "#FFFFE0" },
+                    { id: 4, name: "Sandwich", price: 4.00, color: "#E0FFDE" }
+                ];
+                renderProducts();
             }
         }
 
@@ -885,62 +936,106 @@
             if (swipeDistance > swipeThreshold && currentPage < totalPages - 1) {
                 currentPage++;
                 renderProducts();
-                productGrid.style.transform = `translateX(-100%)`;
-                setTimeout(() => {
-                    productGrid.style.transform = 'translateX(0)';
-                }, 10);
+                productGrid.style.transform = 'translateX(0)';
             } else if (swipeDistance < -swipeThreshold && currentPage > 0) {
                 currentPage--;
                 renderProducts();
-                productGrid.style.transform = `translateX(100%)`;
-                setTimeout(() => {
-                    productGrid.style.transform = 'translateX(0)';
-                }, 10);
+                productGrid.style.transform = 'translateX(0)';
             } else {
                 productGrid.style.transform = 'translateX(0)';
             }
         }
 
-        // === Produktanzeige Logik ===
-        function renderProducts() {
-            const grid = document.getElementById("product-grid");
-            if (!grid) return;
-            grid.innerHTML = "";
-
-            const totalPages = Math.ceil(products.length / itemsPerPage);
-            const start = currentPage * itemsPerPage;
-            const pageProducts = products.slice(start, start + itemsPerPage);
-
-            if (pageProducts.length === 0) {
-                grid.innerHTML = "<p>Keine Produkte gefunden.</p>";
-            } else {
-                pageProducts.forEach(product => {
-                    const tile = document.createElement("div");
-                    tile.className = "product-tile";
-                    tile.style.backgroundColor = product.color;
-                    tile.innerHTML = `
-                        <h4>${product.name}</h4>
-                        <span>${product.price.toFixed(2)} €</span>
-                    `;
-                    tile.onclick = () => addToCart(product);
-                    grid.appendChild(tile);
-                });
-            }
-
-            updateDotIndicator(totalPages);
+        // === Warenkorb-Wischgeste-Logik ===
+        function handleCartTouchStart(event, itemId) {
+            cartTouchStartX = event.changedTouches[0].clientX;
+            cartTouchStartY = event.changedTouches[0].clientY;
+            cartIsSwiping = false;
+            currentSwipingItem = itemId;
+            event.preventDefault();
         }
 
-        function updateDotIndicator(totalPages) {
+        function handleCartTouchMove(event, itemWrapper) {
+            if (!currentSwipingItem) return;
+            
+            const currentX = event.changedTouches[0].clientX;
+            const currentY = event.changedTouches[0].clientY;
+            const deltaX = currentX - cartTouchStartX;
+            const deltaY = currentY - cartTouchStartY;
+            
+            // Nur horizontal swipen, wenn die horizontale Bewegung größer ist als die vertikale
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+                cartIsSwiping = true;
+                event.preventDefault();
+                
+                // Nur nach links swipen erlauben (negative deltaX)
+                if (deltaX < 0) {
+                    const swipeDistance = Math.max(deltaX, -200); // Maximal 200px nach links
+                    const cartItem = itemWrapper.querySelector('.cart-item');
+                    cartItem.style.transform = `translateX(${swipeDistance}px)`;
+                    
+                    // Zeige Lösch-Hintergrund wenn genug geswiped wurde
+                    if (Math.abs(swipeDistance) > cartSwipeThreshold) {
+                        itemWrapper.classList.add('swiping');
+                    } else {
+                        itemWrapper.classList.remove('swiping');
+                    }
+                }
+            }
+        }
+
+        function handleCartTouchEnd(event, itemId, itemWrapper) {
+            if (!currentSwipingItem || currentSwipingItem !== itemId) return;
+            
+            const currentX = event.changedTouches[0].clientX;
+            const deltaX = currentX - cartTouchStartX;
+            const cartItem = itemWrapper.querySelector('.cart-item');
+            
+            // Wenn genug nach links geswiped wurde, lösche das Item
+            if (cartIsSwiping && deltaX < -cartSwipeThreshold) {
+                removeFromCart(itemId);
+            } else {
+                // Andernfalls, bringe das Item zurück zur ursprünglichen Position
+                cartItem.style.transform = 'translateX(0)';
+                itemWrapper.classList.remove('swiping');
+            }
+            
+            currentSwipingItem = null;
+            cartIsSwiping = false;
+        }
+
+        // === Produktanzeige-Logik ===
+        function renderProducts() {
+            const productGrid = document.getElementById("product-grid");
             const dotIndicator = document.getElementById("dot-indicator");
-            if (!dotIndicator) return;
+            
+            if (!productGrid || !dotIndicator) return;
+
+            productGrid.innerHTML = "";
             dotIndicator.innerHTML = "";
+
+            const totalPages = Math.ceil(products.length / itemsPerPage);
+            const startIndex = currentPage * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, products.length);
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const product = products[i];
+                const tile = document.createElement("div");
+                tile.className = "product-tile";
+                tile.style.backgroundColor = product.color;
+                tile.onclick = () => addToCart(product);
+
+                tile.innerHTML = `
+                    <h4>${product.name}</h4>
+                    <span>${product.price.toFixed(2)} €</span>
+                `;
+
+                productGrid.appendChild(tile);
+            }
 
             for (let i = 0; i < totalPages; i++) {
                 const dot = document.createElement("div");
-                dot.className = "page-dot";
-                if (i === currentPage) {
-                    dot.classList.add("active");
-                }
+                dot.className = `page-dot ${i === currentPage ? 'active' : ''}`;
                 dotIndicator.appendChild(dot);
             }
         }
@@ -954,52 +1049,56 @@
                 cart.push({ ...product, quantity: 1 });
             }
             renderCart();
-            updateTotal();
             saveCartToApi();
         }
 
         function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            renderCart();
-            updateTotal();
-            saveCartToApi();
-        }
-
-        function updateQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                item.quantity += change;
-                if (item.quantity <= 0) {
-                    removeFromCart(productId);
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex > -1) {
+                if (cart[itemIndex].quantity > 1) {
+                    cart[itemIndex].quantity--;
                 } else {
-                    renderCart();
-                    updateTotal();
-                    saveCartToApi();
+                    cart.splice(itemIndex, 1);
                 }
+                renderCart();
+                saveCartToApi();
             }
         }
 
         function renderCart() {
             const cartItems = document.getElementById("cart-items");
             if (!cartItems) return;
+
             cartItems.innerHTML = "";
 
             if (cart.length === 0) {
-                cartItems.innerHTML = "<li>Warenkorb ist leer</li>";
+                const emptyMessage = document.createElement("li");
+                emptyMessage.textContent = "Warenkorb ist leer";
+                emptyMessage.style.textAlign = "center";
+                emptyMessage.style.color = "#6b7280";
+                emptyMessage.style.padding = "1rem";
+                cartItems.appendChild(emptyMessage);
             } else {
                 cart.forEach(item => {
                     const li = document.createElement("li");
                     li.className = "cart-item-wrapper";
+                    li.dataset.itemId = item.id;
+                    
+                    // Touch-Event-Listener für Wischgeste hinzufügen
+                    li.addEventListener('touchstart', (e) => handleCartTouchStart(e, item.id), { passive: false });
+                    li.addEventListener('touchmove', (e) => handleCartTouchMove(e, li), { passive: false });
+                    li.addEventListener('touchend', (e) => handleCartTouchEnd(e, item.id, li), { passive: false });
+
                     li.innerHTML = `
                         <div class="cart-item">
                             <div class="cart-item-details">
                                 <h4>${item.name}</h4>
-                                <span>${item.price.toFixed(2)} € pro Stück</span>
+                                <span>${item.quantity}x ${item.price.toFixed(2)} €</span>
                             </div>
                             <div class="cart-item-controls">
-                                <button onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <button onclick="removeFromCart(${item.id})">-</button>
                                 <span>${item.quantity}</span>
-                                <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                                <button onclick="addToCart({id: ${item.id}, name: '${item.name}', price: ${item.price}, color: '${item.color}'})">+</button>
                             </div>
                             <div class="cart-item-price">
                                 ${(item.price * item.quantity).toFixed(2)} €
@@ -1399,17 +1498,23 @@
         async function fetchCartFromApi(cartId) {
             try {
                 const response = await fetch(`${window.location.origin}/api/cart?cartId=${cartId}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    cart = data.cart || [];
-                    depositReturn = data.depositReturn || 0;
-                    receivedAmount = data.receivedAmount || 0;
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                }
+                const cartData = await response.json();
+                
+                if (cartData && cartData.cart) {
+                    cart = cartData.cart;
+                    depositReturn = cartData.depositReturn || 0;
+                    receivedAmount = cartData.receivedAmount || 0;
                     console.log("Warenkorb erfolgreich von der API geladen.");
-                } else {
-                    console.log("Kein bestehender Warenkorb gefunden, starte mit leerem Warenkorb.");
                 }
             } catch (error) {
-                console.error("Fehler beim Laden des Warenkorbs von der API:", error);
+                console.error("Fehler beim Laden des Warenkorbs von der API.", error);
+                // Fallback: Leerer Warenkorb
+                cart = [];
+                depositReturn = 0;
+                receivedAmount = 0;
             }
         }
     </script>
