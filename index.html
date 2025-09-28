@@ -163,30 +163,32 @@
             border-radius: 0.5rem;
             margin-bottom: 0.5rem;
             touch-action: pan-y;
-            transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+            transition: transform 0.3s ease-in-out;
         }
         
         /* Delete background for swipe gesture */
         .cart-item-wrapper::before {
-            content: '';
+            content: ";
             position: absolute;
             top: 0;
             right: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent 0%, #ef4444 50%);
+            background-color: #ef4444; /* Solid red background */
             z-index: 1;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition for opacity and transform */
+            transform: translateX(100%); /* Start off-screen to the right */
         }
         
         .cart-item-wrapper.swiping::before {
             opacity: 1;
+            transform: translateX(0); /* Slide in from the right */
         }
         
         /* Delete icon for swipe gesture */
         .cart-item-wrapper::after {
-            content: '🗑️';
+            content: "; /* Remove trash can icon */
             position: absolute;
             top: 50%;
             right: 20px;
@@ -198,7 +200,11 @@
         }
         
         .cart-item-wrapper.swiping::after {
-            opacity: 1;
+            opacity: 0; /* Ensure icon is not visible */
+        }
+        
+        .cart-item-wrapper.swiping .cart-item { /* Adjust cart item for better visual */
+            color: white; /* Change text color to white for contrast */
         }
         
         .cart-item {
@@ -986,8 +992,7 @@
                 // Nur nach links swipen erlauben (negative deltaX)
                 if (deltaX < 0) {
                     const swipeDistance = Math.max(deltaX, -200); // Maximal 200px nach links
-                    const cartItem = itemWrapper.querySelector('.cart-item');
-                    cartItem.style.transform = `translateX(${swipeDistance}px)`;
+                    itemWrapper.style.transform = `translateX(${swipeDistance}px)`;
                     
                     // Zeige Lösch-Hintergrund wenn genug geswiped wurde
                     if (Math.abs(swipeDistance) > cartSwipeThreshold) {
@@ -1021,7 +1026,7 @@
                 removeAllFromCart(itemId);
             } else {
                 // Andernfalls, bringe das Item zurück zur ursprünglichen Position
-                cartItem.style.transform = 'translateX(0)';
+                itemWrapper.style.transform = 'translateX(0)';
                 itemWrapper.classList.remove('swiping');
             }
             
