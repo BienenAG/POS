@@ -1285,18 +1285,20 @@
                 if (value === 'clear') {
                     manualReceivedInput = "";
                 } else if (value === ',') {
-                    if (!manualReceivedInput.includes('.') && manualReceivedInput.length > 0) {
+                    // Allow comma as first character for decimal numbers less than 1
+                    if (manualReceivedInput === "") {
+                        manualReceivedInput = "0.";
+                    } else if (!manualReceivedInput.includes('.')) {
                         manualReceivedInput += '.';
                     }
                 } else {
-                    if (manualReceivedInput === "" && value === "0") {
-                        return;
-                    } else if (manualReceivedInput.includes('.') && manualReceivedInput.split('.')[1].length >= 2) {
-                        return;
+                    // Allow leading zero for decimal numbers
+                    if (manualReceivedInput.includes('.') && manualReceivedInput.split('.')[1].length >= 2) {
+                        return; // Limit to 2 decimal places
                     }
                     manualReceivedInput += value;
                 }
-                display.textContent = manualReceivedInput.replace('.',',') === "" ? "0" : manualReceivedInput.replace('.',',');
+                display.textContent = manualReceivedInput.replace('.', ',') === "" ? "0" : manualReceivedInput.replace('.', ',');
             }
         }
 
