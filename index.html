@@ -789,6 +789,7 @@
         // Variablen für die Warenkorb-Wischgeste
         let cartTouchStartX = 0;
         let cartTouchStartY = 0;
+        let cartTouchStartTime = 0;
         let cartIsSwiping = false;
         let currentSwipingItem = null;
         const cartSwipeThreshold = 100;
@@ -948,23 +949,37 @@
 
         // === Warenkorb-Wischgeste-Logik ===
         function handleCartTouchStart(event, itemId) {
+            // Prüfe ob das Touch-Event auf einem Button stattfindet
+            const target = event.target;
+            if (target.tagName === 'BUTTON' || target.closest('button')) {
+                return; // Lass Button-Klicks durch
+            }
+            
             cartTouchStartX = event.changedTouches[0].clientX;
             cartTouchStartY = event.changedTouches[0].clientY;
             cartIsSwiping = false;
             currentSwipingItem = itemId;
-            event.preventDefault();
+            cartTouchStartTime = Date.now();
+            // Verhindere nur preventDefault wenn es kein Button ist
         }
 
         function handleCartTouchMove(event, itemWrapper) {
             if (!currentSwipingItem) return;
+            
+            // Prüfe ob das Touch-Event auf einem Button stattfindet
+            const target = event.target;
+            if (target.tagName === 'BUTTON' || target.closest('button')) {
+                return; // Lass Button-Interaktionen durch
+            }
             
             const currentX = event.changedTouches[0].clientX;
             const currentY = event.changedTouches[0].clientY;
             const deltaX = currentX - cartTouchStartX;
             const deltaY = currentY - cartTouchStartY;
             
-            // Nur horizontal swipen, wenn die horizontale Bewegung größer ist als die vertikale
-            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+            // Erhöhe die Schwelle für Swipe-Erkennung und prüfe Zeit
+            const timeDiff = Date.now() - cartTouchStartTime;
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30 && timeDiff > 100) {
                 cartIsSwiping = true;
                 event.preventDefault();
                 
@@ -987,12 +1002,22 @@
         function handleCartTouchEnd(event, itemId, itemWrapper) {
             if (!currentSwipingItem || currentSwipingItem !== itemId) return;
             
+            // Prüfe ob das Touch-Event auf einem Button stattfindet
+            const target = event.target;
+            if (target.tagName === 'BUTTON' || target.closest('button')) {
+                // Reset für Button-Klicks
+                currentSwipingItem = null;
+                cartIsSwiping = false;
+                return;
+            }
+            
             const currentX = event.changedTouches[0].clientX;
             const deltaX = currentX - cartTouchStartX;
             const cartItem = itemWrapper.querySelector('.cart-item');
+            const timeDiff = Date.now() - cartTouchStartTime;
             
-            // Wenn genug nach links geswiped wurde, lösche das Item
-            if (cartIsSwiping && deltaX < -cartSwipeThreshold) {
+            // Nur löschen wenn es wirklich ein Swipe war (Zeit und Distanz)
+            if (cartIsSwiping && deltaX < -cartSwipeThreshold && timeDiff > 200) {
                 removeFromCart(itemId);
             } else {
                 // Andernfalls, bringe das Item zurück zur ursprünglichen Position
