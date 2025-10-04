@@ -25,31 +25,31 @@
             background-color: var(--primary-bg);
             color: var(--text-color-dark);
             display: flex;
-            flex-direction: row;
+            flex-direction: row-reverse;
             justify-content: center;
             align-items: stretch;
-            height: 100vh;
+            height: calc(100vh - 60px);
             margin: 0;
-            padding: 0;
+            padding: 0.5rem;
             box-sizing: border-box;
             position: relative;
-            gap: 0;
+            gap: 1.5rem;
             overflow: hidden;
         }
 
         .main-content {
-            flex: 0 0 40%; /* Fixed width for the main content */
+            flex: 2; /* Takes 2/3 of the space */
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100vh;
+            height: 100%;
         }
 
         .container {
             width: 100%;
-            height: 100vh;
+            height: 100%;
             background-color: var(--secondary-bg);
-            border-radius: 0;
+            border-radius: 1rem;
             box-shadow: 0 8px 24px var(--shadow-medium);
             text-align: left;
             display: flex;
@@ -62,7 +62,7 @@
 
         #content-display {
             width: 100%;
-            height: 100vh;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -72,7 +72,7 @@
         #content-display > div {
             display: none;
             width: 100%;
-            height: 100vh;
+            height: 100%;
             position: absolute;
             top: 0;
             left: 0;
@@ -84,11 +84,11 @@
         }
 
         #cart-display-area {
-            padding: 0;
+            padding: 0.5rem;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100%;
             width: 100%;
         }
 
@@ -116,12 +116,12 @@
         }
 
         #payment-display-area {
-            padding: 0;
+            padding: 0.5rem;
             box-sizing: border-box;
         }
 
         #thank-you-message {
-            padding: 0;
+            padding: 0.5rem;
             box-sizing: border-box;
         }
 
@@ -230,7 +230,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100vh;
+            height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
             display: none;
             justify-content: center;
@@ -240,7 +240,7 @@
         .connection-modal-content {
             background-color: var(--secondary-bg);
             padding: 3rem;
-            border-radius: 0;
+            border-radius: 1rem;
             box-shadow: 0 10px 30px var(--shadow-medium);
             text-align: center;
             width: 90%;
@@ -298,10 +298,9 @@
 
         /* Banner Styles */
         .banner-container {
-            flex: 1; /* Banner takes remaining space */
-            margin-left: 0; /* Remove any default margin */
-            height: 100vh;
-            border-radius: 0;
+            flex: 1; /* Takes 1/3 of the space */
+            height: 100%;
+            border-radius: 1rem;
             overflow: hidden;
             box-shadow: 0 8px 24px var(--shadow-medium);
             background-color: var(--secondary-bg);
@@ -315,10 +314,10 @@
 
         .banner-media {
             width: 100%;
-            height: 100vh;
+            height: 100%;
             display: none;
-            border-radius: 0;
-            object-fit: cover; /* Füllt den Container, schneidet bei Bedarf zu */
+            border-radius: 1rem;
+            object-fit: contain; /* Stellt sicher, dass das ganze Bild sichtbar ist */
             background-color: var(--secondary-bg);
         }
         .banner-media.active {
@@ -327,8 +326,8 @@
         
         .welcome-banner-media {
             width: 100%;
-            height: 100vh;
-            object-fit: cover; /* Füllt den Container, schneidet bei Bedarf zu */
+            height: 100%;
+            object-fit: contain; /* Stellt sicher, dass das ganze Bild sichtbar ist */
             background-color: var(--secondary-bg);
             display: none;
         }
@@ -477,15 +476,17 @@
             const container = document.querySelector(containerId);
             if (!container) return;
 
-            const mediaElements = Array.from(container.querySelectorAll(`.${mediaClass}`));
-            if (mediaElements.length === 0) return;
+            const mediaElements = container.querySelectorAll(`.${mediaClass}`);
+            if (mediaElements.length <= 1) return;
 
-            const activeIndex = mediaElements.findIndex(el => el.classList.contains("active"));
-            
-            if (activeIndex !== -1) {
-                mediaElements[activeIndex].classList.remove("active");
-            }
+            let activeIndex = -1;
+            mediaElements.forEach((el, index) => {
+                if (el.classList.contains("active")) {
+                    activeIndex = index;
+                }
+            });
 
+            mediaElements[activeIndex].classList.remove("active");
             const nextIndex = (activeIndex + 1) % mediaElements.length;
             mediaElements[nextIndex].classList.add("active");
         }
@@ -498,8 +499,8 @@
             changeBanner("#empty-cart-promo-banner", "welcome-banner-media");
         }
 
-        // Auto-Scroll-Logik für den Warenkorb
-        let scrollSpeed = 1; // Scroll-Geschwindigkeit in Pixel pro Frame
+        // Auto-Scroll-Logik
+        const scrollSpeed = 0.5; // Pixel pro Frame
         let scrollDirection = 1; // 1 für runter, -1 für rauf
         let isScrollingPaused = false;
         let scrollPauseTime = 3500; // 3 Sekunden Pause am Ende/Anfang
