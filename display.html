@@ -25,31 +25,31 @@
             background-color: var(--primary-bg);
             color: var(--text-color-dark);
             display: flex;
-            flex-direction: row-reverse;
+            flex-direction: row;
             justify-content: center;
             align-items: stretch;
-            height: calc(100vh - 60px);
+            height: 100vh;
             margin: 0;
-            padding: 0.5rem;
+            padding: 0;
             box-sizing: border-box;
             position: relative;
-            gap: 1.5rem;
+            gap: 0;
             overflow: hidden;
         }
 
         .main-content {
-            flex: 2;
+            flex: 0 0 40%; /* Fixed width for the main content */
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100%;
+            height: 100vh;
         }
 
         .container {
             width: 100%;
-            height: 100%;
+            height: 100vh;
             background-color: var(--secondary-bg);
-            border-radius: 1rem;
+            border-radius: 0;
             box-shadow: 0 8px 24px var(--shadow-medium);
             text-align: left;
             display: flex;
@@ -62,7 +62,7 @@
 
         #content-display {
             width: 100%;
-            height: 100%;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -72,7 +72,7 @@
         #content-display > div {
             display: none;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             position: absolute;
             top: 0;
             left: 0;
@@ -84,11 +84,11 @@
         }
 
         #cart-display-area {
-            padding: 0.5rem;
+            padding: 0;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            height: 100%;
+            height: 100vh;
             width: 100%;
         }
 
@@ -116,12 +116,12 @@
         }
 
         #payment-display-area {
-            padding: 0.5rem;
+            padding: 0;
             box-sizing: border-box;
         }
 
         #thank-you-message {
-            padding: 0.5rem;
+            padding: 0;
             box-sizing: border-box;
         }
 
@@ -230,7 +230,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             background-color: rgba(0, 0, 0, 0.6);
             display: none;
             justify-content: center;
@@ -240,7 +240,7 @@
         .connection-modal-content {
             background-color: var(--secondary-bg);
             padding: 3rem;
-            border-radius: 1rem;
+            border-radius: 0;
             box-shadow: 0 10px 30px var(--shadow-medium);
             text-align: center;
             width: 90%;
@@ -298,9 +298,10 @@
 
         /* Banner Styles */
         .banner-container {
-            flex: 1;
-            height: 100%;
-            border-radius: 1rem;
+            flex: 1; /* Banner takes remaining space */
+            margin-left: 0; /* Remove any default margin */
+            height: 100vh;
+            border-radius: 0;
             overflow: hidden;
             box-shadow: 0 8px 24px var(--shadow-medium);
             background-color: var(--secondary-bg);
@@ -314,9 +315,9 @@
 
         .banner-media {
             width: 100%;
-            height: 100%;
+            height: 100vh;
             display: none;
-            border-radius: 1rem;
+            border-radius: 0;
             object-fit: cover; /* Füllt den Container, schneidet bei Bedarf zu */
             background-color: var(--secondary-bg);
         }
@@ -326,7 +327,7 @@
         
         .welcome-banner-media {
             width: 100%;
-            height: 100%;
+            height: 100vh;
             object-fit: cover; /* Füllt den Container, schneidet bei Bedarf zu */
             background-color: var(--secondary-bg);
             display: none;
