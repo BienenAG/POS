@@ -28,17 +28,17 @@
             flex-direction: row-reverse;
             justify-content: center;
             align-items: stretch;
-            height: calc(100vh - 1rem); /* 0.5rem top + 0.5rem bottom padding = 1rem */
+            height: calc(100vh - 60px);
             margin: 0;
-            padding: 0.5rem 0; /* Adjust as needed for desired top/bottom padding */;
+            padding: 0.5rem;
             box-sizing: border-box;
             position: relative;
-            /* gap: 1.5rem; */
-            /* overflow: hidden; */
+            gap: 1.5rem;
+            overflow: hidden;
         }
 
         .main-content {
-            flex: 2; /* Takes 2/3 of the space */
+            flex: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -48,7 +48,7 @@
         .container {
             width: 100%;
             height: 100%;
-            /* background-color: var(--secondary-bg); */
+            background-color: var(--secondary-bg);
             border-radius: 1rem;
             box-shadow: 0 8px 24px var(--shadow-medium);
             text-align: left;
@@ -57,7 +57,7 @@
             align-items: center;
             border: none; /* Removed border as per user request */
             box-sizing: border-box;
-            /* overflow: hidden; */
+            overflow: hidden;
         }
 
         #content-display {
@@ -84,7 +84,7 @@
         }
 
         #cart-display-area {
-            padding: 0.5rem 0; /* Adjust as needed for desired top/bottom padding */;
+            padding: 0.5rem;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -104,8 +104,7 @@
             flex-grow: 1;
             overflow-y: auto;
             width: 100%;
-            padding: 0.5rem 0; /* Adjust as needed for desired top/bottom padding */;
-            box-sizing: border-box;
+            padding: 0;
             margin: 0;
         }
 
@@ -117,12 +116,12 @@
         }
 
         #payment-display-area {
-            padding: 0.5rem 0; /* Adjust as needed for desired top/bottom padding */;
+            padding: 0.5rem;
             box-sizing: border-box;
         }
 
         #thank-you-message {
-            padding: 0.5rem 0; /* Adjust as needed for desired top/bottom padding */;
+            padding: 0.5rem;
             box-sizing: border-box;
         }
 
@@ -143,8 +142,7 @@
         }
         .item-list {
             list-style: none;
-            padding: 0.5rem 0; /* Adjust as needed for desired top/bottom padding */;
-            box-sizing: border-box;
+            padding: 0;
             margin: 0;
             flex-grow: 1;
             overflow-y: auto;
@@ -240,7 +238,7 @@
             z-index: 1000;
         }
         .connection-modal-content {
-            /* background-color: var(--secondary-bg); */
+            background-color: var(--secondary-bg);
             padding: 3rem;
             border-radius: 1rem;
             box-shadow: 0 10px 30px var(--shadow-medium);
@@ -300,12 +298,12 @@
 
         /* Banner Styles */
         .banner-container {
-            flex: 1; /* Takes 1/3 of the space */
+            flex: 1;
             height: 100%;
             border-radius: 1rem;
-            /* overflow: hidden; */
+            overflow: hidden;
             box-shadow: 0 8px 24px var(--shadow-medium);
-            /* background-color: var(--secondary-bg); */
+            background-color: var(--secondary-bg);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -319,8 +317,8 @@
             height: 100%;
             display: none;
             border-radius: 1rem;
-            object-fit: contain; /* Stellt sicher, dass das ganze Bild sichtbar ist */
-            /* background-color: var(--secondary-bg); */
+            object-fit: cover; /* Füllt den Container, schneidet bei Bedarf zu */
+            background-color: var(--secondary-bg);
         }
         .banner-media.active {
             display: block;
@@ -329,8 +327,8 @@
         .welcome-banner-media {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Stellt sicher, dass das ganze Bild sichtbar ist */
-            /* background-color: var(--secondary-bg); */
+            object-fit: cover; /* Füllt den Container, schneidet bei Bedarf zu */
+            background-color: var(--secondary-bg);
             display: none;
         }
         .welcome-banner-media.active {
@@ -478,17 +476,15 @@
             const container = document.querySelector(containerId);
             if (!container) return;
 
-            const mediaElements = container.querySelectorAll(`.${mediaClass}`);
-            if (mediaElements.length <= 1) return;
+            const mediaElements = Array.from(container.querySelectorAll(`.${mediaClass}`));
+            if (mediaElements.length === 0) return;
 
-            let activeIndex = -1;
-            mediaElements.forEach((el, index) => {
-                if (el.classList.contains("active")) {
-                    activeIndex = index;
-                }
-            });
+            const activeIndex = mediaElements.findIndex(el => el.classList.contains("active"));
+            
+            if (activeIndex !== -1) {
+                mediaElements[activeIndex].classList.remove("active");
+            }
 
-            mediaElements[activeIndex].classList.remove("active");
             const nextIndex = (activeIndex + 1) % mediaElements.length;
             mediaElements[nextIndex].classList.add("active");
         }
@@ -501,8 +497,8 @@
             changeBanner("#empty-cart-promo-banner", "welcome-banner-media");
         }
 
-        // Auto-Scroll-Logik
-        const scrollSpeed = 0.5; // Pixel pro Frame
+        // Auto-Scroll-Logik für den Warenkorb
+        let scrollSpeed = 1; // Scroll-Geschwindigkeit in Pixel pro Frame
         let scrollDirection = 1; // 1 für runter, -1 für rauf
         let isScrollingPaused = false;
         let scrollPauseTime = 3500; // 3 Sekunden Pause am Ende/Anfang
