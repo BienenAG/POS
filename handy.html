@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -35,7 +36,7 @@
         
         /* Moderner Header */
         .header {
-            background: linear-gradient(135deg, #4f46e5 0%, #118e86 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             color: white;
             padding: 1rem 1.5rem;
             display: flex;
@@ -228,50 +229,50 @@
             transform: scale(1.3);
         }
         
-        /* Warenkorb */
-        .cart-section {
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            max-height: 45vh;
+        /* Action Buttons */
+        .action-buttons {
             display: flex;
-            flex-direction: column;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            gap: 1rem;
         }
         
-        .cart-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .cart-title {
-            font-size: 1.25rem;
+        .action-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
             font-weight: 600;
-            color: #1e293b;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
         }
         
-        .cart-count {
-            background: #0009f6;
+        .action-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .deposit-btn {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
             color: white;
-            font-size: 0.875rem;
-            font-weight: 600;
-            padding: 0.25rem 0.5rem;
-            border-radius: 8px;
-            min-width: 24px;
-            text-align: center;
         }
         
-        .cart-items {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0 1.5rem;
+        .deposit-btn:hover {
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
         }
         
+        .checkout-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .checkout-btn:hover {
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* Cart Item Styles for Modal */
         .cart-item {
             display: flex;
             align-items: center;
@@ -367,13 +368,7 @@
             opacity: 0.5;
         }
         
-        /* Zusammenfassung */
-        .cart-summary {
-            padding: 1.5rem;
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
-        }
-        
+        /* Summary Row */
         .summary-row {
             display: flex;
             justify-content: space-between;
@@ -389,49 +384,6 @@
             border-top: 2px solid #e2e8f0;
             margin-top: 0.75rem;
             margin-bottom: 1.5rem;
-        }
-        
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .action-btn {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .action-btn:active {
-            transform: translateY(1px);
-        }
-        
-        .deposit-btn {
-            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-            color: white;
-        }
-        
-        .deposit-btn:hover {
-            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
-        }
-        
-        .checkout-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-        
-        .checkout-btn:hover {
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
         
         /* Modals */
@@ -772,14 +724,67 @@
             margin-top: 1rem;
         }
         
-        /* Clickable Cart Header */
-        .cart-header {
+        /* Floating Cart Button */
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
         }
         
-        .cart-header:hover {
-            background: #f8fafc;
+        .floating-cart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(79, 70, 229, 0.4);
+        }
+        
+        .floating-cart-btn:active {
+            transform: translateY(0);
+        }
+        
+        .floating-cart-btn .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            min-width: 20px;
+            text-align: center;
+            line-height: 1;
+        }
+        
+        /* Cart ID Display */
+        .cart-id-display {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: #64748b;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 998;
+        }
+        
+        .cart-id-display strong {
+            color: #1e293b;
         }
     </style>
 </head>
@@ -787,7 +792,7 @@
     <div class="app">
         <!-- Header -->
         <div class="header">
-            <h1>BienenAG POS</h1>
+            <h1>Kassen-App</h1>
             <div class="header-actions">
                 <button class="header-btn" onclick="showProductManagementMenu()" title="Produkte verwalten">
                     <i class="fas fa-cog"></i>
@@ -814,53 +819,17 @@
                 <div class="pagination" id="pagination"></div>
             </div>
 
-            <!-- Warenkorb -->
-            <div class="cart-section">
-                <div class="cart-header" onclick="showCartDetailModal()">
-                    <div class="cart-title">
-                        <i class="fas fa-shopping-cart"></i>
-                        Warenkorb
-                        <span class="cart-count" id="cart-count">0</span>
-                    </div>
-                </div>
-                
-                <div class="cart-items" id="cart-items">
-                    <div class="empty-cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <div>Warenkorb ist leer</div>
-                    </div>
-                </div>
-                
-                <div class="cart-summary">
-                    <div class="summary-row">
-                        <span>Zwischensumme:</span>
-                        <span id="subtotal">0,00 €</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Pfandrückgabe:</span>
-                        <span id="deposit-return">0,00 €</span>
-                    </div>
-                    <div class="summary-row total">
-                        <span>Gesamt:</span>
-                        <span id="total">0,00 €</span>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="action-btn deposit-btn" onclick="showDepositMenu()">
-                            <i class="fas fa-recycle"></i>
-                            Pfand
-                        </button>
-                        <button class="action-btn checkout-btn" onclick="showCheckoutMenu()">
-                            <i class="fas fa-credit-card"></i>
-                            Bezahlen
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="cart-id">
-                    Warenkorb-ID: <strong id="cart-id-display"></strong>
-                </div>
-            </div>
+        </div>
+
+        <!-- Schwebender Warenkorb-Button -->
+        <div class="floating-cart-btn" onclick="showCartDetailModal()">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count" id="cart-count">0</span>
+        </div>
+
+        <!-- Warenkorb-ID Anzeige -->
+        <div class="cart-id-display">
+            Warenkorb-ID: <strong id="cart-id-display"></strong>
         </div>
     </div>
 
@@ -1119,7 +1088,7 @@
             
             setupEventListeners();
             renderProducts();
-            renderCart();
+            updateCartCount();
         });
 
         function setupEventListeners() {
@@ -1210,8 +1179,7 @@
                         cart = data.cart || [];
                         depositReturn = data.depositReturn || 0;
                         receivedAmount = data.receivedAmount || 0;
-                        renderCart();
-                        updateTotal();
+                        updateCartCount();
                     }
                 }
             } catch (error) {
@@ -1277,53 +1245,9 @@
             }
         }
 
-        function renderCart() {
-            const cartItems = document.getElementById('cart-items');
+        function updateCartCount() {
             const cartCount = document.getElementById('cart-count');
-            
             cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-            if (cart.length === 0) {
-                cartItems.innerHTML = `
-                    <div class="empty-cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <div>Warenkorb ist leer</div>
-                    </div>
-                `;
-            } else {
-                cartItems.innerHTML = '';
-                cart.forEach(item => {
-                    const cartItem = document.createElement('div');
-                    cartItem.className = 'cart-item';
-                    cartItem.dataset.itemId = item.id;
-
-                    cartItem.innerHTML = `
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-details">${item.quantity}x ${item.price.toFixed(2)} €</div>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button class="quantity-btn" onclick="removeFromCart(${item.id})">−</button>
-                            <span class="quantity-display">${item.quantity}</span>
-                            <button class="quantity-btn" onclick="addToCart({id: ${item.id}, name: '${item.name}', price: ${item.price}, color: '${item.color}'})">+</button>
-                        </div>
-                        <div class="item-total">${(item.price * item.quantity).toFixed(2)} €</div>
-                    `;
-
-                    cartItems.appendChild(cartItem);
-                });
-            }
-
-            updateTotal();
-        }
-
-        function updateTotal() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const total = subtotal - depositReturn;
-
-            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' €';
-            document.getElementById('deposit-return').textContent = depositReturn.toFixed(2) + ' €';
-            document.getElementById('total').textContent = total.toFixed(2) + ' €';
         }
 
         // === Warenkorb-Funktionen ===
@@ -1334,7 +1258,7 @@
             } else {
                 cart.push({ ...product, quantity: 1 });
             }
-            renderCart();
+            updateCartCount();
             saveCartToApi();
         }
 
@@ -1346,7 +1270,7 @@
                 } else {
                     cart.splice(itemIndex, 1);
                 }
-                renderCart();
+                updateCartCount();
                 saveCartToApi();
             }
         }
@@ -1355,7 +1279,7 @@
             const itemIndex = cart.findIndex(item => item.id === productId);
             if (itemIndex > -1) {
                 cart.splice(itemIndex, 1);
-                renderCart();
+                updateCartCount();
                 saveCartToApi();
             }
         }
@@ -1505,8 +1429,7 @@
             cart = [];
             depositReturn = 0;
             receivedAmount = 0;
-            updateTotal();
-            renderCart();
+            updateCartCount();
             closeCheckoutMenu();
             
             await saveCartToApi(false, true);
@@ -1772,14 +1695,6 @@
             updateModalTotal();
         }
 
-        function updateModalTotal() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const total = subtotal - depositReturn;
-
-            document.getElementById('modal-subtotal').textContent = subtotal.toFixed(2) + ' €';
-            document.getElementById('modal-deposit-return').textContent = depositReturn.toFixed(2) + ' €';
-            document.getElementById('modal-total').textContent = total.toFixed(2) + ' €';
-        }
-    </script>
+        function updateM    </script>
 </body>
 </html>
