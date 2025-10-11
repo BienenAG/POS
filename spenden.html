@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Spenden & Trinkgeld</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #f8fafc;
+            position: relative;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            overflow-y: auto;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Connection Section */
+        .connection-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .connection-section.hidden {
+            display: none;
+        }
+        
+        .connection-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+        
+        .cart-id-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .cart-id-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .connect-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        
+        .connect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        .connect-btn:active {
+            transform: translateY(0);
+        }
+        
+        .connect-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Donation Section */
+        .donation-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            display: none;
+        }
+        
+        .donation-section.visible {
+            display: block;
+        }
+        
+        .connected-info {
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            color: #166534;
+        }
+        
+        .connected-info i {
+            color: #10b981;
+            margin-right: 0.5rem;
+        }
+        
+        .donation-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+        }
+        
+        .current-donation {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .current-donation-label {
+            font-size: 1rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .current-donation-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+        
+        .change-donation-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .change-donation-btn:hover {
+            background: #e2e8f0;
+        }
+        
+        /* Donation Grid */
+        .donation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .donation-btn {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .donation-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #10b981;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+        
+        .donation-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .donation-btn.selected {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* Custom Amount */
+        .custom-amount-section {
+            margin-bottom: 2rem;
+        }
+        
+        .custom-amount-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+        
+        .custom-amount-input {
+            width: 100%;
+            max-width: 200px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .custom-amount-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .send-btn:hover {
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .send-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .disconnect-btn {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        
+        .disconnect-btn:hover {
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+        }
+        
+        /* Status Messages */
+        .status-message {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .status-message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .status-success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 2px solid #bbf7d0;
+        }
+        
+        .status-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 2px solid #fecaca;
+        }
+        
+        .status-info {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 2px solid #bfdbfe;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .donation-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .donation-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .current-donation-amount {
+                font-size: 2rem;
+            }
+        }
+        
+        /* iPad specific optimizations */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .main-content {
+                padding: 3rem;
+            }
+            
+            .donation-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 1.5rem;
+            }
+            
+            .donation-btn {
+                padding: 2rem 1rem;
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-heart"></i> Spenden & Trinkgeld</h1>
+            <p>Unterstützen Sie uns mit einer freiwilligen Spende</p>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Connection Section -->
+            <div class="connection-section" id="connection-section">
+                <div class="connection-title">
+                    <i class="fas fa-link"></i> Mit Kasse verbinden
+                </div>
+                <input 
+                    type="text" 
+                    class="cart-id-input" 
+                    id="cart-id-input" 
+                    placeholder="Warenkorb-ID eingeben"
+                    maxlength="20"
+                >
+                <button class="connect-btn" id="connect-btn">
+                    <i class="fas fa-plug"></i> Verbinden
+                </button>
+            </div>
+            
+            <!-- Donation Section -->
+            <div class="donation-section" id="donation-section">
+                <!-- Connected Info -->
+                <div class="connected-info">
+                    <i class="fas fa-check-circle"></i>
+                    Verbunden mit Kasse: <strong id="connected-cart-id"></strong>
+                </div>
+                
+                <!-- Status Messages -->
+                <div class="status-message" id="status-message"></div>
+                
+                <!-- Current Donation Display -->
+                <div class="current-donation">
+                    <div class="current-donation-label">Ihre aktuelle Spende:</div>
+                    <div class="current-donation-amount" id="current-donation-amount">0,00 €</div>
+                    <button class="change-donation-btn" id="change-donation-btn">
+                        <i class="fas fa-edit"></i> Ändern
+                    </button>
+                </div>
+                
+                <div class="donation-title">Spendenbetrag wählen</div>
+                
+                <!-- Predefined Donation Amounts -->
+                <div class="donation-grid">
+                    <button class="donation-btn" data-amount="1">1 €</button>
+                    <button class="donation-btn" data-amount="2">2 €</button>
+                    <button class="donation-btn" data-amount="3">3 €</button>
+                    <button class="donation-btn" data-amount="4">4 €</button>
+                    <button class="donation-btn" data-amount="5">5 €</button>
+                </div>
+                
+                <!-- Custom Amount -->
+                <div class="custom-amount-section">
+                    <div class="custom-amount-label">Oder eigenen Betrag eingeben:</div>
+                    <input 
+                        type="number" 
+                        class="custom-amount-input" 
+                        id="custom-amount-input" 
+                        placeholder="0,00"
+                        min="0"
+                        step="0.01"
+                        max="999.99"
+                    >
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn send-btn" id="send-donation-btn" disabled>
+                        <i class="fas fa-paper-plane"></i> Spende senden
+                    </button>
+                    <button class="action-btn reset-btn" id="reset-donation-btn">
+                        <i class="fas fa-undo"></i> Zurücksetzen
+                    </button>
+                </div>
+                
+                <button class="action-btn disconnect-btn" id="disconnect-btn">
+                    <i class="fas fa-unlink"></i> Verbindung trennen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === Zustandsvariablen ===
+        let connectedCartId = '';
+        let currentDonationAmount = 0;
+        let isConnected = false;
+        let pollInterval = null;
+        
+        // === DOM-Elemente ===
+        const connectionSection = document.getElementById('connection-section');
+        const donationSection = document.getElementById('donation-section');
+        const cartIdInput = document.getElementById('cart-id-input');
+        const connectBtn = document.getElementById('connect-btn');
+        const connectedCartIdDisplay = document.getElementById('connected-cart-id');
+        const currentDonationAmountDisplay = document.getElementById('current-donation-amount');
+        const customAmountInput = document.getElementById('custom-amount-input');
+        const sendDonationBtn = document.getElementById('send-donation-btn');
+        const resetDonationBtn = document.getElementById('reset-donation-btn');
+        const disconnectBtn = document.getElementById('disconnect-btn');
+        const changeDonationBtn = document.getElementById('change-donation-btn');
+        const statusMessage = document.getElementById('status-message');
+        const donationBtns = document.querySelectorAll('.donation-btn');
+        
+        // === Event Listeners ===
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            // Connection
+            connectBtn.addEventListener('click', connectToCart);
+            cartIdInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') connectToCart();
+            });
+            cartIdInput.addEventListener('input', validateCartIdInput);
+            
+            // Donation buttons
+            donationBtns.forEach(btn => {
+                btn.addEventListener('click', () => selectDonationAmount(parseFloat(btn.dataset.amount)));
+            });
+            
+            // Custom amount
+            customAmountInput.addEventListener('input', handleCustomAmountInput);
+            customAmountInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendDonation();
+            });
+            
+            // Action buttons
+            sendDonationBtn.addEventListener('click', sendDonation);
+            resetDonationBtn.addEventListener('click', resetDonation);
+            disconnectBtn.addEventListener('click', disconnect);
+            changeDonationBtn.addEventListener('click', enableDonationChange);
+        }
+        
+        // === Connection Functions ===
+        function validateCartIdInput() {
+            const cartId = cartIdInput.value.trim();
+            connectBtn.disabled = cartId.length < 3;
+        }
+        
+        async function connectToCart() {
+            const cartId = cartIdInput.value.trim();
+            
+            if (!cartId || cartId.length < 3) {
+                showStatus('Bitte geben Sie eine gültige Warenkorb-ID ein.', 'error');
+                return;
+            }
+            
+            connectBtn.disabled = true;
+            connectBtn.innerHTML = '<span class="loading-spinner"></span> Verbinde...';
+            
+            try {
+                // Prüfe ob Warenkorb existiert
+                const response = await fetch(`${window.location.origin}/api/cart?cartId=${cartId}`);
+                
+                if (response.ok) {
+                    connectedCartId = cartId;
+                    isConnected = true;
+                    
+                    // UI aktualisieren
+                    connectionSection.classList.add('hidden');
+                    donationSection.classList.add('visible');
+                    connectedCartIdDisplay.textContent = cartId;
+                    
+                    // Aktuelle Spende laden
+                    await loadCurrentDonation();
+                    
+                    // Polling starten
+                    startPolling();
+                    
+                    showStatus('Erfolgreich mit der Kasse verbunden!', 'success');
+                } else {
+                    throw new Error('Warenkorb nicht gefunden');
+                }
+            } catch (error) {
+                console.error('Verbindungsfehler:', error);
+                showStatus('Verbindung fehlgeschlagen. Bitte prüfen Sie die Warenkorb-ID.', 'error');
+            } finally {
+                connectBtn.disabled = false;
+                connectBtn.innerHTML = '<i class="fas fa-plug"></i> Verbinden';
+            }
+        }
+        
+        async function loadCurrentDonation() {
+            try {
+                const response = await fetch(`${window.location.origin}/api/donation?cartId=${connectedCartId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    currentDonationAmount = data.donationAmount || 0;
+                    updateDonationDisplay();
+                }
+            } catch (error) {
+                console.error('Fehler beim Laden der aktuellen Spende:', error);
+            }
+        }
+        
+        function startPolling() {
+            // Alle 2 Sekunden nach Updates prüfen
+            pollInterval = setInterval(async () => {
+                if (isConnected) {
+                    await loadCurrentDonation();
+                }
+            }, 2000);
+        }
+        
+        function stopPolling() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+        
+        // === Donation Functions ===
+        function selectDonationAmount(amount) {
+            currentDonationAmount = amount;
+            updateDonationDisplay();
+            updateDonationButtons();
+            customAmountInput.value = '';
+            sendDonationBtn.disabled = false;
+        }
+        
+        function handleCustomAmountInput() {
+            const value = parseFloat(customAmountInput.value) || 0;
+            if (value > 0) {
+                currentDonationAmount = value;
+                updateDonationDisplay();
+                clearDonationButtons();
+                sendDonationBtn.disabled = false;
+            } else {
+                sendDonationBtn.disabled = true;
+            }
+        }
+        
+        function updateDonationDisplay() {
+            currentDonationAmountDisplay.textContent = currentDonationAmount.toFixed(2).replace('.', ',') + ' €';
+        }
+        
+        function updateDonationButtons() {
+            donationBtns.forEach(btn => {
+                const amount = parseFloat(btn.dataset.amount);
+                btn.classList.toggle('selected', amount === currentDonationAmount);
+            });
+        }
+        
+        function clearDonationButtons() {
+            donationBtns.forEach(btn => {
+                btn.classList.remove('selected');
+            });
+        }
+        
+        async function sendDonation() {
+            if (currentDonationAmount <= 0) {
+                showStatus('Bitte wählen Sie einen Spendenbetrag aus.', 'error');
+                return;
+            }
+            
+            sendDonationBtn.disabled = true;
+            sendDonationBtn.innerHTML = '<span class="loading-spinner"></span> Sende...';
+            
+            try {
+                const response = await fetch(`${window.location.origin}/api/donation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cartId: connectedCartId,
+                        donationAmount: currentDonationAmount,
+                        timestamp: new Date().toISOString()
+                    }),
+                });
+                
+                if (response.ok) {
+                    showStatus(`Vielen Dank! Ihre Spende von ${currentDonationAmount.toFixed(2).replace('.', ',')} € wurde gesendet.`, 'success');
+                    disableDonationChange();
+                } else {
+                    throw new Error('Fehler beim Senden der Spende');
+                }
+            } catch (error) {
+                console.error('Fehler beim Senden der Spende:', error);
+                showStatus('Fehler beim Senden der Spende. Bitte versuchen Sie es erneut.', 'error');
+            } finally {
+                sendDonationBtn.disabled = false;
+                sendDonationBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Spende senden';
+            }
+        }
+        
+        function resetDonation() {
+            currentDonationAmount = 0;
+            updateDonationDisplay();
+            clearDonationButtons();
+            customAmountInput.value = '';
+            sendDonationBtn.disabled = true;
+            enableDonationChange();
+            hideStatus();
+        }
+        
+        function enableDonationChange() {
+            donationBtns.forEach(btn => btn.disabled = false);
+            customAmountInput.disabled = false;
+            sendDonationBtn.disabled = currentDonationAmount <= 0;
+            resetDonationBtn.disabled = false;
+            changeDonationBtn.style.display = 'none';
+        }
+        
+        function disableDonationChange() {
+            donationBtns.forEach(btn => btn.disabled = true);
+            customAmountInput.disabled = true;
+            sendDonationBtn.disabled = true;
+            resetDonationBtn.disabled = true;
+            changeDonationBtn.style.display = 'inline-block';
+        }
+        
+        function disconnect() {
+            isConnected = false;
+            connectedCartId = '';
+            currentDonationAmount = 0;
+            
+            stopPolling();
+            
+            // UI zurücksetzen
+            connectionSection.classList.remove('hidden');
+            donationSection.classList.remove('visible');
+            cartIdInput.value = '';
+            resetDonation();
+            hideStatus();
+            
+            showStatus('Verbindung getrennt.', 'info');
+            setTimeout(hideStatus, 2000);
+        }
+        
+        // === Status Functions ===
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type} visible`;
+        }
+        
+        function hideStatus() {
+            statusMessage.classList.remove('visible');
+        }
+        
+        // === Cleanup ===
+        window.addEventListener('beforeunload', () => {
+            stopPolling();
+        });
+    </script>
+</body>
+</html>
