@@ -745,6 +745,30 @@
         .cart-id strong {
             color: #1e293b;
         }
+        
+        /* Modal Cart Items */
+        .modal-cart-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-cart-summary {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+        
+        /* Clickable Cart Header */
+        .cart-header {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .cart-header:hover {
+            background: #f8fafc;
+        }
     </style>
 </head>
 <body>
@@ -780,7 +804,7 @@
 
             <!-- Warenkorb -->
             <div class="cart-section">
-                <div class="cart-header">
+                <div class="cart-header" onclick="showCartDetailModal()">
                     <div class="cart-title">
                         <i class="fas fa-shopping-cart"></i>
                         Warenkorb
@@ -961,6 +985,56 @@
                         <button class="action-btn checkout-btn" onclick="finishCheckout()">
                             <i class="fas fa-check"></i>
                             Abschließen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warenkorb Detail Modal -->
+    <div id="cart-detail-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-shopping-cart"></i>
+                    Warenkorb Details
+                    <span class="cart-count" id="modal-cart-count">0</span>
+                </h3>
+                <button class="modal-close" onclick="closeCartDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div id="modal-cart-items" class="modal-cart-items">
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <div>Warenkorb ist leer</div>
+                    </div>
+                </div>
+                
+                <div class="modal-cart-summary">
+                    <div class="summary-row">
+                        <span>Zwischensumme:</span>
+                        <span id="modal-subtotal">0,00 €</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Pfandrückgabe:</span>
+                        <span id="modal-deposit-return">0,00 €</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Gesamt:</span>
+                        <span id="modal-total">0,00 €</span>
+                    </div>
+                    
+                    <div class="action-buttons" style="margin-top: 1.5rem;">
+                        <button class="action-btn deposit-btn" onclick="showDepositMenu(); closeCartDetailModal();">
+                            <i class="fas fa-recycle"></i>
+                            Pfand
+                        </button>
+                        <button class="action-btn checkout-btn" onclick="showCheckoutMenu(); closeCartDetailModal();">
+                            <i class="fas fa-credit-card"></i>
+                            Bezahlen
                         </button>
                     </div>
                 </div>
@@ -1634,6 +1708,65 @@
                 renderProductManagementList();
                 saveProducts();
             }
+        }
+
+        // === Warenkorb-Detail-Modal ===
+        function showCartDetailModal() {
+            renderCartInModal();
+            showModal('cart-detail-modal');
+        }
+
+        function closeCartDetailModal() {
+            hideModal('cart-detail-modal');
+        }
+
+        function renderCartInModal() {
+            const modalCartItems = document.getElementById('modal-cart-items');
+            const modalCartCount = document.getElementById('modal-cart-count');
+            
+            modalCartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            if (cart.length === 0) {
+                modalCartItems.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <div>Warenkorb ist leer</div>
+                    </div>
+                `;
+            } else {
+                modalCartItems.innerHTML = '';
+                cart.forEach(item => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.dataset.itemId = item.id;
+
+                    cartItem.innerHTML = `
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-details">${item.quantity}x ${item.price.toFixed(2)} €</div>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="quantity-btn" onclick="removeFromCart(${item.id}); renderCartInModal();">−</button>
+                            <span class="quantity-display">${item.quantity}</span>
+                            <button class="quantity-btn" onclick="addToCart({id: ${item.id}, name: '${item.name}', price: ${item.price}, color: '${item.color}'}); renderCartInModal();">+</button>
+                        </div>
+                        <div class="item-total">${(item.price * item.quantity).toFixed(2)} €</div>
+                    `;
+
+                    modalCartItems.appendChild(cartItem);
+                });
+            }
+
+            updateModalTotal();
+        }
+
+        function updateModalTotal() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = subtotal - depositReturn;
+
+            document.getElementById('modal-subtotal').textContent = subtotal.toFixed(2) + ' €';
+            document.getElementById('modal-deposit-return').textContent = depositReturn.toFixed(2) + ' €';
+            document.getElementById('modal-total').textContent = total.toFixed(2) + ' €';
         }
     </script>
 </body>
