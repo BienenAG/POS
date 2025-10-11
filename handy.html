@@ -798,6 +798,9 @@
     </style>
 </head>
 <body>
+    <!-- API-Simulation einbinden -->
+    <script src="api-simulation.js"></script>
+    
     <div class="app">
         <!-- Header -->
         <div class="header">
@@ -1841,80 +1844,7 @@
         }
 
         // === API-Endpunkte für Spenden ===
-        // Simulierte API-Endpunkte (in einer echten Anwendung würden diese auf einem Server laufen)
-        
-        // GET /api/donation?cartId=xxx - Aktuelle Spende abrufen
-        // POST /api/donation - Neue Spende senden
-        // GET /api/cart?cartId=xxx - Warenkorb-Existenz prüfen
-
-        // Simulierter lokaler Speicher für Spenden
-        function getDonationFromStorage(cartId) {
-            const donations = JSON.parse(localStorage.getItem('donations') || '{}');
-            return donations[cartId] || { donationAmount: 0, timestamp: null };
-        }
-
-        function saveDonationToStorage(cartId, donationAmount) {
-            const donations = JSON.parse(localStorage.getItem('donations') || '{}');
-            donations[cartId] = {
-                donationAmount: donationAmount,
-                timestamp: new Date().toISOString()
-            };
-            localStorage.setItem('donations', JSON.stringify(donations));
-        }
-
-        // Simuliere API-Server für Entwicklungszwecke
-        function setupDonationAPI() {
-            // Überschreibe fetch für lokale API-Simulation
-            const originalFetch = window.fetch;
-            window.fetch = function(url, options) {
-                const urlObj = new URL(url, window.location.origin);
-                
-                // API-Route: GET /api/donation
-                if (urlObj.pathname === '/api/donation' && (!options || options.method === 'GET')) {
-                    const cartId = urlObj.searchParams.get('cartId');
-                    if (cartId) {
-                        const donation = getDonationFromStorage(cartId);
-                        return Promise.resolve(new Response(JSON.stringify(donation), {
-                            status: 200,
-                            headers: { 'Content-Type': 'application/json' }
-                        }));
-                    }
-                    return Promise.resolve(new Response('{"error": "cartId required"}', { status: 400 }));
-                }
-                
-                // API-Route: POST /api/donation
-                if (urlObj.pathname === '/api/donation' && options && options.method === 'POST') {
-                    try {
-                        const data = JSON.parse(options.body);
-                        if (data.cartId && typeof data.donationAmount === 'number') {
-                            saveDonationToStorage(data.cartId, data.donationAmount);
-                            return Promise.resolve(new Response('{"success": true}', {
-                                status: 200,
-                                headers: { 'Content-Type': 'application/json' }
-                            }));
-                        }
-                        return Promise.resolve(new Response('{"error": "Invalid data"}', { status: 400 }));
-                    } catch (e) {
-                        return Promise.resolve(new Response('{"error": "Invalid JSON"}', { status: 400 }));
-                    }
-                }
-                
-                // API-Route: GET /api/cart
-                if (urlObj.pathname === '/api/cart' && (!options || options.method === 'GET')) {
-                    const cartId = urlObj.searchParams.get('cartId');
-                    if (cartId && cartId === currentCashRegisterCartId) {
-                        return Promise.resolve(new Response('{"exists": true}', {
-                            status: 200,
-                            headers: { 'Content-Type': 'application/json' }
-                        }));
-                    }
-                    return Promise.resolve(new Response('{"error": "Cart not found"}', { status: 404 }));
-                }
-                
-                // Für alle anderen Anfragen die ursprüngliche fetch-Funktion verwenden
-                return originalFetch.apply(this, arguments);
-            };
-        }
+        // Die API-Simulation wird durch api-simulation.js bereitgestellt
 
         // === Warenkorb-Detail-Modal ===
         function showCartDetailModal() {
