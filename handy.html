@@ -798,9 +798,6 @@
     </style>
 </head>
 <body>
-    <!-- API-Simulation einbinden -->
-    <script src="api-simulation.js"></script>
-    
     <div class="app">
         <!-- Header -->
         <div class="header">
@@ -856,10 +853,6 @@
                     <div class="summary-row">
                         <span>Pfandrückgabe:</span>
                         <span id="deposit-return">0,00 €</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Spende:</span>
-                        <span id="donation">0,00 €</span>
                     </div>
                     <div class="summary-row total">
                         <span>Gesamt:</span>
@@ -1135,14 +1128,8 @@
             currentCashRegisterCartId = `kasse-${Math.random().toString(36).substring(2, 9)}`;
             document.getElementById('cart-id-display').textContent = currentCashRegisterCartId;
 
-            // Spenden-API initialisieren
-            setupDonationAPI();
-            
             await fetchProducts();
             await fetchCartFromApi(currentCashRegisterCartId);
-            
-            // Spenden-Polling starten
-            startDonationPolling();
             
             setupEventListeners();
             renderProducts();
@@ -1346,11 +1333,10 @@
 
         function updateTotal() {
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const total = subtotal - depositReturn + donationAmount;
+            const total = subtotal - depositReturn;
 
             document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' €';
             document.getElementById('deposit-return').textContent = depositReturn.toFixed(2) + ' €';
-            document.getElementById('donation').textContent = donationAmount.toFixed(2) + ' €';
             document.getElementById('total').textContent = total.toFixed(2) + ' €';
         }
 
@@ -1750,102 +1736,6 @@
             }
         }
 
-        // === Spenden-Funktionalität ===
-        let donationAmount = 0;
-        let donationPollInterval = null;
-
-        function startDonationPolling() {
-            // Alle 2 Sekunden nach Spenden-Updates prüfen
-            donationPollInterval = setInterval(async () => {
-                await checkForDonationUpdates();
-            }, 2000);
-        }
-
-        function stopDonationPolling() {
-            if (donationPollInterval) {
-                clearInterval(donationPollInterval);
-                donationPollInterval = null;
-            }
-        }
-
-        async function checkForDonationUpdates() {
-            try {
-                const response = await fetch(`${window.location.origin}/api/donation?cartId=${currentCashRegisterCartId}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    const newDonationAmount = data.donationAmount || 0;
-                    
-                    if (newDonationAmount !== donationAmount) {
-                        donationAmount = newDonationAmount;
-                        updateTotal();
-                        
-                        // Zeige Benachrichtigung bei neuer Spende
-                        if (newDonationAmount > 0) {
-                            showDonationNotification(newDonationAmount);
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Fehler beim Prüfen von Spenden-Updates:', error);
-            }
-        }
-
-        function showDonationNotification(amount) {
-            // Erstelle eine temporäre Benachrichtigung
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-                z-index: 10000;
-                font-weight: 600;
-                animation: slideInRight 0.3s ease-out;
-            `;
-            notification.innerHTML = `
-                <i class="fas fa-heart" style="margin-right: 0.5rem;"></i>
-                Neue Spende: ${amount.toFixed(2).replace('.', ',')} €
-            `;
-
-            // Füge CSS-Animation hinzu
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideInRight {
-                    from {
-                        opacity: 0;
-                        transform: translateX(100%);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateX(0);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-
-            document.body.appendChild(notification);
-
-            // Entferne Benachrichtigung nach 3 Sekunden
-            setTimeout(() => {
-                notification.style.animation = 'slideInRight 0.3s ease-out reverse';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                    if (style.parentNode) {
-                        style.parentNode.removeChild(style);
-                    }
-                }, 300);
-            }, 3000);
-        }
-
-        // === API-Endpunkte für Spenden ===
-        // Die API-Simulation wird durch api-simulation.js bereitgestellt
-
         // === Warenkorb-Detail-Modal ===
         function showCartDetailModal() {
             renderCartInModal();
@@ -1898,11 +1788,10 @@
 
         function updateModalTotal() {
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const total = subtotal - depositReturn + donationAmount;
+            const total = subtotal - depositReturn;
 
             document.getElementById('modal-subtotal').textContent = subtotal.toFixed(2) + ' €';
             document.getElementById('modal-deposit-return').textContent = depositReturn.toFixed(2) + ' €';
-            document.getElementById('modal-donation').textContent = donationAmount.toFixed(2) + ' €';
             document.getElementById('modal-total').textContent = total.toFixed(2) + ' €';
         }
     </script>
