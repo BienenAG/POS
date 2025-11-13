@@ -863,18 +863,17 @@
             const cartIdInput = document.getElementById("cart-id-input");
             const connectedCartIdDisplay = document.getElementById("connected-cart-id");
 
+            connectionModal.classList.remove("hidden");
+            
             if (savedCartId) {
                 cartIdInput.value = savedCartId;
                 connectedCartIdDisplay.textContent = savedCartId;
-                connectedCartId = savedCartId;
-                connectionModal.classList.add("hidden");
-                fetchAndUpdateDisplay();
             } else {
                 connectedCartIdDisplay.textContent = "Nicht verbunden";
-                connectionModal.classList.remove("hidden");
-                showDisplaySection("empty-cart-promo-banner");
-                cartIdInput.focus();
             }
+            
+            cartIdInput.focus();
+            showDisplaySection("empty-cart-promo-banner");
 
             rightBannerSlideshowInterval = setInterval(changeRightBanner, bannerIntervalTime);
         });
