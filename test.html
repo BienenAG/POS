@@ -124,7 +124,7 @@
         }
 
         #cart-display-area {
-            padding: 1rem;
+            padding: 0.75rem;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -133,10 +133,10 @@
         }
 
         #cart-display-area h1 {
-            margin: 0 0 1.5rem 0;
+            margin: 0 0 0.8rem 0;
             text-align: center;
             color: var(--text-color-dark);
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             letter-spacing: -1px;
             background: linear-gradient(135deg, var(--accent-color) 0%, #f97316 100%);
@@ -149,39 +149,156 @@
             flex-grow: 1;
             overflow-y: auto;
             width: 100%;
-            padding: 0;
+            padding: 0.5rem 0;
             margin: 0;
         }
 
         #cart-display-area #customer-summary {
             width: 100%;
-            padding: 1.5rem;
-            margin-top: 1rem;
+            padding: 1rem 1.25rem;
+            margin-top: 0.75rem;
             box-sizing: border-box;
             background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-            border-radius: 1rem;
+            border-radius: 0.875rem;
             border: 1px solid #e8eef5;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
         }
 
         #payment-display-area {
-            padding: 1rem;
+            padding: 2rem;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100%;
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            gap: 1.5rem;
+        }
+
+        #customer-payment-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .payment-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #e8eef5;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .payment-box:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .payment-box.total {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #f97316 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 30px rgba(229, 184, 11, 0.3);
+        }
+
+        .payment-box.total:hover {
+            box-shadow: 0 12px 40px rgba(229, 184, 11, 0.4);
+        }
+
+        .payment-label {
+            font-size: 0.95rem;
+            color: var(--text-color-light);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .payment-box.total .payment-label {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .payment-amount {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--accent-color);
+            letter-spacing: -1px;
+        }
+
+        .payment-box.total .payment-amount {
+            color: white;
         }
 
         #thank-you-message {
-            padding: 1rem;
+            padding: 2rem;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100%;
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            text-align: center;
+        }
+
+        .thank-you-container {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 2px solid #f3e8ff;
+            max-width: 500px;
+            animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .thank-you-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 0.6s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .thank-you-text {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--text-color-dark);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #f97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .thank-you-subtext {
+            font-size: 1.2rem;
+            color: var(--text-color-light);
+            font-weight: 500;
         }
 
         h1, h2, h3 {
@@ -234,16 +351,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.6rem;
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 1rem;
+            border-radius: 0.875rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             border: 1px solid #e8eef5;
             text-align: left;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            min-height: 3.5rem;
         }
 
         .item::before {
@@ -267,19 +385,19 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            gap: 0.5rem;
+            gap: 0.2rem;
             padding-left: 0.5rem;
         }
 
         .item-name {
             font-weight: 700;
             color: var(--text-color-dark);
-            font-size: 1.15rem;
-            line-height: 1.3;
+            font-size: 1.05rem;
+            line-height: 1.2;
         }
 
         .item-quantity {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-color-light);
             font-weight: 500;
         }
@@ -287,17 +405,17 @@
         .item-price {
             font-weight: 800;
             text-align: right;
-            min-width: 130px;
+            min-width: 110px;
             color: var(--accent-color);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.8rem;
-            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
             width: 100%;
             color: var(--text-color-dark);
             font-weight: 500;
@@ -308,10 +426,10 @@
         }
 
         .summary-row.total {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            margin-top: 1rem;
-            padding-top: 1rem;
+            margin-top: 0.6rem;
+            padding-top: 0.6rem;
             color: var(--accent-color);
             border-top: 2px solid #e8eef5;
         }
@@ -337,6 +455,7 @@
             margin-top: 2rem;
             color: var(--accent-color);
             line-height: 1.2;
+            display: none;
         }
 
         /* Connection Modal Styles */
@@ -512,25 +631,28 @@
                 </div>
                 <!-- Zahlungs-Anzeigebereich -->
                 <div id="payment-display-area">
-                    <h1>Zahlung</h1>
-                    <div id="customer-payment-summary" style="width: 100%;">
-                        <div class="summary-row">
-                            <span>Gesamtbetrag:</span>
-                            <span id="customer-total-due"></span>
+                    <div id="customer-payment-summary">
+                        <div class="payment-box">
+                            <div class="payment-label">Gesamtbetrag</div>
+                            <div class="payment-amount" id="customer-total-due">0,00 €</div>
                         </div>
-                        <div class="summary-row">
-                            <span>Gegeben:</span>
-                            <span id="customer-received"></span>
+                        <div class="payment-box">
+                            <div class="payment-label">Gegeben</div>
+                            <div class="payment-amount" id="customer-received">0,00 €</div>
                         </div>
-                        <div class="summary-row total">
-                            <span>Rückgeld:</span>
-                            <span id="customer-change"></span>
+                        <div class="payment-box total">
+                            <div class="payment-label">Rückgeld</div>
+                            <div class="payment-amount" id="customer-change">0,00 €</div>
                         </div>
                     </div>
                 </div>
                 <!-- Vielen Dank-Nachricht -->
                 <div id="thank-you-message">
-                    <div class="message">Vielen Dank für Ihren Einkauf!</div>
+                    <div class="thank-you-container">
+                        <div class="thank-you-icon">✨</div>
+                        <div class="thank-you-text">Vielen Dank!</div>
+                        <div class="thank-you-subtext">Für Ihren Einkauf</div>
+                    </div>
                 </div>
                 <!-- NEUER BANNER FÜR LEEREN WARENKORB -->
                 <div id="empty-cart-promo-banner" style="background-color: var(--secondary-bg);">
@@ -791,9 +913,13 @@
 
             if (isPaymentInProgress) {
                 showDisplaySection("payment-display-area");
-                document.getElementById("customer-total-due").textContent = `${totalDue.toFixed(2).replace(".", ",")} €`;
-                document.getElementById("customer-received").textContent = `${parseFloat(displayData.receivedAmount || 0).toFixed(2).replace(".", ",")} €`;
-                document.getElementById("customer-change").textContent = `${(parseFloat(displayData.receivedAmount || 0) - totalDue).toFixed(2).replace(".", ",")} €`;
+                const totalDueFormatted = totalDue.toFixed(2).replace(".", ",");
+                const receivedFormatted = parseFloat(displayData.receivedAmount || 0).toFixed(2).replace(".", ",");
+                const changeFormatted = (parseFloat(displayData.receivedAmount || 0) - totalDue).toFixed(2).replace(".", ",");
+                
+                document.getElementById("customer-total-due").textContent = `${totalDueFormatted} €`;
+                document.getElementById("customer-received").textContent = `${receivedFormatted} €`;
+                document.getElementById("customer-change").textContent = `${changeFormatted} €`;
                 stopAutoScroll();
 
             } else if (cartHasItems) {
