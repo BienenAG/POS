@@ -2,89 +2,66 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kundendisplay</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
-        * {
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-        }
-
         :root {
-            --primary-bg: #f5f7fa;
+            --primary-bg: #f8f9fa;
             --secondary-bg: #ffffff;
-            --text-color-dark: #1a202c;
-            --text-color-light: #718096;
-            --accent-color: #f59e0b;
-            --accent-dark: #d97706;
-            --border-color: #e2e8f0;
-            --shadow-light: rgba(0, 0, 0, 0.05);
-            --shadow-medium: rgba(0, 0, 0, 0.1);
-            --shadow-lg: rgba(0, 0, 0, 0.15);
+            --text-color-dark: #212529;
+            --text-color-light: #6c757d;
+            --accent-color: #E5B80B;
+            --border-color: #e9ecef;
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-medium: rgba(0, 0, 0, 0.12);
             --font-family: "Inter", sans-serif;
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: var(--font-family);
-            background-color: var(--primary-bg);
-            color: var(--text-color-dark);
-        }
-
-        body {
-            display: flex;
-            flex-direction: row-reverse;
-            gap: 0.75rem;
-            padding: 0.75rem;
+        * {
             box-sizing: border-box;
         }
 
-        /* iPad Optimization */
-        @media (max-width: 1024px) {
-            body {
-                flex-direction: column;
-                gap: 0.5rem;
-                padding: 0.5rem;
-            }
-        }
-
-        .banner-section {
-            flex: 1;
-            min-width: 0;
-            height: 100%;
-            border-radius: 1rem;
-            overflow: hidden;
-            background-color: #000;
-            box-shadow: 0 4px 20px var(--shadow-lg);
+        body {
+            font-family: var(--font-family);
+            background-color: var(--primary-bg);
+            color: var(--text-color-dark);
             display: flex;
-            align-items: center;
+            flex-direction: row;
             justify-content: center;
+            align-items: stretch;
+            height: calc(100vh - 60px);
+            margin: 0;
+            padding: 0.5rem;
+            gap: 1.5rem;
+            overflow: hidden;
+            position: relative;
         }
 
         .banner-container {
-            width: 100%;
+            flex: 1;
             height: 100%;
-            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 8px 24px var(--shadow-medium);
+            background-color: var(--secondary-bg);
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            background-color: #1a1a1a;
+            align-items: center;
+            box-sizing: border-box;
         }
 
         .banner-media {
             width: 100%;
             height: 100%;
             display: none;
+            border-radius: 1rem;
             object-fit: cover;
             object-position: center;
+            background-color: var(--secondary-bg);
         }
 
         .banner-media.active {
@@ -98,51 +75,26 @@
             object-position: center;
         }
 
-        .banner-indicators {
-            position: absolute;
-            bottom: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 0.5rem;
-            z-index: 10;
-        }
-
-        .indicator {
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator.active {
-            background-color: white;
-            width: 1.5rem;
-            border-radius: 0.25rem;
-        }
-
-        .main-section {
+        .main-content {
             flex: 2;
-            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
             height: 100%;
             background-color: var(--secondary-bg);
             border-radius: 1rem;
-            box-shadow: 0 4px 20px var(--shadow-lg);
+            box-shadow: 0 8px 24px var(--shadow-medium);
+            text-align: left;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
             overflow: hidden;
-        }
-
-        @media (max-width: 1024px) {
-            .banner-section {
-                flex: 0 0 40%;
-                height: auto;
-            }
-            .main-section {
-                flex: 1;
-            }
         }
 
         #content-display {
@@ -150,6 +102,7 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             position: relative;
         }
 
@@ -170,366 +123,256 @@
             display: flex;
         }
 
-        /* Cart Display Area */
         #cart-display-area {
+            padding: 1rem;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             height: 100%;
             width: 100%;
+        }
+
+        #cart-display-area h1 {
+            margin: 0 0 1rem 0;
+            text-align: center;
+            color: var(--text-color-dark);
+            font-size: 2.8rem;
+            font-weight: 700;
+        }
+
+        #cart-display-area .item-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            width: 100%;
             padding: 0;
+            margin: 0;
+        }
+
+        #cart-display-area #customer-summary {
+            width: 100%;
+            padding-top: 1rem;
+            margin-top: 1rem;
             box-sizing: border-box;
         }
 
-        .cart-header {
-            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-            color: white;
-            padding: 1.25rem;
-            text-align: center;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px var(--shadow-medium);
-        }
-
-        .cart-header h1 {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        #customer-cart-items {
-            flex: 1;
-            overflow-y: auto;
+        #payment-display-area {
             padding: 1rem;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        #thank-you-message {
+            padding: 1rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        h1, h2, h3 {
+            margin: 0 0 0.5rem 0;
+            text-align: center;
+            color: var(--text-color-dark);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--text-color-dark);
+        }
+
+        .item-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+            overflow-y: auto;
+            width: 100%;
             -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
         }
 
-        #customer-cart-items::-webkit-scrollbar {
-            width: 6px;
+        .item-list::-webkit-scrollbar {
+            width: 8px;
         }
 
-        #customer-cart-items::-webkit-scrollbar-track {
-            background: var(--primary-bg);
+        .item-list::-webkit-scrollbar-track {
+            background: var(--border-color);
             border-radius: 10px;
         }
 
-        #customer-cart-items::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+        .item-list::-webkit-scrollbar-thumb {
+            background: #adb5bd;
             border-radius: 10px;
         }
 
-        #customer-cart-items::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .item-list::-webkit-scrollbar-thumb:hover {
+            background: #6c757d;
         }
 
         .item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 0.8rem;
+            background-color: var(--primary-bg);
             border-radius: 0.75rem;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 6px var(--shadow-light);
-            transition: all 0.2s ease;
-            min-height: 4.5rem;
-        }
-
-        .item:hover {
-            box-shadow: 0 4px 12px var(--shadow-medium);
-            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-light);
+            text-align: left;
         }
 
         .item-details {
             display: flex;
             flex-direction: column;
-            flex: 1;
-            min-width: 0;
+            flex-grow: 1;
         }
 
         .item-name {
             font-weight: 600;
             color: var(--text-color-dark);
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-            word-break: break-word;
+            font-size: 1.2rem;
         }
 
         .item-quantity {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-color-light);
+            margin-top: 0.3rem;
         }
 
         .item-price {
             font-weight: 700;
-            color: var(--accent-color);
-            font-size: 1.4rem;
-            margin-left: 1rem;
             text-align: right;
-            min-width: 6rem;
-        }
-
-        #customer-summary {
-            background-color: var(--primary-bg);
-            padding: 1.25rem;
-            border-top: 2px solid var(--border-color);
-            flex-shrink: 0;
-            box-shadow: 0 -2px 8px var(--shadow-light);
+            width: 120px;
+            color: var(--accent-color);
+            font-size: 1.3rem;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            font-size: 1.1rem;
+            margin-top: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.4rem;
+            width: 100%;
             color: var(--text-color-dark);
-        }
-
-        .summary-row:last-child {
-            margin-bottom: 0;
         }
 
         .summary-row.total {
-            font-size: 1.8rem;
+            font-size: 2.4rem;
             font-weight: 800;
+            margin-top: 1.5rem;
             color: var(--accent-color);
-            padding-top: 0.75rem;
+            padding-top: 1.5rem;
             border-top: 2px solid var(--border-color);
-            margin-top: 0.75rem;
         }
 
-        .summary-label {
-            font-weight: 500;
-            color: var(--text-color-light);
-        }
-
-        .summary-value {
-            font-weight: 600;
-            color: var(--text-color-dark);
-        }
-
-        .summary-row.total .summary-value {
-            color: var(--accent-color);
-        }
-
-        /* Payment Display Area */
-        #payment-display-area {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            padding: 2rem;
-            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+        .message {
             text-align: center;
-        }
-
-        .payment-info {
-            background: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 12px var(--shadow-medium);
-            min-width: 300px;
-        }
-
-        .payment-label {
-            font-size: 1rem;
-            color: var(--text-color-light);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .payment-amount {
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             font-weight: 800;
+            margin-top: 2rem;
             color: var(--accent-color);
+            line-height: 1.2;
         }
 
-        .payment-info.change .payment-amount {
-            color: #10b981;
-        }
-
-        .payment-info.change.negative .payment-amount {
-            color: #ef4444;
-        }
-
-        /* Thank You Message */
-        #thank-you-message {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .thank-you-icon {
-            font-size: 5rem;
-            margin-bottom: 1rem;
-            animation: bounce 0.6s ease-in-out;
-        }
-
-        .thank-you-text {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--text-color-dark);
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
-        }
-
-        .thank-you-subtext {
-            font-size: 1.5rem;
-            color: var(--text-color-light);
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        /* Empty Cart Banner */
-        #empty-cart-promo-banner {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-        }
-
-        .empty-state {
-            text-align: center;
-        }
-
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
-        .empty-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--text-color-dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .empty-subtitle {
-            font-size: 1.2rem;
-            color: var(--text-color-light);
-        }
-
-        /* Connection Modal */
+        /* Connection Modal Styles */
         .connection-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            backdrop-filter: blur(4px);
         }
 
-        .connection-modal-overlay.active {
-            display: flex;
+        .connection-modal-overlay.hidden {
+            display: none;
         }
 
         .connection-modal-content {
             background-color: var(--secondary-bg);
-            padding: 2.5rem;
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px var(--shadow-medium);
             text-align: center;
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
             color: var(--text-color-dark);
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .connection-modal-content h2 {
             color: var(--accent-color);
-            margin: 0 0 1rem 0;
-            font-size: 1.8rem;
+            margin-bottom: 1.8rem;
+            font-size: 2rem;
             font-weight: 700;
         }
 
         .connection-modal-content p {
+            font-size: 1.1rem;
             color: var(--text-color-light);
             margin-bottom: 1.5rem;
-            font-size: 1rem;
         }
 
         .connection-modal-content input {
-            width: 100%;
+            width: calc(100% - 2rem);
             padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 0.75rem;
+            margin-bottom: 1.8rem;
+            border-radius: 0.5rem;
             border: 2px solid var(--border-color);
             background-color: var(--primary-bg);
             color: var(--text-color-dark);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             text-align: center;
-            font-weight: 500;
-            box-sizing: border-box;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .connection-modal-content input:focus {
             outline: none;
             border-color: var(--accent-color);
             background-color: white;
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
         }
 
         .connection-modal-content button {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 0.75rem;
+            padding: 1rem 2.5rem;
+            border-radius: 0.5rem;
             font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+            color: #ffffff;
+            background-color: var(--accent-color);
             border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            transition: background-color 0.2s;
+            font-size: 1.2rem;
+            width: 100%;
         }
 
         .connection-modal-content button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            background-color: #d4a500;
         }
 
         .connection-modal-content button:active {
-            transform: translateY(0);
+            background-color: #c49a00;
         }
 
         .cart-id-display {
-            font-size: 0.95rem;
-            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            margin-top: 1.8rem;
             color: var(--text-color-light);
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
         }
 
         .cart-id-display strong {
@@ -537,269 +380,180 @@
             font-weight: 600;
         }
 
-        /* Powered By */
         .powered-by {
             position: absolute;
-            bottom: 0.75rem;
-            left: 0.75rem;
-            font-size: 0.75rem;
+            bottom: 1rem;
+            left: 1rem;
+            font-size: 0.85rem;
             color: var(--text-color-light);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.08em;
             font-weight: 500;
-            opacity: 0.7;
         }
 
         /* Responsive Design */
-        @media (max-width: 1024px) {
-            .cart-header h1 {
-                font-size: 1.75rem;
-            }
-
-            .item {
-                min-height: 4rem;
-                padding: 0.875rem;
-            }
-
-            .item-name {
-                font-size: 1rem;
-            }
-
-            .item-price {
-                font-size: 1.25rem;
-                min-width: 5rem;
-            }
-
-            #customer-summary {
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                align-items: center;
+                height: auto;
+                overflow-y: auto;
                 padding: 1rem;
             }
 
-            .summary-row {
-                font-size: 1rem;
+            .main-content, .banner-container {
+                flex: none;
+                width: 100%;
+                max-width: 600px;
+                height: auto;
+                margin-top: 1rem;
             }
 
-            .summary-row.total {
-                font-size: 1.5rem;
+            .banner-container {
+                height: 250px;
             }
 
-            .payment-amount {
-                font-size: 2rem;
+            .item-list {
+                max-height: 40vh;
             }
 
-            .thank-you-text {
-                font-size: 2.5rem;
+            #cart-display-area h1 {
+                font-size: 2.2rem;
             }
 
-            .thank-you-icon {
-                font-size: 4rem;
-            }
-
-            .empty-title {
-                font-size: 1.8rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 0.375rem;
-                gap: 0.375rem;
-            }
-
-            .cart-header h1 {
-                font-size: 1.5rem;
-            }
-
-            .item {
-                min-height: 3.75rem;
-                padding: 0.75rem;
-            }
-
-            .item-name {
-                font-size: 0.95rem;
-            }
-
-            .item-price {
-                font-size: 1.1rem;
-                margin-left: 0.75rem;
-            }
-
-            #customer-cart-items {
-                padding: 0.75rem;
-                gap: 0.5rem;
+            .message {
+                font-size: 2.8rem;
             }
 
             .summary-row {
-                font-size: 0.95rem;
+                font-size: 1.2rem;
             }
 
             .summary-row.total {
-                font-size: 1.4rem;
-            }
-
-            .payment-info {
-                min-width: 280px;
-                padding: 1.5rem;
-            }
-
-            .payment-amount {
-                font-size: 1.75rem;
-            }
-
-            .thank-you-text {
                 font-size: 2rem;
-            }
-
-            .thank-you-icon {
-                font-size: 3.5rem;
-            }
-
-            .empty-title {
-                font-size: 1.5rem;
-            }
-
-            .empty-icon {
-                font-size: 3.5rem;
-            }
-
-            .connection-modal-content {
-                padding: 2rem;
-                width: 95%;
-            }
-
-            .connection-modal-content h2 {
-                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Connection Modal -->
-    <div class="connection-modal-overlay" id="connection-modal">
+    <div class="main-content">
+        <div class="container" id="main-display-container">
+            <div id="content-display">
+                <!-- Warenkorb-Anzeigebereich -->
+                <div id="cart-display-area">
+                    <h1>Ihr Einkauf</h1>
+                    <ul id="customer-cart-items" class="item-list"></ul>
+                    <div id="customer-summary">
+                        <div class="summary-row">
+                            <span>Zwischensumme:</span>
+                            <span id="customer-subtotal"></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Pfandrückgabe:</span>
+                            <span id="customer-deposit-return"></span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Gesamt:</span>
+                            <span id="customer-total"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Zahlungs-Anzeigebereich -->
+                <div id="payment-display-area">
+                    <h1>Zahlung</h1>
+                    <div id="customer-payment-summary" style="width: 100%;">
+                        <div class="summary-row">
+                            <span>Gesamtbetrag:</span>
+                            <span id="customer-total-due"></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Gegeben:</span>
+                            <span id="customer-received"></span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Rückgeld:</span>
+                            <span id="customer-change"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Vielen Dank-Nachricht -->
+                <div id="thank-you-message">
+                    <div class="message">Vielen Dank für Ihren Einkauf!</div>
+                </div>
+                <!-- NEUER BANNER FÜR LEEREN WARENKORB -->
+                <div id="empty-cart-promo-banner" style="background-color: var(--secondary-bg);">
+                    <!-- Wechselnde Bilder für den leeren Warenkorb // Willkommen Banner  -->
+                    <img src="https://res.cloudinary.com/dskacwue0/image/upload/v1762808765/IMG_1942_nrwmcm.jpg" alt="Banner Bild 1" class="banner-media welcome-banner-media active">
+                    <!-- Du kannst hier weitere Bilder hinzufügen -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner auf der rechten Seite (wechselnde Bilder) -->
+    <div class="banner-container">
+        <!-- Bild 1 mit der bereitgestellten Cloudinary URL INSTAGRAM Banner "WEIß" -->
+        <img src="https://res.cloudinary.com/dskacwue0/image/upload/v1762886054/IMG_1947_wrben7.jpg" alt="Banner Bild 1" class="banner-media active">
+        <!-- Bild 2 mit der bereitgestellten Cloudinary URL PREISLISTE Banner "WEIß" -->
+        <img src="https://res.cloudinary.com/dskacwue0/image/upload/v1762886054/IMG_1949_iedmkx.jpg" alt="Banner Bild 2" class="banner-media">
+        <!-- Bild 3 mit der bereitgestellten Cloudinary URL WORLD BEE DAY Banner "WEIß"-->
+        <img src="https://res.cloudinary.com/dskacwue0/image/upload/v1762885601/IMG_1946_hajpo6.jpg" alt="Banner Bild 3" class="banner-media">
+        <!-- Bild 4 mit der bereitgestellten Cloudinary URL Adventsbasar-Erle Banner "WEIß"-->
+        <img src="https://res.cloudinary.com/dskacwue0/image/upload/v1762941787/IMG_1953_bwuqrk.jpg" alt="Banner Bild 4" class="banner-media">
+        <!-- Falls du ein Video hast, kannst du es hier hinzufügen: -->
+        <!-- <video class="banner-media" autoplay loop muted playsinline poster="DEIN_VIDEO_VORSCHAU_BILD.jpg">
+            <source src="DEIN_VIDEO_URL.mp4" type="video/mp4">
+            Dein Browser unterstützt das Video-Tag nicht.
+        </video> -->
+    </div>
+    <!-- Warenkorb-ID Eingabemodal für das Display -->
+    <div id="connection-modal" class="connection-modal-overlay">
         <div class="connection-modal-content">
-            <h2>Warenkorb verbinden</h2>
-            <p>Geben Sie die Warenkorb-ID ein</p>
-            <input type="text" id="cart-id-input" placeholder="Warenkorb-ID eingeben" />
+            <h2>Kundenterminal verbinden</h2>
+            <p class="cart-id-display">Geben Sie die Warenkorb-ID der Kasse ein:</p>
+            <input type="text" id="cart-id-input" placeholder="z.B. kasse-abc1234">
             <button onclick="connectToCart()">Verbinden</button>
-            <div class="cart-id-display">
-                Status: <strong id="connected-cart-id">Nicht verbunden</strong>
-            </div>
+            <p class="cart-id-display">Aktuell verbunden mit: <strong id="connected-cart-id">Nicht verbunden</strong></p>
         </div>
     </div>
-
-    <!-- Banner Section -->
-    <div class="banner-section">
-        <div class="banner-container" id="main-display-container">
-            <img id="banner-image-1" class="banner-media active" src="" alt="Banner 1" />
-            <img id="banner-image-2" class="banner-media" src="" alt="Banner 2" />
-            <img id="banner-image-3" class="banner-media" src="" alt="Banner 3" />
-            <video id="banner-video-1" class="banner-media" muted autoplay loop></video>
-            <video id="banner-video-2" class="banner-media" muted autoplay loop></video>
-            <video id="banner-video-3" class="banner-media" muted autoplay loop></video>
-            <div class="banner-indicators" id="banner-indicators"></div>
-        </div>
-    </div>
-
-    <!-- Main Content Section -->
-    <div class="main-section">
-        <div id="content-display">
-            <!-- Cart Display Area -->
-            <div id="cart-display-area">
-                <div class="cart-header">
-                    <h1>Ihr Warenkorb</h1>
-                </div>
-                <ul id="customer-cart-items" class="item-list"></ul>
-                <div id="customer-summary">
-                    <div class="summary-row">
-                        <span class="summary-label">Zwischensumme:</span>
-                        <span class="summary-value" id="customer-subtotal">0,00 €</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Pfand:</span>
-                        <span class="summary-value" id="customer-deposit-return">0,00 €</span>
-                    </div>
-                    <div class="summary-row total">
-                        <span class="summary-label">Gesamt:</span>
-                        <span class="summary-value" id="customer-total">0,00 €</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Payment Display Area -->
-            <div id="payment-display-area">
-                <div class="payment-info">
-                    <div class="payment-label">Zu zahlen:</div>
-                    <div class="payment-amount" id="customer-total-due">0,00 €</div>
-                </div>
-                <div class="payment-info">
-                    <div class="payment-label">Erhalten:</div>
-                    <div class="payment-amount" id="customer-received">0,00 €</div>
-                </div>
-                <div class="payment-info change">
-                    <div class="payment-label">Wechselgeld:</div>
-                    <div class="payment-amount" id="customer-change">0,00 €</div>
-                </div>
-            </div>
-
-            <!-- Thank You Message -->
-            <div id="thank-you-message">
-                <div class="empty-state">
-                    <div class="thank-you-icon">✨</div>
-                    <div class="thank-you-text">Vielen Dank!</div>
-                    <div class="thank-you-subtext">Auf Wiedersehen!</div>
-                </div>
-            </div>
-
-            <!-- Empty Cart Promo Banner -->
-            <div id="empty-cart-promo-banner">
-                <div class="empty-state">
-                    <div class="empty-icon">🛒</div>
-                    <div class="empty-title">Willkommen!</div>
-                    <div class="empty-subtitle">Ihr Warenkorb ist leer</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="powered-by">Kundendisplay</div>
-
+    <div class="powered-by"></div>
     <script>
         let connectedCartId = "";
         let pollingInterval = null;
         let thankYouTimeout = null;
-        let emptyCartBannerTimeout = null;
         let thankYouTimerStarted = false;
         let hasShownThankYouAndTransitioned = false;
+        let emptyCartBannerTimeout = null;
         let lastCartChangeTime = Date.now();
-        let window.scrollAnimationId = null;
-        let welcomeBannerSlideshowInterval = null;
-        let rightBannerSlideshowInterval = null;
-        const bannerIntervalTime = 5000;
-        const bannerImages = [];
-        let currentBannerIndex = 0;
+        window.scrollAnimationId = null;
 
-        function changeRightBanner() {
-            if (bannerImages.length === 0) return;
-            currentBannerIndex = (currentBannerIndex + 1) % bannerImages.length;
-            updateBannerDisplay();
+        // Banner-Logik
+        const bannerIntervalTime = 7000; // 7 Sekunden
+        let rightBannerSlideshowInterval = null;
+        let welcomeBannerSlideshowInterval = null;
+
+        function changeBanner(containerId, mediaClass) {
+            const container = document.querySelector(containerId);
+            if (!container) return;
+            const mediaElements = Array.from(container.querySelectorAll(`.${mediaClass}`));
+            if (mediaElements.length === 0) return;
+            const activeIndex = mediaElements.findIndex(el => el.classList.contains("active"));
+
+            if (activeIndex !== -1) {
+                mediaElements[activeIndex].classList.remove("active");
+            }
+            const nextIndex = (activeIndex + 1) % mediaElements.length;
+            mediaElements[nextIndex].classList.add("active");
         }
 
-        function updateBannerDisplay() {
-            const bannerContainer = document.getElementById("main-display-container");
-            const allMedia = bannerContainer.querySelectorAll(".banner-media");
-            allMedia.forEach((media, index) => {
-                media.classList.toggle("active", index === currentBannerIndex);
-            });
-
-            const indicators = document.querySelectorAll(".indicator");
-            indicators.forEach((ind, index) => {
-                ind.classList.toggle("active", index === currentBannerIndex);
-            });
+        function changeRightBanner() {
+            changeBanner(".banner-container", "banner-media");
         }
 
         function changeWelcomeBanner() {
-            changeRightBanner();
+            changeBanner("#empty-cart-promo-banner", "welcome-banner-media");
         }
 
+        // Auto-Scroll-Logik für den Warenkorb
         let scrollSpeed = 1;
         let scrollDirection = 1;
         let isScrollingPaused = false;
@@ -901,7 +655,7 @@
                 await fetchAndUpdateDisplay();
                 const connectionModal = document.getElementById("connection-modal");
                 if (connectionModal) {
-                    connectionModal.classList.remove("active");
+                    connectionModal.classList.add("hidden");
                 }
                 pollingInterval = setInterval(fetchAndUpdateDisplay, 700);
             } else {
@@ -918,7 +672,7 @@
             if (!connectedCartId) {
                 const connectionModal = document.getElementById("connection-modal");
                 if (connectionModal) {
-                    connectionModal.classList.add("active");
+                    connectionModal.classList.remove("hidden");
                 }
                 showDisplaySection("empty-cart-promo-banner");
                 stopAutoScroll();
@@ -987,8 +741,7 @@
                 showDisplaySection("payment-display-area");
                 document.getElementById("customer-total-due").textContent = `${totalDue.toFixed(2).replace(".", ",")} €`;
                 document.getElementById("customer-received").textContent = `${parseFloat(displayData.receivedAmount || 0).toFixed(2).replace(".", ",")} €`;
-                const change = (parseFloat(displayData.receivedAmount || 0) - totalDue).toFixed(2).replace(".", ",");
-                document.getElementById("customer-change").textContent = `${change} €`;
+                document.getElementById("customer-change").textContent = `${(parseFloat(displayData.receivedAmount || 0) - totalDue).toFixed(2).replace(".", ",")} €`;
                 stopAutoScroll();
 
             } else if (cartHasItems) {
@@ -1110,26 +863,31 @@
             const cartIdInput = document.getElementById("cart-id-input");
             const connectedCartIdDisplay = document.getElementById("connected-cart-id");
 
-            connectionModal.classList.add("active");
-
             if (savedCartId) {
                 cartIdInput.value = savedCartId;
                 connectedCartIdDisplay.textContent = savedCartId;
                 connectedCartId = savedCartId;
-                connectionModal.classList.remove("active");
+                connectionModal.classList.add("hidden");
                 fetchAndUpdateDisplay();
             } else {
                 connectedCartIdDisplay.textContent = "Nicht verbunden";
+                connectionModal.classList.remove("hidden");
                 showDisplaySection("empty-cart-promo-banner");
+                cartIdInput.focus();
             }
 
             rightBannerSlideshowInterval = setInterval(changeRightBanner, bannerIntervalTime);
         });
 
-        // Handle Enter key in input
-        document.getElementById("cart-id-input").addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                connectToCart();
+        // Enter-Taste im Input-Feld
+        document.addEventListener("DOMContentLoaded", () => {
+            const cartIdInput = document.getElementById("cart-id-input");
+            if (cartIdInput) {
+                cartIdInput.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        connectToCart();
+                    }
+                });
             }
         });
     </script>
