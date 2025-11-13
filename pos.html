@@ -112,9 +112,9 @@
         
         .product-tile {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 1rem;
+            border-radius: 0.75rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            padding: 1.25rem;
+            padding: 0.75rem 0.5rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -146,8 +146,8 @@
         }
         
         .product-tile h4 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.1rem;
+            margin: 0 0 0.25rem 0;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #1a202c;
             position: relative;
@@ -155,7 +155,7 @@
         }
         
         .product-tile span {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #2d3748;
             position: relative;
@@ -255,24 +255,16 @@
         }
         
         .cart-panel h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0 0 1.5rem 0;
-            color: #1a202c;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .cart-panel h2::before {
-            content: '🛒';
             font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+            color: #1a202c;
         }
         
         #cart-items {
             list-style: none;
             padding: 0;
-            margin: 0 0 1rem 0;
+            margin: 0 0 0.75rem 0;
             flex-grow: 1;
             overflow-y: auto;
         }
@@ -294,8 +286,8 @@
         .cart-item-wrapper {
             position: relative;
             overflow: hidden;
-            border-radius: 0.75rem;
-            margin-bottom: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
             touch-action: pan-y;
             transition: transform 0.3s ease-in-out;
         }
@@ -328,12 +320,12 @@
             justify-content: space-between;
             align-items: center;
             background: #ffffff;
-            padding: 1rem;
+            padding: 0.65rem 0.75rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             position: relative;
             z-index: 10;
             transition: transform 0.3s ease-in-out;
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             border: 1px solid #e2e8f0;
         }
         
@@ -342,14 +334,15 @@
         }
         
         .cart-item-details h4 {
-            margin: 0 0 0.25rem 0;
+            margin: 0 0 0.15rem 0;
             font-weight: 600;
             color: #1a202c;
+            font-size: 0.95rem;
         }
         
         .cart-item-details span {
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         
         .cart-item-controls {
@@ -361,14 +354,15 @@
         .cart-item-controls button {
             background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             border: none;
-            border-radius: 0.5rem;
-            padding: 0.5rem 0.8rem;
-            font-size: 1.1rem;
+            border-radius: 0.4rem;
+            padding: 0.35rem 0.6rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             color: #475569;
-            min-width: 36px;
+            min-width: 32px;
+            height: 32px;
         }
         
         .cart-item-controls button:hover {
@@ -381,17 +375,18 @@
         }
         
         .cart-item-controls span {
-            min-width: 30px;
+            min-width: 24px;
             text-align: center;
             font-weight: 600;
             color: #1a202c;
+            font-size: 0.9rem;
         }
         
         .cart-item-price {
-            min-width: 80px;
+            min-width: 70px;
             text-align: right;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             color: #1a202c;
         }
         
@@ -399,10 +394,10 @@
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.75rem;
-            padding: 0.5rem 0;
+            margin-bottom: 0.4rem;
+            padding: 0.3rem 0;
             color: #475569;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         
         .summary-row span:last-child {
@@ -411,11 +406,11 @@
         }
         
         .summary-row.total {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            margin-top: 1rem;
+            margin-top: 0.75rem;
             border-top: 2px solid #e2e8f0;
-            padding-top: 1rem;
+            padding-top: 0.75rem;
             color: #1a202c;
         }
         
@@ -430,16 +425,16 @@
         .cart-actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-top: 1rem;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
         }
         
         .cart-actions button {
             flex: 1;
-            padding: 1rem;
+            padding: 0.85rem 0.75rem;
             border-radius: 0.75rem;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: #ffffff;
             transition: all 0.2s ease;
             border: none;
@@ -464,7 +459,7 @@
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         }
         
-        /* Modal Styles */
+        /* Modal Styles - Frosted Glass */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -472,8 +467,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
+            background-color: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -490,10 +486,12 @@
         }
         
         .modal-content, .product-edit-modal-content {
-            background: #ffffff;
-            padding: 2rem;
-            border-radius: 1.25rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
             width: 90%;
             max-width: 500px;
             max-height: 90vh;
@@ -518,7 +516,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
         
         .modal-header h3 {
@@ -533,7 +531,7 @@
             font-weight: 300;
             cursor: pointer;
             border: none;
-            background: #f1f5f9;
+            background: rgba(0, 0, 0, 0.05);
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -545,32 +543,33 @@
         }
         
         .modal-close:hover {
-            background: #e2e8f0;
+            background: rgba(0, 0, 0, 0.1);
             transform: rotate(90deg);
             color: #1a202c;
         }
         
         /* Deposit Modal */
         #current-deposit-display {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
             border-radius: 1rem;
-            color: #0369a1;
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.2);
         }
         
         .deposit-grid, .checkout-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         .deposit-grid button, .checkout-grid button {
-            padding: 1.25rem;
+            padding: 1.5rem 1rem;
             border-radius: 0.75rem;
             font-weight: 600;
             font-size: 1rem;
@@ -594,7 +593,7 @@
         .deposit-actions, .checkout-actions {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
         }
         
         .deposit-actions button, .checkout-actions button {
@@ -642,10 +641,11 @@
         
         /* Checkout Modal */
         .checkout-summary {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
             padding: 1.5rem;
             border-radius: 1rem;
             margin-bottom: 1.5rem;
+            border: 1px solid rgba(102, 126, 234, 0.15);
         }
         
         .checkout-summary .summary-row {
@@ -670,15 +670,16 @@
             font-size: 2.5rem;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
             border-radius: 1rem;
-            color: #15803d;
+            color: #10b981;
             min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
         
         .numpad {
@@ -694,7 +695,7 @@
             font-size: 1.5rem;
             color: #1a202c;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 2px solid #e2e8f0;
+            border: 1px solid #e2e8f0;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -725,7 +726,7 @@
         .product-management-list {
             list-style: none;
             padding: 0;
-            margin: 0 0 1rem 0;
+            margin: 0 0 1.5rem 0;
             max-height: 60vh;
             overflow-y: auto;
         }
@@ -734,46 +735,53 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            padding: 1rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.8) 100%);
+            padding: 1.25rem;
             margin-bottom: 0.75rem;
             border-radius: 0.75rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(226, 232, 240, 0.5);
             transition: all 0.2s ease;
         }
         
         .product-management-item:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+            border-color: rgba(102, 126, 234, 0.3);
             transform: translateX(4px);
+        }
+        
+        .product-management-item-details {
+            flex: 1;
         }
         
         .product-management-item-details h4 {
             margin: 0 0 0.25rem 0;
             font-weight: 600;
             color: #1a202c;
+            font-size: 1.1rem;
         }
         
         .product-management-item-details span {
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         
         .product-management-item-actions {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            margin-left: 1rem;
         }
         
         .product-management-item-actions button {
             background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            border: none;
+            border: 1px solid #cbd5e1;
             cursor: pointer;
             color: #475569;
-            padding: 0.5rem;
+            padding: 0.65rem;
             border-radius: 0.5rem;
             transition: all 0.2s ease;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -781,16 +789,22 @@
         
         .product-management-item-actions button:hover {
             background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            border-color: #94a3b8;
             transform: scale(1.1);
+            color: #1a202c;
         }
         
         .product-management-item-actions button .fas {
             font-size: 1rem;
         }
         
+        .product-management-actions {
+            margin-top: 1.5rem;
+        }
+        
         .add-product-button {
             width: 100%;
-            padding: 1rem;
+            padding: 1.25rem;
             border-radius: 0.75rem;
             font-weight: 700;
             font-size: 1rem;
@@ -812,37 +826,40 @@
         .product-edit-modal-content input[type="number"] {
             width: 100%;
             padding: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             border-radius: 0.75rem;
-            border: 2px solid #e2e8f0;
+            border: 1px solid #e2e8f0;
             font-size: 1rem;
             font-family: 'Inter', sans-serif;
             transition: all 0.2s ease;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.8) 100%);
         }
         
         .product-edit-modal-content input:focus {
             outline: none;
             border-color: #667eea;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 1) 100%);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         .product-edit-modal-content label {
             font-weight: 600;
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             color: #1a202c;
+            font-size: 1rem;
         }
         
         .product-edit-modal-content .color-picker-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
         
         .product-edit-modal-content .color-picker-grid button {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             border: 3px solid transparent;
             cursor: pointer;
@@ -863,7 +880,7 @@
         
         .product-edit-modal-content .save-product-button {
             width: 100%;
-            padding: 1rem;
+            padding: 1.25rem;
             border-radius: 0.75rem;
             font-weight: 700;
             font-size: 1rem;
@@ -883,12 +900,14 @@
         /* Cart ID Display */
         .cart-id-display {
             text-align: center;
-            margin-top: 1rem;
-            padding: 1rem;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            margin-top: 0.5rem;
+            padding: 0.6rem;
+            background: linear-gradient(135deg, rgba(3, 105, 161, 0.08) 0%, rgba(2, 132, 199, 0.08) 100%);
             border-radius: 0.75rem;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             color: #0369a1;
+            border: 1px solid rgba(3, 105, 161, 0.15);
+            line-height: 1.3;
         }
         
         .cart-id-display span {
@@ -898,6 +917,9 @@
         .cart-id-display strong {
             font-weight: 700;
             color: #075985;
+            display: block;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
         }
     </style>
 </head>
@@ -960,7 +982,7 @@
             <ul id="product-management-list" class="product-management-list">
             </ul>
             <div class="product-management-actions">
-                <button class="add-product-button" onclick="openProductEditModal('new')">Produkt hinzufügen</button>
+                <button class="add-product-button" onclick="openProductEditModal('new')"><i class="fas fa-plus"></i> Neues Produkt</button>
             </div>
         </div>
     </div>
@@ -972,13 +994,13 @@
                 <button class="modal-close" onclick="closeProductEditModal()">×</button>
             </div>
             <div>
-                <label for="product-name-input">Name</label>
-                <input type="text" id="product-name-input">
+                <label for="product-name-input">Produktname</label>
+                <input type="text" id="product-name-input" placeholder="z.B. Kaffee">
                 <label for="product-price-input">Preis (€)</label>
-                <input type="number" step="0.01" id="product-price-input">
-                <label>Wähle eine Farbe:</label>
+                <input type="number" step="0.01" id="product-price-input" placeholder="z.B. 2.50">
+                <label>Farbe wählen</label>
                 <div id="color-picker-grid" class="color-picker-grid"></div>
-                <button class="save-product-button" onclick="saveProduct()">Speichern</button>
+                <button class="save-product-button" onclick="saveProduct()"><i class="fas fa-save"></i> Speichern</button>
             </div>
         </div>
     </div>
@@ -1002,9 +1024,9 @@
                 <button onclick="addQuickDeposit(9)">9 Gläser</button>
             </div>
             <div class="deposit-actions">
-                <button class="reset" onclick="resetTotalDeposit()">Zurücksetzen</button>
+                <button class="manual-input-button" onclick="showNumpad(true)"><i class="fas fa-keyboard"></i> Manuelle Eingabe</button>
+                <button class="reset" onclick="resetTotalDeposit()"><i class="fas fa-redo"></i> Zurücksetzen</button>
             </div>
-            <button class="manual-input-button" onclick="showNumpad(true)">Manuelle Eingabe</button>
         </div>
     </div>
 
@@ -1037,9 +1059,9 @@
                 <button onclick="addQuickPayment(50)">50 €</button>
             </div>
             <div class="checkout-actions">
-                <button class="manual-input-button" onclick="showNumpad(false)">Manuelle Eingabe</button>
-                <button class="reset" onclick="resetReceivedAmount()">Zurücksetzen</button>
-                <button class="finish" onclick="finishCheckout()">Abschließen</button>
+                <button class="manual-input-button" onclick="showNumpad(false)"><i class="fas fa-keyboard"></i> Manuelle Eingabe</button>
+                <button class="reset" onclick="resetReceivedAmount()"><i class="fas fa-redo"></i> Zurücksetzen</button>
+                <button class="finish" onclick="finishCheckout()"><i class="fas fa-check"></i> Abschließen</button>
             </div>
         </div>
     </div>
@@ -1921,13 +1943,13 @@
                 li.innerHTML = `
                     <div class="product-management-item-details">
                         <h4>${product.name}</h4>
-                        <span>Preis: ${product.price.toFixed(2)} €</span>
+                        <span>€ ${product.price.toFixed(2)}</span>
                     </div>
                     <div class="product-management-item-actions">
-                        <button title="Nach oben verschieben" onclick="moveProductUp(${product.id}, event)">
+                        <button title="Nach oben" onclick="moveProductUp(${product.id}, event)">
                             <i class="fas fa-arrow-up"></i>
                         </button>
-                        <button title="Nach unten verschieben" onclick="moveProductDown(${product.id}, event)">
+                        <button title="Nach unten" onclick="moveProductDown(${product.id}, event)">
                             <i class="fas fa-arrow-down"></i>
                         </button>
                         <button title="Bearbeiten" onclick="openProductEditModal(${product.id})">
@@ -1966,7 +1988,7 @@
 
             if (productId === 'new') {
                 editingProductId = null;
-                title.textContent = "Produkt hinzufügen";
+                title.textContent = "Neues Produkt";
                 nameInput.value = "";
                 priceInput.value = "";
                 editingProductColor = pastelColors[0];
