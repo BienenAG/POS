@@ -118,7 +118,7 @@
             padding: 0.75rem 0.5rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             user-select: none;
             position: relative;
             overflow: hidden;
@@ -131,18 +131,26 @@
             left: 0;
             right: 0;
             bottom: 0;
-            opacity: 0.08;
+            opacity: 0.12;
             z-index: 0;
+            transition: opacity 0.25s ease;
         }
         
         .product-tile:hover {
-            transform: translateY(-3px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             border-color: #d8dfe8;
         }
         
+        .product-tile:hover::before {
+            opacity: 0.22;
+        }
+        
         .product-tile:active {
-            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        }
+        
+        .product-tile:active::before {
+            opacity: 0.28;
         }
         
         .product-tile h4 {
@@ -152,6 +160,7 @@
             color: #2c3e50;
             position: relative;
             z-index: 1;
+            transition: color 0.25s ease;
         }
         
         .product-tile span {
@@ -160,6 +169,17 @@
             color: #556b82;
             position: relative;
             z-index: 1;
+            transition: color 0.25s ease;
+        }
+        
+        .product-tile:hover h4,
+        .product-tile:active h4 {
+            color: #1a2a3a;
+        }
+        
+        .product-tile:hover span,
+        .product-tile:active span {
+            color: #3a4a5a;
         }
         
         /* Page Controls */
@@ -1134,8 +1154,8 @@
     <script>
         // === Konstanten für die Farbauswahl und den Pfandwert ===
         const pastelColors = [
-            '#FFB6C1', '#FFDAB9', '#FFFFE0', '#E0FFDE', '#B0E0E6',
-            '#ADD8E6', '#E6E6FA', '#D8BFD8', '#FFFACD'
+            '#FFA3B3', '#FFC896', '#FFFFD0', '#D0FFCC', '#9EDAE5',
+            '#9DD4E8', '#DCDCF0', '#D0B0D8', '#FFFAAA'
         ];
         const DEPOSIT_VALUE = 1.00;
 
