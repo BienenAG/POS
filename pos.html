@@ -313,7 +313,7 @@
             border-radius: 0.65rem;
             margin-bottom: 0.5rem;
             touch-action: pan-y;
-            transition: transform 0.3s ease-in-out;
+            --swipe-progress: 0;
         }
         
         .cart-item-wrapper::before {
@@ -323,16 +323,14 @@
             right: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #ffd4d4 0%, #ffcccc 100%);
+            background: linear-gradient(135deg, #ffb3b3 0%, #ffaaaa 100%);
             z-index: 1;
-            opacity: 0;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            transform: translateX(100%);
+            opacity: calc(var(--swipe-progress) * 0.8);
+            z-index: 0;
         }
         
         .cart-item-wrapper.swiping::before {
-            opacity: 1;
-            transform: translateX(0);
+            opacity: 0.8;
         }
         
         .cart-item-wrapper.swiping .cart-item {
@@ -348,9 +346,9 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             position: relative;
             z-index: 10;
-            transition: transform 0.3s ease-in-out;
             border-radius: 0.65rem;
             border: 1.5px solid #e8ecf1;
+            transition: color 0.2s ease;
         }
         
         .cart-item-details {
@@ -1016,10 +1014,6 @@
                     <span>Pfandrückgabe:</span>
                     <span id="deposit-return">0,00 €</span>
                 </div>
-                <div class="summary-row">
-                    <span>Spende:</span>
-                    <span id="donation">0,00 €</span>
-                </div>
                 <div class="summary-row total">
                     <span>Gesamt:</span>
                     <span id="total">0,00 €</span>
@@ -1350,17 +1344,17 @@
             }
         }
 
-        // === Warenkorb-Wischgeste-Logik ===
+        // === Warenkorb-Wischgeste-Logik - Verbessert ===
         function handleCartTouchStart(event, itemId) {
-            // Prüfe ob das Touch-Event auf einem Button stattfindet
             const target = event.target;
             if (target.tagName === 'BUTTON' || target.closest('button')) {
-                return; // Lass Button-Klicks durch
+                return;
             }
             
             cartTouchStartX = event.changedTouches[0].clientX;
             cartTouchStartY = event.changedTouches[0].clientY;
             cartIsSwiping = false;
+            cartSwipeStarted = false;
             currentSwipingItem = itemId;
             cartTouchStartTime = Date.now();
         }
@@ -1368,34 +1362,38 @@
         function handleCartTouchMove(event, itemWrapper) {
             if (!currentSwipingItem) return;
             
-            // Prüfe ob das Touch-Event auf einem Button stattfindet
             const target = event.target;
             if (target.tagName === 'BUTTON' || target.closest('button')) {
-                return; // Lass Button-Interaktionen durch
+                return;
             }
             
             const currentX = event.changedTouches[0].clientX;
             const currentY = event.changedTouches[0].clientY;
             const deltaX = currentX - cartTouchStartX;
             const deltaY = currentY - cartTouchStartY;
+            const absDeltaX = Math.abs(deltaX);
+            const absDeltaY = Math.abs(deltaY);
             
-            // Erhöhe die Schwelle für Swipe-Erkennung und prüfe Zeit
-            const timeDiff = Date.now() - cartTouchStartTime;
-            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30 && timeDiff > 100) {
+            // Verbesserte Swipe-Erkennung: Horizontal muss deutlich größer als Vertikal sein
+            if (absDeltaX > 15 && absDeltaX > absDeltaY * 2 && deltaX < 0) {
+                if (!cartSwipeStarted) {
+                    cartSwipeStarted = true;
+                    itemWrapper.style.transition = 'none';
+                }
                 cartIsSwiping = true;
                 event.preventDefault();
                 
-                // Nur nach links swipen erlauben (negative deltaX)
-                if (deltaX < 0) {
-                    const swipeDistance = Math.max(deltaX, -200); // Maximal 200px nach links
-                    itemWrapper.style.transform = `translateX(${swipeDistance}px)`;
-                    
-                    // Zeige Lösch-Hintergrund wenn genug geswiped wurde
-                    if (Math.abs(swipeDistance) > cartSwipeThreshold) {
-                        itemWrapper.classList.add('swiping');
-                    } else {
-                        itemWrapper.classList.remove('swiping');
-                    }
+                const swipeDistance = Math.max(deltaX, -220);
+                itemWrapper.style.transform = `translateX(${swipeDistance}px)`;
+                
+                // Smooth Farbübergang basierend auf Swipe-Fortschritt
+                const swipeProgress = Math.min(Math.abs(swipeDistance) / 80, 1);
+                itemWrapper.style.setProperty('--swipe-progress', swipeProgress);
+                
+                if (Math.abs(swipeDistance) > 80) {
+                    itemWrapper.classList.add('swiping');
+                } else {
+                    itemWrapper.classList.remove('swiping');
                 }
             }
         }
@@ -1403,31 +1401,40 @@
         function handleCartTouchEnd(event, itemId, itemWrapper) {
             if (!currentSwipingItem || currentSwipingItem !== itemId) return;
             
-            // Prüfe ob das Touch-Event auf einem Button stattfindet
             const target = event.target;
             if (target.tagName === 'BUTTON' || target.closest('button')) {
-                // Reset für Button-Klicks
                 currentSwipingItem = null;
                 cartIsSwiping = false;
+                cartSwipeStarted = false;
+                itemWrapper.style.transition = '';
+                itemWrapper.style.transform = 'translateX(0)';
+                itemWrapper.classList.remove('swiping');
                 return;
             }
             
             const currentX = event.changedTouches[0].clientX;
             const deltaX = currentX - cartTouchStartX;
-            const cartItem = itemWrapper.querySelector('.cart-item');
-            const timeDiff = Date.now() - cartTouchStartTime;
+            const absDeltaX = Math.abs(deltaX);
             
-            // Nur löschen wenn es wirklich ein Swipe war (Zeit und Distanz)
-            if (cartIsSwiping && deltaX < -cartSwipeThreshold && timeDiff > 200) {
-                removeAllFromCart(itemId);
+            // Smooth Rückanimation
+            itemWrapper.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease';
+            
+            // Nur löschen wenn es wirklich ein Swipe war
+            if (cartSwipeStarted && absDeltaX > 80 && deltaX < 0) {
+                itemWrapper.style.transform = 'translateX(-220px)';
+                itemWrapper.style.opacity = '0';
+                
+                setTimeout(() => {
+                    removeAllFromCart(itemId);
+                }, 300);
             } else {
-                // Andernfalls, bringe das Item zurück zur ursprünglichen Position
                 itemWrapper.style.transform = 'translateX(0)';
                 itemWrapper.classList.remove('swiping');
             }
             
             currentSwipingItem = null;
             cartIsSwiping = false;
+            cartSwipeStarted = false;
         }
 
         // === Produktanzeige-Logik ===
