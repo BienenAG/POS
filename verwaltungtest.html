@@ -516,6 +516,18 @@
         let allSales = [];
         let charts = {};
 
+        // Vordefinierte schöne Farben für Diagramme
+        const chartColors = [
+            '#9edae5', '#FFA3B3', '#D0FFCC', '#DCDCF0', '#FFC896',
+            '#B0E0E6', '#FFB3C1', '#E0FFDE', '#E6E6FA', '#FFFAAA',
+            '#9DD4E8', '#FFD4D4', '#C0F0D0', '#D0D0E8', '#FFFACD'
+        ];
+
+        // Funktion zum Abrufen von Farben mit Rotation
+        function getChartColor(index) {
+            return chartColors[index % chartColors.length];
+        }
+
         // Initialisiere Datumsfilter mit heutigem Datum
         function initializeDateFilter() {
             const today = new Date();
@@ -661,6 +673,8 @@
                 charts.topProducts.destroy();
             }
 
+            const colors = topProducts.map((p, i) => getChartColor(i));
+
             charts.topProducts = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -668,8 +682,8 @@
                     datasets: [{
                         label: 'Verkaufte Menge',
                         data: topProducts.map(p => p.quantity),
-                        backgroundColor: topProducts.map(p => p.color),
-                        borderColor: topProducts.map(p => p.color),
+                        backgroundColor: colors,
+                        borderColor: colors,
                         borderWidth: 2,
                         borderRadius: 6
                     }]
@@ -704,13 +718,15 @@
                 charts.revenueDistribution.destroy();
             }
 
+            const colors = products.map((p, i) => getChartColor(i));
+
             charts.revenueDistribution = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: products.map(p => p.name),
                     datasets: [{
                         data: products.map(p => p.revenue),
-                        backgroundColor: products.map(p => p.color),
+                        backgroundColor: colors,
                         borderColor: '#fff',
                         borderWidth: 2
                     }]
@@ -971,7 +987,7 @@
         confirmDeleteButton.addEventListener('click', async () => {
             if (saleToPermDeleteId) {
                 try {
-                    const response = await fetch(`${window.location.origin}/api/sales?id=${saleToPermDeleteId}&permanent=true`, {
+                    const response = await fetch(`${window.location.origin}/api/sales/${saleToPermDeleteId}?permanent=true`, {
                         method: 'DELETE',
                     });
                     if (!response.ok) {
@@ -1028,4 +1044,3 @@
     </script>
 </body>
 </html>
-
