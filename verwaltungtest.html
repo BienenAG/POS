@@ -337,7 +337,7 @@
         }
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
         }
@@ -347,14 +347,19 @@
             border-radius: 0.75rem;
             padding: 1.5rem;
             position: relative;
-            height: 500px;
-            overflow: hidden;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
         }
         .chart-title {
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 1rem;
             color: #1a2a3a;
+            flex-shrink: 0;
+        }
+        canvas {
+            max-height: 400px !important;
         }
     </style>
 </head>
