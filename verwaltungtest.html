@@ -6,6 +6,7 @@
     <title>Verkaufsstatistik - POS Verwaltung</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
         body {
@@ -14,7 +15,7 @@
             color: #1f2937;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: auto;
             padding: 1rem;
         }
@@ -257,6 +258,86 @@
             color: #6b7280;
             margin-top: 0.25rem;
         }
+        .filter-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1.5px solid #e8ecf1;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .filter-input {
+            display: flex;
+            flex-direction: column;
+        }
+        .filter-input label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1a2a3a;
+            font-size: 0.9rem;
+        }
+        .filter-input input {
+            padding: 0.75rem;
+            border: 1.5px solid #e8ecf1;
+            border-radius: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .filter-input input:focus {
+            outline: none;
+            border-color: #9edae5;
+            box-shadow: 0 0 0 3px rgba(158, 218, 229, 0.1);
+        }
+        .filter-presets {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .preset-button {
+            padding: 0.5rem 1rem;
+            background-color: #f0f3f8;
+            border: 1.5px solid #e8ecf1;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .preset-button:hover {
+            background-color: #e8ecf1;
+            border-color: #d0d8e0;
+        }
+        .preset-button.active {
+            background-color: #9edae5;
+            border-color: #8dd4e0;
+            color: #1a2a3a;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .chart-container {
+            background: #fff;
+            border: 1.5px solid #e8ecf1;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            position: relative;
+            height: 400px;
+        }
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1a2a3a;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -277,6 +358,30 @@
         <!-- Fehlermeldungen und Erfolgsmeldungen -->
         <div id="messageContainer"></div>
 
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h3 class="text-lg font-bold mb-4">Zeitraum wählen</h3>
+            <div class="filter-controls">
+                <div class="filter-input">
+                    <label for="startDate">Von:</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-input">
+                    <label for="endDate">Bis:</label>
+                    <input type="date" id="endDate">
+                </div>
+            </div>
+            <div>
+                <label class="block font-bold mb-2 text-sm">Schnellfilter:</label>
+                <div class="filter-presets">
+                    <button class="preset-button active" data-preset="today">Heute</button>
+                    <button class="preset-button" data-preset="week">Diese Woche</button>
+                    <button class="preset-button" data-preset="month">Dieser Monat</button>
+                    <button class="preset-button" data-preset="all">Alles</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Statistik-Übersicht -->
         <div class="stats-grid">
             <div class="stat-card revenue">
@@ -290,6 +395,22 @@
             <div class="stat-card avg-sale">
                 <div class="stat-value" id="avgSale">0,00 €</div>
                 <div class="stat-label">Durchschnittlicher Verkauf</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">Top Produkte</div>
+                <canvas id="topProductsChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Umsatzverteilung</div>
+                <canvas id="revenueDistributionChart"></canvas>
+            </div>
+            <div class="chart-container" style="grid-column: 1 / -1;">
+                <div class="chart-title">Verkaufsverlauf</div>
+                <canvas id="salesTrendChart"></canvas>
             </div>
         </div>
 
@@ -349,9 +470,65 @@
         const denyCancelButton = document.getElementById('denyCancel');
         const refreshButton = document.getElementById('refreshButton');
         const messageContainer = document.getElementById('messageContainer');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const presetButtons = document.querySelectorAll('.preset-button');
 
         let saleToDeleteId = null;
         let allSales = [];
+        let charts = {};
+
+        // Initialisiere Datumsfilter mit heutigem Datum
+        function initializeDateFilter() {
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0];
+            startDateInput.value = todayString;
+            endDateInput.value = todayString;
+        }
+
+        // Setze Datumsbereich basierend auf Preset
+        function setDatePreset(preset) {
+            const today = new Date();
+            const startDate = new Date();
+
+            switch(preset) {
+                case 'today':
+                    startDate.setDate(today.getDate());
+                    break;
+                case 'week':
+                    startDate.setDate(today.getDate() - today.getDay());
+                    break;
+                case 'month':
+                    startDate.setDate(1);
+                    break;
+                case 'all':
+                    startDate.setFullYear(2000);
+                    break;
+            }
+
+            startDateInput.value = startDate.toISOString().split('T')[0];
+            endDateInput.value = today.toISOString().split('T')[0];
+        }
+
+        // Preset-Button Event Listener
+        presetButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                presetButtons.forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+                setDatePreset(button.getAttribute('data-preset'));
+                fetchAndDisplaySales();
+            });
+        });
+
+        // Datum-Input Event Listener
+        startDateInput.addEventListener('change', () => {
+            presetButtons.forEach(b => b.classList.remove('active'));
+            fetchAndDisplaySales();
+        });
+        endDateInput.addEventListener('change', () => {
+            presetButtons.forEach(b => b.classList.remove('active'));
+            fetchAndDisplaySales();
+        });
 
         // Tab-Funktionalität
         const tabButtons = document.querySelectorAll('.tab-button');
@@ -360,12 +537,8 @@
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabName = button.getAttribute('data-tab');
-                
-                // Entferne active Klasse von allen Buttons und Inhalten
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
-                
-                // Füge active Klasse zum geklickten Button und entsprechenden Inhalt hinzu
                 button.classList.add('active');
                 document.getElementById(tabName).classList.add('active');
             });
@@ -386,7 +559,19 @@
             }, 5000);
         }
 
-        // Funktion zum Aggregieren von Produktdaten
+        // Filtere Verkäufe nach Datumsbereich
+        function filterSalesByDate(sales) {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            endDate.setHours(23, 59, 59, 999);
+
+            return sales.filter(sale => {
+                const saleDate = new Date(sale.createdAt);
+                return saleDate >= startDate && saleDate <= endDate;
+            });
+        }
+
+        // Aggregiere Produktdaten
         function aggregateProductData(sales) {
             const productMap = {};
             
@@ -411,7 +596,148 @@
             return Object.values(productMap).sort((a, b) => b.revenue - a.revenue);
         }
 
-        // Funktion zum Rendern der Produktübersicht
+        // Erstelle Top Products Chart
+        function createTopProductsChart(sales) {
+            const products = aggregateProductData(sales);
+            const topProducts = products.slice(0, 5);
+
+            const ctx = document.getElementById('topProductsChart').getContext('2d');
+            
+            if (charts.topProducts) {
+                charts.topProducts.destroy();
+            }
+
+            charts.topProducts = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: topProducts.map(p => p.name),
+                    datasets: [{
+                        label: 'Verkaufte Menge',
+                        data: topProducts.map(p => p.quantity),
+                        backgroundColor: topProducts.map(p => p.color),
+                        borderColor: topProducts.map(p => p.color),
+                        borderWidth: 1.5,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Erstelle Revenue Distribution Chart
+        function createRevenueDistributionChart(sales) {
+            const products = aggregateProductData(sales);
+
+            const ctx = document.getElementById('revenueDistributionChart').getContext('2d');
+            
+            if (charts.revenueDistribution) {
+                charts.revenueDistribution.destroy();
+            }
+
+            charts.revenueDistribution = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: products.map(p => p.name),
+                    datasets: [{
+                        data: products.map(p => p.revenue),
+                        backgroundColor: products.map(p => p.color),
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Erstelle Sales Trend Chart
+        function createSalesTrendChart(sales) {
+            const dailyData = {};
+            
+            sales.forEach(sale => {
+                if (!sale.cancelled) {
+                    const date = new Date(sale.createdAt).toLocaleDateString('de-DE');
+                    if (!dailyData[date]) {
+                        dailyData[date] = 0;
+                    }
+                    dailyData[date] += sale.total;
+                }
+            });
+
+            const sortedDates = Object.keys(dailyData).sort((a, b) => new Date(a) - new Date(b));
+            const values = sortedDates.map(date => dailyData[date]);
+
+            const ctx = document.getElementById('salesTrendChart').getContext('2d');
+            
+            if (charts.salesTrend) {
+                charts.salesTrend.destroy();
+            }
+
+            charts.salesTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedDates,
+                    datasets: [{
+                        label: 'Tagesumsatz (€)',
+                        data: values,
+                        borderColor: '#9edae5',
+                        backgroundColor: 'rgba(158, 218, 229, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#9edae5',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toFixed(2) + ' €';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Rendern der Produktübersicht
         function renderProductsOverview(sales) {
             const products = aggregateProductData(sales);
             productsListEl.innerHTML = '';
@@ -438,11 +764,11 @@
                     productsListEl.appendChild(productCard);
                 });
             } else {
-                productsListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Noch keine Produkte verkauft.</p>';
+                productsListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Keine Produkte in diesem Zeitraum verkauft.</p>';
             }
         }
 
-        // Funktion zum Abrufen und Anzeigen der Verkaufsdaten
+        // Abrufen und Anzeigen der Verkaufsdaten
         async function fetchAndDisplaySales() {
             try {
                 salesListEl.innerHTML = `
@@ -465,15 +791,17 @@
                 const sales = await response.json();
                 allSales = sales;
                 
+                // Filtere nach Datumsbereich
+                const filteredSales = filterSalesByDate(sales);
+                
                 let totalRevenue = 0;
                 let activeSalesCount = 0;
                 salesListEl.innerHTML = '';
 
-                if (sales && sales.length > 0) {
-                    // Sortiere Verkäufe absteigend nach Datum
-                    sales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                if (filteredSales && filteredSales.length > 0) {
+                    filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-                    sales.forEach(sale => {
+                    filteredSales.forEach(sale => {
                         if (!sale.cancelled) {
                             totalRevenue += sale.total;
                             activeSalesCount++;
@@ -511,15 +839,20 @@
                     });
 
                     // Rendern der Produktübersicht
-                    renderProductsOverview(sales);
+                    renderProductsOverview(filteredSales);
+
+                    // Erstelle Charts
+                    createTopProductsChart(filteredSales);
+                    createRevenueDistributionChart(filteredSales);
+                    createSalesTrendChart(filteredSales);
 
                     // Statistiken aktualisieren
                     totalRevenueEl.textContent = `${totalRevenue.toFixed(2)} €`;
                     totalSalesEl.textContent = activeSalesCount.toString();
                     avgSaleEl.textContent = activeSalesCount > 0 ? `${(totalRevenue / activeSalesCount).toFixed(2)} €` : '0,00 €';
                 } else {
-                    salesListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Noch keine Verkäufe getätigt.</p>';
-                    productsListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Noch keine Produkte verkauft.</p>';
+                    salesListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Keine Verkäufe in diesem Zeitraum.</p>';
+                    productsListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Keine Produkte in diesem Zeitraum verkauft.</p>';
                     totalRevenueEl.textContent = '0,00 €';
                     totalSalesEl.textContent = '0';
                     avgSaleEl.textContent = '0,00 €';
@@ -591,6 +924,7 @@
 
         // Seite beim Laden die Verkäufe abrufen
         document.addEventListener('DOMContentLoaded', () => {
+            initializeDateFilter();
             fetchAndDisplaySales();
             
             // Automatische Aktualisierung alle 30 Sekunden
