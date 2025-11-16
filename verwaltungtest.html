@@ -347,7 +347,8 @@
             border-radius: 0.75rem;
             padding: 1.5rem;
             position: relative;
-            height: 450px;
+            height: 500px;
+            overflow: hidden;
         }
         .chart-title {
             font-size: 1.1rem;
@@ -698,12 +699,15 @@
                             display: false
                         },
                         datalabels: {
-                            anchor: 'end',
-                            align: 'end',
-                            color: '#1a2a3a',
+                            anchor: 'center',
+                            align: 'center',
+                            color: '#fff',
                             font: {
                                 weight: 'bold',
-                                size: 12
+                                size: 13
+                            },
+                            formatter: function(value) {
+                                return value;
                             }
                         }
                     },
@@ -712,6 +716,14 @@
                             beginAtZero: true,
                             ticks: {
                                 stepSize: 1
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
                             }
                         }
                     }
