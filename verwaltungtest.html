@@ -41,6 +41,22 @@
             background-color: #ff8fa5;
             border-color: #ffa3b3;
         }
+        .delete-button {
+            background-color: #ff6b7a;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1.5px solid #ff5a69;
+            margin-left: 0.5rem;
+        }
+        .delete-button:hover {
+            background-color: #ff5a69;
+            border-color: #ff4959;
+        }
         .cancelled-sale {
             opacity: 0.6;
             background-color: #fef2f2;
@@ -320,7 +336,7 @@
         }
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
         }
@@ -330,7 +346,7 @@
             border-radius: 0.75rem;
             padding: 1.5rem;
             position: relative;
-            height: 400px;
+            height: 450px;
         }
         .chart-title {
             font-size: 1.1rem;
@@ -358,8 +374,37 @@
         <!-- Fehlermeldungen und Erfolgsmeldungen -->
         <div id="messageContainer"></div>
 
-        <!-- Filter Section -->
-        <div class="filter-section">
+        <!-- Statistik-Übersicht -->
+        <div class="stats-grid">
+            <div class="stat-card revenue">
+                <div class="stat-value" id="totalRevenue">0,00 €</div>
+                <div class="stat-label">Gesamtumsatz</div>
+            </div>
+            <div class="stat-card sales-count">
+                <div class="stat-value" id="totalSales">0</div>
+                <div class="stat-label">Anzahl Verkäufe</div>
+            </div>
+            <div class="stat-card avg-sale">
+                <div class="stat-value" id="avgSale">0,00 €</div>
+                <div class="stat-label">Durchschnittlicher Verkauf</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="products">
+                <i class="fas fa-box"></i> Produkt-Übersicht
+            </button>
+            <button class="tab-button" data-tab="history">
+                <i class="fas fa-history"></i> Verkaufshistorie
+            </button>
+            <button class="tab-button" data-tab="charts">
+                <i class="fas fa-chart-bar"></i> Diagramme
+            </button>
+        </div>
+
+        <!-- Filter Section (nur für Products und Charts) -->
+        <div id="filterSection" class="filter-section">
             <h3 class="text-lg font-bold mb-4">Zeitraum wählen</h3>
             <div class="filter-controls">
                 <div class="filter-input">
@@ -380,48 +425,6 @@
                     <button class="preset-button" data-preset="all">Alles</button>
                 </div>
             </div>
-        </div>
-
-        <!-- Statistik-Übersicht -->
-        <div class="stats-grid">
-            <div class="stat-card revenue">
-                <div class="stat-value" id="totalRevenue">0,00 €</div>
-                <div class="stat-label">Gesamtumsatz</div>
-            </div>
-            <div class="stat-card sales-count">
-                <div class="stat-value" id="totalSales">0</div>
-                <div class="stat-label">Anzahl Verkäufe</div>
-            </div>
-            <div class="stat-card avg-sale">
-                <div class="stat-value" id="avgSale">0,00 €</div>
-                <div class="stat-label">Durchschnittlicher Verkauf</div>
-            </div>
-        </div>
-
-        <!-- Charts -->
-        <div class="charts-grid">
-            <div class="chart-container">
-                <div class="chart-title">Top Produkte</div>
-                <canvas id="topProductsChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <div class="chart-title">Umsatzverteilung</div>
-                <canvas id="revenueDistributionChart"></canvas>
-            </div>
-            <div class="chart-container" style="grid-column: 1 / -1;">
-                <div class="chart-title">Verkaufsverlauf</div>
-                <canvas id="salesTrendChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-button active" data-tab="products">
-                <i class="fas fa-box"></i> Produkt-Übersicht
-            </button>
-            <button class="tab-button" data-tab="history">
-                <i class="fas fa-history"></i> Verkaufshistorie
-            </button>
         </div>
 
         <!-- Produkt-Übersicht Tab -->
@@ -445,9 +448,27 @@
                 </div>
             </div>
         </div>
+
+        <!-- Charts Tab -->
+        <div id="charts" class="tab-content">
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Top Produkte</div>
+                    <canvas id="topProductsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Umsatzverteilung</div>
+                    <canvas id="revenueDistributionChart"></canvas>
+                </div>
+                <div class="chart-container" style="grid-column: 1 / -1;">
+                    <div class="chart-title">Verkaufsverlauf</div>
+                    <canvas id="salesTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Bestätigungsmodal -->
+    <!-- Bestätigungsmodal für Stornierung -->
     <div id="confirmationModal" class="modal">
         <div class="modal-content">
             <h3 class="text-xl font-bold mb-4">Verkauf stornieren?</h3>
@@ -459,6 +480,18 @@
         </div>
     </div>
 
+    <!-- Bestätigungsmodal für Löschen -->
+    <div id="deleteConfirmationModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">Verkauf permanent löschen?</h3>
+            <p>Dieser Verkauf wird komplett aus der Datenbank gelöscht und kann nicht wiederhergestellt werden.</p>
+            <div class="modal-buttons">
+                <button id="confirmDelete" class="delete-button">Ja, löschen</button>
+                <button id="denyDelete" class="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-200 border-1.5 border-gray-400">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const totalRevenueEl = document.getElementById('totalRevenue');
         const totalSalesEl = document.getElementById('totalSales');
@@ -466,15 +499,20 @@
         const salesListEl = document.getElementById('salesList');
         const productsListEl = document.getElementById('productsList');
         const confirmationModal = document.getElementById('confirmationModal');
+        const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
         const confirmCancelButton = document.getElementById('confirmCancel');
         const denyCancelButton = document.getElementById('denyCancel');
+        const confirmDeleteButton = document.getElementById('confirmDelete');
+        const denyDeleteButton = document.getElementById('denyDelete');
         const refreshButton = document.getElementById('refreshButton');
         const messageContainer = document.getElementById('messageContainer');
         const startDateInput = document.getElementById('startDate');
         const endDateInput = document.getElementById('endDate');
         const presetButtons = document.querySelectorAll('.preset-button');
+        const filterSection = document.getElementById('filterSection');
 
         let saleToDeleteId = null;
+        let saleToPermDeleteId = null;
         let allSales = [];
         let charts = {};
 
@@ -541,6 +579,22 @@
                 tabContents.forEach(content => content.classList.remove('active'));
                 button.classList.add('active');
                 document.getElementById(tabName).classList.add('active');
+
+                // Zeige/Verstecke Filter basierend auf Tab
+                if (tabName === 'history') {
+                    filterSection.style.display = 'none';
+                } else {
+                    filterSection.style.display = 'block';
+                }
+
+                // Trigger Chart Resize wenn Charts Tab geöffnet wird
+                if (tabName === 'charts') {
+                    setTimeout(() => {
+                        Object.values(charts).forEach(chart => {
+                            if (chart) chart.resize();
+                        });
+                    }, 100);
+                }
             });
         });
 
@@ -571,7 +625,7 @@
             });
         }
 
-        // Aggregiere Produktdaten
+        // Aggregiere Produktdaten (nur nicht-stornierte)
         function aggregateProductData(sales) {
             const productMap = {};
             
@@ -616,8 +670,8 @@
                         data: topProducts.map(p => p.quantity),
                         backgroundColor: topProducts.map(p => p.color),
                         borderColor: topProducts.map(p => p.color),
-                        borderWidth: 1.5,
-                        borderRadius: 4
+                        borderWidth: 2,
+                        borderRadius: 6
                     }]
                 },
                 options: {
@@ -704,15 +758,15 @@
                         label: 'Tagesumsatz (€)',
                         data: values,
                         borderColor: '#9edae5',
-                        backgroundColor: 'rgba(158, 218, 229, 0.1)',
-                        borderWidth: 2,
+                        backgroundColor: 'rgba(158, 218, 229, 0.15)',
+                        borderWidth: 3,
                         fill: true,
                         tension: 0.4,
                         pointBackgroundColor: '#9edae5',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+                        pointRadius: 6,
+                        pointHoverRadius: 8
                     }]
                 },
                 options: {
@@ -830,7 +884,12 @@
                                         `<button class="cancel-button" data-sale-id="${sale._id}">
                                             <i class="fas fa-times"></i> Stornieren
                                         </button>` : 
-                                        `<span class="text-gray-400 text-sm">Storniert am ${new Date(sale.cancelledAt).toLocaleString('de-DE')}</span>`
+                                        `<div>
+                                            <span class="text-gray-400 text-sm block mb-2">Storniert am ${new Date(sale.cancelledAt).toLocaleString('de-DE')}</span>
+                                            <button class="delete-button" data-perm-delete-id="${sale._id}">
+                                                <i class="fas fa-trash"></i> Löschen
+                                            </button>
+                                        </div>`
                                     }
                                 </div>
                             </div>
@@ -872,12 +931,17 @@
             }
         }
 
-        // Event-Delegation für Stornierungs-Buttons
+        // Event-Delegation für Stornierungs- und Lösch-Buttons
         document.addEventListener('click', (event) => {
-            if (event.target.closest('.cancel-button')) {
-                const button = event.target.closest('.cancel-button');
+            if (event.target.closest('.cancel-button[data-sale-id]')) {
+                const button = event.target.closest('.cancel-button[data-sale-id]');
                 saleToDeleteId = button.getAttribute('data-sale-id');
                 confirmationModal.style.display = 'block';
+            }
+            if (event.target.closest('.delete-button[data-perm-delete-id]')) {
+                const button = event.target.closest('.delete-button[data-perm-delete-id]');
+                saleToPermDeleteId = button.getAttribute('data-perm-delete-id');
+                deleteConfirmationModal.style.display = 'block';
             }
         });
 
@@ -903,10 +967,37 @@
             }
         });
 
-        // Abbrechen des Stornierens
+        // Bestätigung für das permanente Löschen
+        confirmDeleteButton.addEventListener('click', async () => {
+            if (saleToPermDeleteId) {
+                try {
+                    const response = await fetch(`${window.location.origin}/api/sales?id=${saleToPermDeleteId}&permanent=true`, {
+                        method: 'DELETE',
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                    }
+                    console.log("Verkauf erfolgreich gelöscht.");
+                    showMessage('Verkauf wurde erfolgreich gelöscht.', 'success');
+                    fetchAndDisplaySales();
+                } catch (error) {
+                    console.error("Fehler beim Löschen des Verkaufs:", error);
+                    showMessage('Fehler beim Löschen des Verkaufs. Bitte versuchen Sie es erneut.', 'error');
+                }
+                saleToPermDeleteId = null;
+                deleteConfirmationModal.style.display = 'none';
+            }
+        });
+
+        // Abbrechen-Buttons
         denyCancelButton.addEventListener('click', () => {
             saleToDeleteId = null;
             confirmationModal.style.display = 'none';
+        });
+
+        denyDeleteButton.addEventListener('click', () => {
+            saleToPermDeleteId = null;
+            deleteConfirmationModal.style.display = 'none';
         });
 
         // Aktualisieren-Button
@@ -919,6 +1010,10 @@
             if (event.target === confirmationModal) {
                 confirmationModal.style.display = 'none';
                 saleToDeleteId = null;
+            }
+            if (event.target === deleteConfirmationModal) {
+                deleteConfirmationModal.style.display = 'none';
+                saleToPermDeleteId = null;
             }
         });
 
@@ -933,3 +1028,4 @@
     </script>
 </body>
 </html>
+
