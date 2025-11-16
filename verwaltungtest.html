@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verkaufsstatistik - POS Verwaltung</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%);
+            color: #1f2937;
+        }
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 1rem;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 0.75rem;
+            border: 1.5px solid #e8ecf1;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .cancel-button {
+            background-color: #ffa3b3;
+            color: #8b5a5a;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1.5px solid #ffb3c3;
+        }
+        .cancel-button:hover {
+            background-color: #ff8fa5;
+            border-color: #ffa3b3;
+        }
+        .cancelled-sale {
+            opacity: 0.6;
+            background-color: #fef2f2;
+        }
+        .cancelled-sale .sale-total {
+            text-decoration: line-through;
+            color: #dc2626;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            margin: 15% auto;
+            padding: 20px;
+            border: 1.5px solid #e8ecf1;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #9edae5 0%, #b0e0e6 100%);
+            color: #1a2a3a;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid #d0ecf0;
+            text-align: center;
+        }
+        .stat-card.revenue {
+            background: linear-gradient(135deg, #d0ffcc 0%, #e0ffde 100%);
+            border-color: #c0f0d0;
+        }
+        .stat-card.sales-count {
+            background: linear-gradient(135deg, #9edae5 0%, #b0e0e6 100%);
+            border-color: #8dd4e0;
+        }
+        .stat-card.avg-sale {
+            background: linear-gradient(135deg, #dcdcf0 0%, #e6e6fa 100%);
+            border-color: #d0d0e8;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.85;
+        }
+        .refresh-button {
+            background-color: #9edae5;
+            color: #1a2a3a;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1.5px solid #8dd4e0;
+            margin-bottom: 1rem;
+        }
+        .refresh-button:hover {
+            background-color: #8dd4e0;
+            border-color: #7dccd8;
+        }
+        .back-button {
+            background-color: #d0d8e0;
+            color: #1a2a3a;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1.5px solid #c0c8d0;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+        .back-button:hover {
+            background-color: #c0c8d0;
+            border-color: #b0b8c0;
+        }
+        .sale-item {
+            border-left: 4px solid #9edae5;
+            transition: all 0.2s;
+        }
+        .sale-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        .error {
+            background-color: #fef2f2;
+            border: 1.5px solid #ffb3b3;
+            color: #8b5a5a;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .success {
+            background-color: #f0fdf4;
+            border: 1.5px solid #c0f0d0;
+            color: #1a5a1a;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e8ecf1;
+        }
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .tab-button.active {
+            color: #1a2a3a;
+            border-bottom-color: #9edae5;
+        }
+        .tab-button:hover {
+            color: #1a2a3a;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .product-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1.5px solid #e8ecf1;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-color: #d0d8e0;
+        }
+        .product-color {
+            width: 100%;
+            height: 60px;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1.5px solid #e8ecf1;
+        }
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a2a3a;
+            margin-bottom: 0.5rem;
+        }
+        .product-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .product-stat {
+            text-align: center;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            border: 1px solid #e8ecf1;
+        }
+        .product-stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #9edae5;
+        }
+        .product-stat-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div class="container">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-extrabold">Verkaufsstatistik & Verwaltung</h1>
+            <div>
+                <a href="index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Zurück zur Kasse
+                </a>
+                <button id="refreshButton" class="refresh-button">
+                    <i class="fas fa-sync-alt"></i> Aktualisieren
+                </button>
+            </div>
+        </div>
+
+        <!-- Fehlermeldungen und Erfolgsmeldungen -->
+        <div id="messageContainer"></div>
+
+        <!-- Statistik-Übersicht -->
+        <div class="stats-grid">
+            <div class="stat-card revenue">
+                <div class="stat-value" id="totalRevenue">0,00 €</div>
+                <div class="stat-label">Gesamtumsatz</div>
+            </div>
+            <div class="stat-card sales-count">
+                <div class="stat-value" id="totalSales">0</div>
+                <div class="stat-label">Anzahl Verkäufe</div>
+            </div>
+            <div class="stat-card avg-sale">
+                <div class="stat-value" id="avgSale">0,00 €</div>
+                <div class="stat-label">Durchschnittlicher Verkauf</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="products">
+                <i class="fas fa-box"></i> Produkt-Übersicht
+            </button>
+            <button class="tab-button" data-tab="history">
+                <i class="fas fa-history"></i> Verkaufshistorie
+            </button>
+        </div>
+
+        <!-- Produkt-Übersicht Tab -->
+        <div id="products" class="tab-content active card">
+            <h2 class="text-2xl font-bold mb-4">Verkaufte Produkte</h2>
+            <div id="productsList" class="product-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin text-2xl"></i>
+                    <p class="mt-2">Lade Produktdaten...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verkaufshistorie Tab -->
+        <div id="history" class="tab-content card">
+            <h2 class="text-2xl font-bold mb-4">Verkaufshistorie</h2>
+            <div id="salesList" class="space-y-4">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin text-2xl"></i>
+                    <p class="mt-2">Lade Verkaufsdaten...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bestätigungsmodal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">Verkauf stornieren?</h3>
+            <p>Bist du sicher, dass du diesen Verkauf stornieren möchtest?</p>
+            <div class="modal-buttons">
+                <button id="confirmCancel" class="cancel-button">Ja, stornieren</button>
+                <button id="denyCancel" class="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-200 border-1.5 border-gray-400">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const totalRevenueEl = document.getElementById('totalRevenue');
+        const totalSalesEl = document.getElementById('totalSales');
+        const avgSaleEl = document.getElementById('avgSale');
+        const salesListEl = document.getElementById('salesList');
+        const productsListEl = document.getElementById('productsList');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmCancelButton = document.getElementById('confirmCancel');
+        const denyCancelButton = document.getElementById('denyCancel');
+        const refreshButton = document.getElementById('refreshButton');
+        const messageContainer = document.getElementById('messageContainer');
+
+        let saleToDeleteId = null;
+        let allSales = [];
+
+        // Tab-Funktionalität
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.getAttribute('data-tab');
+                
+                // Entferne active Klasse von allen Buttons und Inhalten
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Füge active Klasse zum geklickten Button und entsprechenden Inhalt hinzu
+                button.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Funktion zum Anzeigen von Nachrichten
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error' : 'success';
+            messageDiv.innerHTML = `
+                <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}"></i>
+                ${message}
+            `;
+            messageContainer.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Funktion zum Aggregieren von Produktdaten
+        function aggregateProductData(sales) {
+            const productMap = {};
+            
+            sales.forEach(sale => {
+                if (!sale.cancelled && sale.items) {
+                    sale.items.forEach(item => {
+                        if (!productMap[item.name]) {
+                            productMap[item.name] = {
+                                name: item.name,
+                                color: item.color,
+                                quantity: 0,
+                                revenue: 0,
+                                price: item.price
+                            };
+                        }
+                        productMap[item.name].quantity += item.quantity;
+                        productMap[item.name].revenue += item.price * item.quantity;
+                    });
+                }
+            });
+            
+            return Object.values(productMap).sort((a, b) => b.revenue - a.revenue);
+        }
+
+        // Funktion zum Rendern der Produktübersicht
+        function renderProductsOverview(sales) {
+            const products = aggregateProductData(sales);
+            productsListEl.innerHTML = '';
+
+            if (products.length > 0) {
+                products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-card';
+                    productCard.innerHTML = `
+                        <div class="product-color" style="background-color: ${product.color}; border-color: ${product.color}80;"></div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="text-sm text-gray-600 mb-3">Preis: ${product.price.toFixed(2)} €</div>
+                        <div class="product-stats">
+                            <div class="product-stat">
+                                <div class="product-stat-value">${product.quantity}</div>
+                                <div class="product-stat-label">Verkauft</div>
+                            </div>
+                            <div class="product-stat">
+                                <div class="product-stat-value">${product.revenue.toFixed(2)}</div>
+                                <div class="product-stat-label">Umsatz (€)</div>
+                            </div>
+                        </div>
+                    `;
+                    productsListEl.appendChild(productCard);
+                });
+            } else {
+                productsListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Noch keine Produkte verkauft.</p>';
+            }
+        }
+
+        // Funktion zum Abrufen und Anzeigen der Verkaufsdaten
+        async function fetchAndDisplaySales() {
+            try {
+                salesListEl.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin text-2xl"></i>
+                        <p class="mt-2">Lade Verkaufsdaten...</p>
+                    </div>
+                `;
+                productsListEl.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin text-2xl"></i>
+                        <p class="mt-2">Lade Produktdaten...</p>
+                    </div>
+                `;
+
+                const response = await fetch(`${window.location.origin}/api/sales`);
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                }
+                const sales = await response.json();
+                allSales = sales;
+                
+                let totalRevenue = 0;
+                let activeSalesCount = 0;
+                salesListEl.innerHTML = '';
+
+                if (sales && sales.length > 0) {
+                    // Sortiere Verkäufe absteigend nach Datum
+                    sales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                    sales.forEach(sale => {
+                        if (!sale.cancelled) {
+                            totalRevenue += sale.total;
+                            activeSalesCount++;
+                        }
+                        
+                        const saleItem = document.createElement('div');
+                        saleItem.className = `card sale-item ${sale.cancelled ? 'cancelled-sale' : ''}`;
+                        
+                        const itemsHTML = sale.items.map(item => 
+                            `<span class="inline-block bg-gray-100 px-2 py-1 rounded text-sm mr-2 mb-2">${item.quantity}x ${item.name}</span>`
+                        ).join('');
+                        
+                        const saleDate = new Date(sale.createdAt).toLocaleString('de-DE');
+                        
+                        saleItem.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div class="flex-grow">
+                                    <div class="text-sm text-gray-500 mb-2">${saleDate}</div>
+                                    <div class="mb-3">${itemsHTML}</div>
+                                    <div class="sale-total font-bold text-lg">
+                                        ${sale.total.toFixed(2)} €
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    ${!sale.cancelled ? 
+                                        `<button class="cancel-button" data-sale-id="${sale._id}">
+                                            <i class="fas fa-times"></i> Stornieren
+                                        </button>` : 
+                                        `<span class="text-gray-400 text-sm">Storniert am ${new Date(sale.cancelledAt).toLocaleString('de-DE')}</span>`
+                                    }
+                                </div>
+                            </div>
+                        `;
+                        salesListEl.appendChild(saleItem);
+                    });
+
+                    // Rendern der Produktübersicht
+                    renderProductsOverview(sales);
+
+                    // Statistiken aktualisieren
+                    totalRevenueEl.textContent = `${totalRevenue.toFixed(2)} €`;
+                    totalSalesEl.textContent = activeSalesCount.toString();
+                    avgSaleEl.textContent = activeSalesCount > 0 ? `${(totalRevenue / activeSalesCount).toFixed(2)} €` : '0,00 €';
+                } else {
+                    salesListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Noch keine Verkäufe getätigt.</p>';
+                    productsListEl.innerHTML = '<p class="text-center text-gray-500 py-8">Noch keine Produkte verkauft.</p>';
+                    totalRevenueEl.textContent = '0,00 €';
+                    totalSalesEl.textContent = '0';
+                    avgSaleEl.textContent = '0,00 €';
+                }
+            } catch (error) {
+                console.error("Fehler beim Abrufen der Verkaufsdaten:", error);
+                const errorHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Fehler beim Laden der Verkaufsdaten:</strong> ${error.message}
+                        <br><small>Bitte stellen Sie sicher, dass die API erreichbar ist.</small>
+                    </div>
+                `;
+                salesListEl.innerHTML = errorHTML;
+                productsListEl.innerHTML = errorHTML;
+                showMessage('Fehler beim Laden der Verkaufsdaten. Bitte versuchen Sie es erneut.', 'error');
+            }
+        }
+
+        // Event-Delegation für Stornierungs-Buttons
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('.cancel-button')) {
+                const button = event.target.closest('.cancel-button');
+                saleToDeleteId = button.getAttribute('data-sale-id');
+                confirmationModal.style.display = 'block';
+            }
+        });
+
+        // Bestätigung für das Stornieren
+        confirmCancelButton.addEventListener('click', async () => {
+            if (saleToDeleteId) {
+                try {
+                    const response = await fetch(`${window.location.origin}/api/sales?id=${saleToDeleteId}`, {
+                        method: 'DELETE',
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                    }
+                    console.log("Verkauf erfolgreich storniert.");
+                    showMessage('Verkauf wurde erfolgreich storniert.', 'success');
+                    fetchAndDisplaySales();
+                } catch (error) {
+                    console.error("Fehler beim Stornieren des Verkaufs:", error);
+                    showMessage('Fehler beim Stornieren des Verkaufs. Bitte versuchen Sie es erneut.', 'error');
+                }
+                saleToDeleteId = null;
+                confirmationModal.style.display = 'none';
+            }
+        });
+
+        // Abbrechen des Stornierens
+        denyCancelButton.addEventListener('click', () => {
+            saleToDeleteId = null;
+            confirmationModal.style.display = 'none';
+        });
+
+        // Aktualisieren-Button
+        refreshButton.addEventListener('click', () => {
+            fetchAndDisplaySales();
+        });
+
+        // Modal schließen bei Klick außerhalb
+        window.addEventListener('click', (event) => {
+            if (event.target === confirmationModal) {
+                confirmationModal.style.display = 'none';
+                saleToDeleteId = null;
+            }
+        });
+
+        // Seite beim Laden die Verkäufe abrufen
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAndDisplaySales();
+            
+            // Automatische Aktualisierung alle 30 Sekunden
+            setInterval(fetchAndDisplaySales, 30000);
+        });
+    </script>
+</body>
+</html>
