@@ -152,6 +152,46 @@
         .product-tile:active::before {
             opacity: 0.28;
         }
+
+        .product-tile.out-of-stock {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #f0f3f7;
+            border-color: #e8ecf1;
+        }
+
+        .product-tile.out-of-stock:hover {
+            box-shadow: none;
+            border-color: #e8ecf1;
+            transform: none;
+        }
+
+        .product-tile.out-of-stock:hover::before {
+            opacity: 0.12;
+        }
+
+        .product-tile.out-of-stock h4,
+        .product-tile.out-of-stock span {
+            color: #a8b8cc;
+        }
+
+        .stock-indicator {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #556b82;
+            margin-top: 0.25rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            display: inline-block;
+        }
+
+        .product-tile.out-of-stock .stock-indicator {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+            opacity: 0.28;
+        }
         
         .product-tile h4 {
             margin: 0 0 0.25rem 0;
@@ -180,24 +220,6 @@
         .product-tile:hover span,
         .product-tile:active span {
             color: #3a4a5a;
-        }
-
-        /* NEU: Lagerbestands-Warnung */
-        .stock-warning {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background-color: #e74c3c; /* Rot */
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.4rem;
-            z-index: 2;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
         }
         
         /* Page Controls */
@@ -365,7 +387,8 @@
             position: relative;
             z-index: 10;
             border-radius: 0.65rem;
-            transition: transform 0.3s ease;
+            border: 1.5px solid #e8ecf1;
+            transition: color 0.2s ease;
         }
         
         .cart-item-details {
@@ -373,165 +396,201 @@
         }
         
         .cart-item-details h4 {
-            margin: 0;
-            font-size: 0.9rem;
+            margin: 0 0 0.15rem 0;
             font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
         }
         
         .cart-item-details span {
-            font-size: 0.75rem;
-            color: #888;
+            color: #7a8a9e;
+            font-size: 0.8rem;
         }
         
         .cart-item-controls {
             display: flex;
             align-items: center;
-            gap: 0.3rem;
-            margin-right: 0.75rem;
+            gap: 0.4rem;
         }
         
         .cart-item-controls button {
-            background: #f0f3f7;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            font-size: 1rem;
-            font-weight: 700;
-            color: #556b82;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
+            border: 1.5px solid #e0e5ec;
+            border-radius: 0.4rem;
+            padding: 0.3rem 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s ease;
+            transition: all 0.2s ease;
+            color: #556b82;
+            min-width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         
         .cart-item-controls button:hover {
-            background: #e8ecf1;
+            background: linear-gradient(135deg, #e8ecf1 0%, #dfe5ec 100%);
+            border-color: #d0d8e0;
+            color: #2c3e50;
+        }
+        
+        .cart-item-controls button:active {
+            transform: scale(0.95);
         }
         
         .cart-item-controls span {
-            font-size: 0.9rem;
-            font-weight: 600;
-            min-width: 1.2rem;
+            min-width: 22px;
             text-align: center;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.85rem;
         }
         
         .cart-item-price {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #2c3e50;
-            min-width: 4rem;
+            min-width: 65px;
             text-align: right;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2c3e50;
         }
         
-        .cart-summary {
-            padding-top: 0.75rem;
-            border-top: 1px solid #e8ecf1;
-        }
-        
+        /* Cart Summary */
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem;
+            padding: 0.25rem 0;
+            color: #7a8a9e;
+            font-size: 0.85rem;
         }
         
-        .summary-row span {
-            font-size: 1rem;
-            color: #556b82;
-        }
-        
-        .summary-row.total {
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid #e8ecf1;
-        }
-        
-        .summary-row.total span {
-            font-size: 1.3rem;
-            font-weight: 700;
+        .summary-row span:last-child {
+            font-weight: 600;
             color: #2c3e50;
         }
         
+        .summary-row.total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 0.6rem;
+            border-top: 1.5px solid #e8ecf1;
+            padding-top: 0.6rem;
+            color: #2c3e50;
+        }
+        
+        .summary-row.total span:last-child {
+            color: #2c3e50;
+        }
+        
+        /* Cart Actions */
         .cart-actions {
             display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
         }
         
         .cart-actions button {
             flex: 1;
-            padding: 0.8rem 1rem;
-            border: none;
+            padding: 0.8rem 0.75rem;
             border-radius: 0.65rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #ffffff;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
         
-        #deposit-button {
-            background: linear-gradient(135deg, #f0f5fa 0%, #e8eff8 100%);
-            color: #556b82;
-            border: 1.5px solid #d8dfe8;
+        .cart-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
         }
         
-        #deposit-button:hover {
-            background: linear-gradient(135deg, #e8eff8 0%, #dce5f0 100%);
-            border-color: #c8cfd8;
+        .cart-actions button:active {
+            transform: translateY(0);
         }
         
         #checkout-button {
-            background: linear-gradient(135deg, #4CAF50 0%, #43A047 100%);
-            color: white;
-            border: 1.5px solid #388E3C;
+            background: linear-gradient(135deg, #c8e6d8 0%, #b8dcc8 100%);
+            color: #2d7a6a;
+            border: 1.5px solid #a8cdb8;
         }
         
         #checkout-button:hover {
-            background: linear-gradient(135deg, #43A047 0%, #388E3C 100%);
+            background: linear-gradient(135deg, #b8dcc8 0%, #a8d2b8 100%);
         }
         
-        /* Modals */
+        #deposit-button {
+            background: linear-gradient(135deg, #d4e8f0 0%, #c4dce8 100%);
+            color: #2d5a7a;
+            border: 1.5px solid #b4cce0;
+        }
+        
+        #deposit-button:hover {
+            background: linear-gradient(135deg, #c4dce8 0%, #b4d2e0 100%);
+        }
+        
+        /* Modal Styles - Clean & Frosty */
         .modal-overlay {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            display: none;
+            background-color: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease;
         }
         
-        .modal-content {
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .modal-content, .product-edit-modal-content {
             background: #ffffff;
-            padding: 1.5rem;
+            border: 1.5px solid #e8ecf1;
+            padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 90%;
-            max-width: 450px;
-            transform: scale(0.95);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 480px;
+            max-height: 90vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         }
         
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-            opacity: 1;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.25rem;
-            border-bottom: 1px solid #e8ecf1;
-            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
         }
         
         .modal-header h3 {
@@ -542,569 +601,444 @@
         }
         
         .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #a8b8cc;
+            font-size: 1.8rem;
+            font-weight: 300;
             cursor: pointer;
-            transition: color 0.2s ease;
+            border: none;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            color: #7a8a9e;
+            border: 1.5px solid #e8ecf1;
         }
         
         .modal-close:hover {
-            color: #556b82;
+            background: linear-gradient(135deg, #e8ecf1 0%, #dfe5ec 100%);
+            transform: rotate(90deg);
+            color: #2c3e50;
+            border-color: #d0d8e0;
         }
         
-        /* Product Management List */
+        /* Deposit Modal */
+        #current-deposit-display {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f0f5fa 0%, #f5f9fc 100%);
+            border-radius: 0.85rem;
+            color: #2d5a7a;
+            border: 1.5px solid #d4e5f0;
+        }
+        
+        .deposit-grid, .checkout-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .deposit-grid button, .checkout-grid button {
+            padding: 1.2rem 0.8rem;
+            border-radius: 0.65rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #2d5a7a;
+            background: linear-gradient(135deg, #d4e8f0 0%, #c4dce8 100%);
+            border: 1.5px solid #b4cce0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        .deposit-grid button:hover, .checkout-grid button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #c4dce8 0%, #b4d2e0 100%);
+            border-color: #a4bcd0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .deposit-grid button:active, .checkout-grid button:active {
+            transform: scale(0.95);
+        }
+        
+        .deposit-actions, .checkout-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .deposit-actions button, .checkout-actions button {
+            padding: 0.9rem;
+            border-radius: 0.65rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1.5px solid;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .manual-input-button {
+            background: linear-gradient(135deg, #e8e8f0 0%, #dfe0e8 100%);
+            color: #2c3e50;
+            border-color: #d0d0d8;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        .manual-input-button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #dfe0e8 0%, #d6d8e0 100%);
+            border-color: #c0c0c8;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        button.reset {
+            background: linear-gradient(135deg, #f0e8d8 0%, #e8dcc8 100%);
+            color: #6b5a2d;
+            border-color: #d8cbb8;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        button.reset:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #e8dcc8 0%, #e0d0b8 100%);
+            border-color: #c8bba8;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        button.finish {
+            background: linear-gradient(135deg, #c8e6d8 0%, #b8dcc8 100%);
+            color: #2d7a6a;
+            border-color: #a8cdb8;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        button.finish:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #b8dcc8 0%, #a8d2b8 100%);
+            border-color: #98bda8;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Checkout Modal */
+        .checkout-summary {
+            background: linear-gradient(135deg, #f5f9fc 0%, #f0f5fa 100%);
+            padding: 1.25rem;
+            border-radius: 0.85rem;
+            margin-bottom: 1.25rem;
+            border: 1.5px solid #d4e5f0;
+        }
+        
+        .checkout-summary .summary-row {
+            margin-bottom: 0.75rem;
+            padding: 0;
+        }
+        
+        .checkout-summary h4 {
+            margin: 0;
+            font-weight: 600;
+            color: #556b82;
+            font-size: 0.9rem;
+        }
+        
+        .checkout-summary span {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+        
+        /* Numpad Modal */
+        #received-input-display {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f0faf7 0%, #f5fcfa 100%);
+            border-radius: 0.85rem;
+            color: #2d7a6a;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid #d0e5df;
+        }
+        
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.65rem;
+        }
+        
+        .numpad button {
+            padding: 1.2rem;
+            border-radius: 0.65rem;
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
+            border: 1.5px solid #e0e5ec;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        .numpad button:hover {
+            background: linear-gradient(135deg, #e8ecf1 0%, #dfe5ec 100%);
+            border-color: #d0d8e0;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .numpad button:active {
+            transform: scale(0.95);
+        }
+        
+        .numpad button.enter {
+            grid-column: span 3;
+            background: linear-gradient(135deg, #c8e6d8 0%, #b8dcc8 100%);
+            color: #2d7a6a;
+            border-color: #a8cdb8;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        .numpad button.enter:hover {
+            background: linear-gradient(135deg, #b8dcc8 0%, #a8d2b8 100%);
+            border-color: #98bda8;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Product Management */
         .product-management-list {
             list-style: none;
             padding: 0;
-            margin: 0;
-            max-height: 400px;
+            margin: 0 0 1.25rem 0;
+            max-height: 60vh;
             overflow-y: auto;
-            margin-bottom: 1rem;
         }
         
         .product-management-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f0f3f7;
-        }
-        
-        .product-management-item:last-child {
-            border-bottom: none;
-        }
-        
-        .product-management-item-details h4 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-        
-        .product-management-item-details span {
-            font-size: 0.85rem;
-            color: #556b82;
-        }
-        
-        .product-management-item-actions button {
-            background: #f0f3f7;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            margin-left: 0.5rem;
-            cursor: pointer;
-            color: #556b82;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 1rem;
+            margin-bottom: 0.65rem;
+            border-radius: 0.65rem;
+            border: 1.5px solid #e8ecf1;
             transition: all 0.2s ease;
         }
         
+        .product-management-item:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #f0f3f7 100%);
+            border-color: #d8dfe8;
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        
+        .product-management-item-details {
+            flex: 1;
+        }
+        
+        .product-management-item-details h4 {
+            margin: 0 0 0.2rem 0;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+        
+        .product-management-item-details span {
+            color: #7a8a9e;
+            font-size: 0.9rem;
+        }
+        
+        .product-management-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-left: 0.8rem;
+        }
+        
+        .product-management-item-actions button {
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
+            border: 1.5px solid #e0e5ec;
+            cursor: pointer;
+            color: #556b82;
+            padding: 0.55rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         .product-management-item-actions button:hover {
-            background: #e8ecf1;
+            background: linear-gradient(135deg, #e8ecf1 0%, #dfe5ec 100%);
+            border-color: #d0d8e0;
+            transform: scale(1.08);
             color: #2c3e50;
         }
         
+        .product-management-item-actions button .fas {
+            font-size: 0.95rem;
+        }
+        
         .product-management-actions {
-            padding-top: 1rem;
-            border-top: 1px solid #e8ecf1;
+            margin-top: 1.25rem;
         }
         
         .add-product-button {
             width: 100%;
-            padding: 0.75rem;
-            background: linear-gradient(135deg, #5cb85c 0%, #4cae4c 100%);
-            color: white;
-            border: none;
+            padding: 1rem;
             border-radius: 0.65rem;
-            font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #ffffff;
+            background: linear-gradient(135deg, #c8e6d8 0%, #b8dcc8 100%);
+            border: 1.5px solid #a8cdb8;
             cursor: pointer;
-            transition: background 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
         
         .add-product-button:hover {
-            background: linear-gradient(135deg, #4cae4c 0%, #449d44 100%);
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #b8dcc8 0%, #a8d2b8 100%);
+            border-color: #98bda8;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
         }
         
         /* Product Edit Modal */
-        .product-edit-modal-content {
-            background: #ffffff;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 450px;
-            transform: scale(0.95);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .modal-overlay.active .product-edit-modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-        
-        .product-edit-modal-content label {
-            display: block;
-            margin-top: 1rem;
-            margin-bottom: 0.4rem;
-            font-weight: 600;
-            color: #556b82;
-            font-size: 0.9rem;
-        }
-        
         .product-edit-modal-content input[type="text"],
         .product-edit-modal-content input[type="number"] {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d8dfe8;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: border-color 0.2s ease;
+            padding: 0.9rem;
+            margin-bottom: 1.25rem;
+            border-radius: 0.65rem;
+            border: 1.5px solid #e8ecf1;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+            background: #ffffff;
+            color: #2c3e50;
         }
         
-        .product-edit-modal-content input[type="text"]:focus,
-        .product-edit-modal-content input[type="number"]:focus {
-            border-color: #a8b8cc;
+        .product-edit-modal-content input:focus {
             outline: none;
+            border-color: #d0d8e0;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(208, 216, 224, 0.2);
         }
         
-        .color-picker-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .color-picker-grid button {
-            width: 100%;
-            height: 40px;
-            border: 2px solid transparent;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .color-picker-grid button:hover {
-            transform: scale(1.05);
-        }
-        
-        .color-picker-grid button.selected {
-            border-color: #2c3e50;
-            box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px #2c3e50;
-        }
-        
-        .save-product-button {
-            width: 100%;
-            padding: 0.75rem;
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            border: none;
-            border-radius: 0.65rem;
-            font-size: 1rem;
+        .product-edit-modal-content label {
             font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            margin-top: 1.5rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        
-        .save-product-button:hover {
-            background: linear-gradient(135deg, #2980b9 0%, #2471a3 100%);
-        }
-        
-        /* Deposit Modal */
-        .deposit-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-            margin-top: 1rem;
-        }
-        
-        .deposit-grid button {
-            padding: 1rem;
-            background: linear-gradient(135deg, #f0f3f7 0%, #e8ecf1 100%);
-            border: 1px solid #d8dfe8;
-            border-radius: 0.65rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        
-        .deposit-grid button:hover {
-            background: linear-gradient(135deg, #e8ecf1 0%, #d0d8e0 100%);
-            transform: translateY(-1px);
-        }
-        
-        #current-deposit-display {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            padding: 0.75rem;
-            background: #f5f7fa;
-            border-radius: 0.65rem;
-        }
-        
-        .deposit-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-        
-        .deposit-actions button {
-            flex: 1;
-            padding: 0.75rem;
-            border: none;
-            border-radius: 0.65rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        
-        .deposit-actions .manual-input-button {
-            background: linear-gradient(135deg, #f0f5fa 0%, #e8eff8 100%);
-            color: #556b82;
-            border: 1.5px solid #d8dfe8;
-        }
-        
-        .deposit-actions .manual-input-button:hover {
-            background: linear-gradient(135deg, #e8eff8 0%, #dce5f0 100%);
-            border-color: #c8cfd8;
-        }
-        
-        .deposit-actions .reset {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-            border: 1.5px solid #a93226;
-        }
-        
-        .deposit-actions .reset:hover {
-            background: linear-gradient(135deg, #c0392b 0%, #922b21 100%);
-        }
-        
-        /* Checkout Modal */
-        .checkout-summary {
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: #f5f7fa;
-            border-radius: 0.65rem;
-        }
-        
-        .checkout-summary .summary-row {
-            margin-bottom: 0.75rem;
-        }
-        
-        .checkout-summary .summary-row h4 {
-            margin: 0;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #556b82;
-        }
-        
-        .checkout-summary .summary-row span {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-        
-        .checkout-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-        }
-        
-        .checkout-grid button {
-            padding: 1rem;
-            background: linear-gradient(135deg, #f0f3f7 0%, #e8ecf1 100%);
-            border: 1px solid #d8dfe8;
-            border-radius: 0.65rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        
-        .checkout-grid button:hover {
-            background: linear-gradient(135deg, #e8ecf1 0%, #d0d8e0 100%);
-            transform: translateY(-1px);
-        }
-        
-        .checkout-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-        
-        .checkout-actions button {
-            flex: 1;
-            padding: 0.75rem;
-            border: none;
-            border-radius: 0.65rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        
-        .checkout-actions .manual-input-button {
-            background: linear-gradient(135deg, #f0f5fa 0%, #e8eff8 100%);
-            color: #556b82;
-            border: 1.5px solid #d8dfe8;
-        }
-        
-        .checkout-actions .manual-input-button:hover {
-            background: linear-gradient(135deg, #e8eff8 0%, #dce5f0 100%);
-            border-color: #c8cfd8;
-        }
-        
-        .checkout-actions .reset {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-            border: 1.5px solid #a93226;
-        }
-        
-        .checkout-actions .reset:hover {
-            background: linear-gradient(135deg, #c0392b 0%, #922b21 100%);
-        }
-        
-        .checkout-actions .finish {
-            background: linear-gradient(135deg, #4CAF50 0%, #43A047 100%);
-            color: white;
-            border: 1.5px solid #388E3C;
-        }
-        
-        .checkout-actions .finish:hover {
-            background: linear-gradient(135deg, #43A047 0%, #388E3C 100%);
-        }
-        
-        /* Numpad Modal */
-        .numpad-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-            margin-top: 1rem;
-        }
-        
-        .numpad-grid button {
-            padding: 1rem;
-            background: linear-gradient(135deg, #f0f3f7 0%, #e8ecf1 100%);
-            border: 1px solid #d8dfe8;
-            border-radius: 0.65rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #2c3e50;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        
-        .numpad-grid button:hover {
-            background: linear-gradient(135deg, #e8ecf1 0%, #d0d8e0 100%);
-            transform: translateY(-1px);
-        }
-        
-        .numpad-grid button.action-button {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            font-size: 1.1rem;
-        }
-        
-        .numpad-grid button.action-button:hover {
-            background: linear-gradient(135deg, #2980b9 0%, #2471a3 100%);
-        }
-        
-        #numpad-display {
-            text-align: right;
-            font-size: 2rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            padding: 0.75rem;
-            background: #f5f7fa;
-            border-radius: 0.65rem;
-        }
-        
-        /* Settings Modal */
-        .settings-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .setting-group {
-            padding: 1rem;
-            border: 1px solid #e8ecf1;
-            border-radius: 0.75rem;
-            background: #fcfcfc;
-        }
-        
-        .setting-group h4 {
-            margin-top: 0;
-            margin-bottom: 0.75rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        
-        .setting-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #556b82;
-        }
-        
-        .setting-group input[type="text"] {
-            width: 100%;
-            padding: 0.6rem;
-            border: 1px solid #d8dfe8;
-            border-radius: 0.5rem;
+            margin-bottom: 0.6rem;
+            color: #2c3e50;
             font-size: 0.95rem;
         }
         
-        .setting-group button {
-            margin-top: 0.5rem;
-            padding: 0.6rem 1rem;
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s ease;
+        .product-edit-modal-content .color-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
         }
         
-        .setting-group button:hover {
-            background: linear-gradient(135deg, #2980b9 0%, #2471a3 100%);
-        }
-        
-        /* Donation Notification */
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* NEU: Lagerbestands-Steuerung Styles (Minimal) */
-        .inventory-toggle-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 1rem;
-            padding: 0.75rem;
-            border: 1px solid #e8ecf1;
-            border-radius: 0.5rem;
-            background: #fcfcfc;
-        }
-
-        .inventory-toggle-group label {
-            margin: 0;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 1rem;
-        }
-
-        .inventory-toggle-group .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 24px;
-        }
-
-        .inventory-toggle-group .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .inventory-toggle-group .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-
-        .inventory-toggle-group .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
+        .product-edit-modal-content .color-picker-grid button {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
-
-        .inventory-toggle-group input:checked + .slider {
-            background-color: #4CAF50;
+        
+        .product-edit-modal-content .color-picker-grid button:hover {
+            transform: scale(1.12);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
-
-        .inventory-toggle-group input:focus + .slider {
-            box-shadow: 0 0 1px #4CAF50;
+        
+        .product-edit-modal-content .color-picker-grid button.selected {
+            border-color: #2c3e50;
+            box-shadow: 0 0 0 3px rgba(208, 216, 224, 0.4);
+            transform: scale(1.08);
         }
-
-        .inventory-toggle-group input:checked + .slider:before {
-            transform: translateX(16px);
+        
+        .product-edit-modal-content .save-product-button {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.65rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #ffffff;
+            background: linear-gradient(135deg, #c8e6d8 0%, #b8dcc8 100%);
+            border: 1.5px solid #a8cdb8;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
-
-        #product-stock-input-group {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            border: 1px solid #e8ecf1;
-            border-radius: 0.5rem;
-            background: #fcfcfc;
+        
+        .product-edit-modal-content .save-product-button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #b8dcc8 0%, #a8d2b8 100%);
+            border-color: #98bda8;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
         }
-
-        #product-stock-input-group label {
-            margin-top: 0;
+        
+        /* Cart ID Display */
+        .cart-id-display {
+            text-align: center;
+            margin-top: 0.5rem;
+            padding: 0.6rem;
+            background: linear-gradient(135deg, #f5f9fc 0%, #f0f5fa 100%);
+            border-radius: 0.65rem;
+            font-size: 0.75rem;
+            color: #2d5a7a;
+            border: 1.5px solid #d4e5f0;
+            line-height: 1.3;
         }
-
-        #product-stock-input-group input {
-            margin-top: 0.4rem;
+        
+        .cart-id-display span {
+            font-weight: 400;
         }
-
+        
+        .cart-id-display strong {
+            font-weight: 700;
+            color: #1d4a6a;
+            display: block;
+            font-size: 0.8rem;
+            margin-top: 0.15rem;
+        }
     </style>
 </head>
 <body>
     <div class="app">
         <div class="product-panel">
             <div class="product-grid-container">
-                <div id="product-grid" class="product-grid">
-                    <!-- Produktkacheln werden hier eingefügt -->
-                </div>
+                <div class="product-grid" id="product-grid"></div>
             </div>
             <div class="page-controls">
-                <a href="#" class="management-link" onclick="showProductManagementMenu()">
-                    <i class="fas fa-box"></i>
-                    Produkte verwalten
-                </a>
-                <div id="page-indicator-dots" class="page-indicator-dots">
-                    <!-- Seitenindikatoren werden hier eingefügt -->
-                </div>
-                <button class="settings-button" onclick="showSettingsMenu()">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.0.0-beta3 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2021 Fonticons, Inc. --><path d="M495.9 166.6c3.1 8.7-1.5 18.4-10.2 21.5l-120.4 43.1 120.4 43.1c8.7 3.1 13.3 12.8 10.2 21.5l-48 134.1c-3.1 8.7-12.8 13.3-21.5 10.2l-120.4-43.1-120.4 43.1c-8.7 3.1-18.4-1.5-21.5-10.2l-48-134.1c-3.1-8.7 1.5-18.4 10.2-21.5l120.4-43.1-120.4-43.1c-8.7-3.1-13.3-12.8-10.2-21.5l48-134.1c3.1-8.7 12.8-13.3 21.5-10.2l120.4 43.1 120.4-43.1c8.7-3.1 18.4 1.5 21.5 10.2l48 134.1zM256 336c-44.18 0-80-35.82-80-80s35.82-80 80-80 80 35.82 80 80-35.82 80-80 80z"/></svg>
+                <button class="settings-button" onclick="showProductManagementMenu()">
+                    <i class="fas fa-cog"></i>
                 </button>
+                <div class="page-indicator-dots" id="dot-indicator"></div>
+                <a href="verwaltung.html" class="management-link">
+                    <i class="fas fa-chart-bar"></i> Verwaltung
+                </a>
+            </div>
+            <div class="cart-id-display">
+                <span>Warenkorb-ID: </span>
+                <strong id="cart-id-display"></strong>
             </div>
         </div>
 
@@ -1159,24 +1093,20 @@
                 <label for="product-price-input">Preis (€)</label>
                 <input type="number" step="0.01" id="product-price-input" placeholder="z.B. 2.50">
 
-                <!-- NEU: Lagerbestands-Steuerung -->
-                <div class="inventory-toggle-group">
-                    <button style="background: none; border: none; padding: 0; margin-right: 0.5rem; color: #2c3e50; cursor: default;" onclick="event.preventDefault();">
-                        <i class="fas fa-box"></i>
-                    </button>
-                    <label for="product-stock-enabled-toggle">Lagerbestand verfolgen</label>
-                    <label class="toggle-switch" style="margin-left: auto;">
-                        <input type="checkbox" id="product-stock-enabled-toggle" onchange="toggleStockInput()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                <div class="inventory-settings-container" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e8ecf1;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem; font-weight: 600;">Lagerbestandsverwaltung</h3>
+                    
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <label for="inventory-enabled-toggle" style="margin-bottom: 0; font-weight: 500;">Bestandsverwaltung aktivieren</label>
+                        <label class="switch">
+                            <input type="checkbox" id="inventory-enabled-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
 
-                <div id="product-stock-input-group" style="display: none;">
-                    <label for="product-stock-input">Aktueller Lagerbestand</label>
-                    <input type="number" step="1" min="0" id="product-stock-input" placeholder="Anzahl auf Lager">
+                    <label for="product-stock-input">Aktueller Bestand</label>
+                    <input type="number" id="product-stock-input" placeholder="Anzahl auf Lager" min="0" required>
                 </div>
-                <!-- ENDE NEU -->
-
                 <label>Farbe wählen</label>
                 <div id="color-picker-grid" class="color-picker-grid"></div>
                 <button class="save-product-button" onclick="saveProduct()"><i class="fas fa-save"></i> Speichern</button>
@@ -1251,236 +1181,454 @@
                 <h3>Manuelle Eingabe</h3>
                 <button class="modal-close" onclick="closeNumpad()">×</button>
             </div>
-            <div id="numpad-display">0,00</div>
-            <div class="numpad-grid">
-                <button onclick="numpadInput('7')">7</button>
-                <button onclick="numpadInput('8')">8</button>
-                <button onclick="numpadInput('9')">9</button>
-                <button onclick="numpadInput('4')">4</button>
-                <button onclick="numpadInput('5')">5</button>
-                <button onclick="numpadInput('6')">6</button>
+            <div id="received-input-display">0</div>
+            <div class="numpad">
                 <button onclick="numpadInput('1')">1</button>
                 <button onclick="numpadInput('2')">2</button>
                 <button onclick="numpadInput('3')">3</button>
+                <button onclick="numpadInput('4')">4</button>
+                <button onclick="numpadInput('5')">5</button>
+                <button onclick="numpadInput('6')">6</button>
+                <button onclick="numpadInput('7')">7</button>
+                <button onclick="numpadInput('8')">8</button>
+                <button onclick="numpadInput('9')">9</button>
+                <button onclick="numpadInput('clear')">C</button>
                 <button onclick="numpadInput('0')">0</button>
                 <button onclick="numpadInput(',')">,</button>
-                <button class="action-button" onclick="numpadDelete()"><i class="fas fa-backspace"></i></button>
-                <button class="action-button" style="grid-column: span 3;" onclick="numpadConfirm()"><i class="fas fa-check"></i> Bestätigen</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="settings-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Einstellungen</h3>
-                <button class="modal-close" onclick="closeSettingsMenu()">×</button>
-            </div>
-            <div class="settings-content">
-                <div class="setting-group">
-                    <h4>Kassen-ID</h4>
-                    <label for="cash-register-id-input">Aktuelle Kassen-ID</label>
-                    <input type="text" id="cash-register-id-input" placeholder="z.B. Kasse-1">
-                    <button onclick="saveCashRegisterId()">Speichern</button>
-                </div>
-                <div class="setting-group">
-                    <h4>API-Synchronisation</h4>
-                    <p style="font-size: 0.9rem; color: #556b82;">
-                        Die App synchronisiert automatisch alle 5 Sekunden Produkte und Warenkörbe über die simulierte API (localStorage).
-                    </p>
-                </div>
+                <button class="enter" onclick="confirmManualInput()">Enter</button>
             </div>
         </div>
     </div>
 
     <script>
-        // === Globale Variablen ===
+        // === Konstanten für die Farbauswahl und den Pfandwert ===
+        const pastelColors = [
+            '#FFA3B3', '#FFC896', '#FFFFD0', '#D0FFCC', '#9EDAE5',
+            '#9DD4E8', '#DCDCF0', '#D0B0D8', '#FFFAAA'
+        ];
+        const DEPOSIT_VALUE = 1.00;
+
+        // === Lokale Zustandsvariablen ===
         let products = [];
         let cart = [];
         let currentPage = 0;
-        const productsPerPage = 8;
-        let editingProductId = null;
-        let editingProductColor = '';
-        const pastelColors = [
-            '#FFD1DC', '#FFABAB', '#FFC3A0', '#FF677D', '#D4A5A5', '#392F5A',
-            '#A7BED3', '#C6E2E9', '#F4EAE6', '#E0BBE4', '#957DAD', '#D291BC'
-        ];
-        let totalDeposit = 0;
+        const itemsPerPage = 16;
         let depositReturn = 0;
+        let manualInputType = '';
+        let manualDepositInput = "";
         let receivedAmount = 0;
-        let numpadTarget = null; // 'deposit', 'payment', 'quantity'
-        let numpadProductId = null; // Für Mengen-Eingabe
-        let currentCashRegisterId = 'Kasse-1';
-        let currentCashRegisterCartId = 'Kasse-1-Warenkorb';
-        let donationAmount = 0;
-        let donationPollInterval = null;
-        let productPollInterval = null; // NEU: Für Produkt-Synchronisation
+        let manualReceivedInput = "";
+        let manualQuantityInput = "";
+        let editingCartItemId = null;
+        let editingProductId = null;
+        let editingProductColor = pastelColors[0];
+        
+        // Warenkorb-ID, die von dieser Kassen-App verwendet wird
+        let currentCashRegisterCartId = '';
 
-        // === Initialisierung ===
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCashRegisterId();
-            setupDonationAPI(); // Simuliert die API für Spenden
-            setupProductAPI(); // Simuliert die API für Produkte
-            setupCartAPI(); // Simuliert die API für Warenkörbe
-            fetchProducts();
-            fetchCartFromApi(currentCashRegisterCartId);
+        // Variablen für die Wischgeste
+        let touchstartX = 0;
+        let isSwiping = false;
+        const swipeThreshold = 150;
+
+        // Variablen für die Warenkorb-Wischgeste
+        let cartTouchStartX = 0;
+        let cartTouchStartY = 0;
+        let cartTouchStartTime = 0;
+        let cartIsSwiping = false;
+        let currentSwipingItem = null;
+        const cartSwipeThreshold = 100;
+
+        // === Initiale Anzeige beim Laden der Seite ===
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Generiere eine neue ID für diese Kassen-App
+            currentCashRegisterCartId = `kasse-${Math.random().toString(36).substring(2, 9)}`;
+            document.getElementById('cart-id-display').textContent = currentCashRegisterCartId;
+
+            // Spenden-API initialisieren
+            startInventoryPolling();
+            setupDonationAPI();
+
+            await fetchProducts();
+            // Beim Start den Warenkorb für diese Kassen-ID von der API laden
+            await fetchCartFromApi(currentCashRegisterCartId); 
+            
+            // Spenden-Polling starten
             startDonationPolling();
-            startProductPolling(); // NEU: Starte Produkt-Synchronisation
+            
+            renderCart();
+
+            const productGrid = document.getElementById("product-grid");
+            if(productGrid) {
+                productGrid.addEventListener('touchstart', handleTouchStart, false);
+                productGrid.addEventListener('touchmove', handleTouchMove, false);
+                productGrid.addEventListener('touchend', handleTouchEnd, false);
+            }
         });
 
-        // === Produkt-Synchronisation (NEU) ===
-        function startProductPolling() {
-            // Alle 5 Sekunden nach Produkt-Updates prüfen
-            productPollInterval = setInterval(async () => {
-                await fetchProducts();
-            }, 5000);
-        }
-
-        // === API-Simulation für Produkte (Erweitert) ===
-        function getProductsFromStorage() {
-            const storedProducts = localStorage.getItem('products');
-            // Minimalinvasive Änderung: Füge stockEnabled und stock zu den Standardprodukten hinzu
-            return storedProducts ? JSON.parse(storedProducts) : [
-                { id: 1, name: 'Kaffee', price: 2.50, color: '#FFD1DC', stockEnabled: true, stock: 15 },
-                { id: 2, name: 'Tee', price: 2.00, color: '#FFABAB', stockEnabled: true, stock: 5 },
-                { id: 3, name: 'Kuchen', price: 3.50, color: '#FFC3A0', stockEnabled: false, stock: 0 },
-                { id: 4, name: 'Wasser', price: 1.50, color: '#FF677D', stockEnabled: true, stock: 20 },
-                { id: 5, name: 'Saft', price: 2.80, color: '#D4A5A5', stockEnabled: false, stock: 0 },
-                { id: 6, name: 'Muffin', price: 2.20, color: '#392F5A', stockEnabled: true, stock: 8 },
-                { id: 7, name: 'Sandwich', price: 4.50, color: '#A7BED3', stockEnabled: false, stock: 0 },
-                { id: 8, name: 'Salat', price: 5.00, color: '#C6E2E9', stockEnabled: true, stock: 12 },
-                { id: 9, name: 'Brot', price: 3.00, color: '#F4EAE6', stockEnabled: true, stock: 9 },
-                { id: 10, name: 'Milch', price: 1.20, color: '#E0BBE4', stockEnabled: false, stock: 0 },
-            ];
-        }
-
-        function saveProductsToStorage(productsArray) {
-            localStorage.setItem('products', JSON.stringify(productsArray));
-        }
-
+        // === API-Logik zum Laden und Speichern der Produkte ===
         async function fetchProducts() {
-            // Simuliere API-Abruf
-            const fetchedProducts = getProductsFromStorage();
-            
-            // Nur aktualisieren, wenn sich die Daten geändert haben (um unnötiges Neurendern zu vermeiden)
-            if (JSON.stringify(products) !== JSON.stringify(fetchedProducts)) {
-                products = fetchedProducts;
+            try {
+                const response = await fetch(`${window.location.origin}/api/products`);
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                }
+                products = await response.json();
                 renderProducts();
-                renderProductManagementList();
+            } catch (error) {
+                console.error("Fehler beim Laden der Produkte von der API.", error);
+                // Fallback zu lokalen Produkten für Demo-Zwecke
+                products = [
+                    { id: 1, name: "Kaffee", price: 2.50, color: "#FFB6C1", stock: 50, inventoryEnabled: true },
+                    { id: 2, name: "Tee", price: 2.00, color: "#FFDAB9", stock: 100, inventoryEnabled: false },
+                    { id: 3, name: "Kuchen", price: 3.50, color: "#FFFFE0", stock: 20, inventoryEnabled: true },
+                    { id: 4, name: "Sandwich", price: 4.00, color: "#E0FFDE", stock: 40, inventoryEnabled: false }
+                ];
+                renderProducts();
             }
         }
 
-        async function saveProducts() {
-            // Simuliere API-Speicherung
-            saveProductsToStorage(products);
-            // Da die API-Simulation lokal ist, rufen wir fetchProducts auf, um die UI zu aktualisieren
-            // In einer echten Anwendung würde dies ein POST/PUT an den Server sein
-            // und fetchProducts würde die Daten von dort abrufen.
-            await fetchProducts();
-        }
+        function saveProduct() {
+            const nameInput = document.getElementById("product-name-input");
+            const priceInput = document.getElementById("product-price-input");
+            const stockInput = document.getElementById("product-stock-input");
+            const inventoryToggle = document.getElementById("inventory-enabled-toggle");
+            // Lade Produkte aus dem lokalen Speicher
+            let productsFromStorage = JSON.parse(localStorage.getItem('products') || '[]');
+            
+            // Lade Lagerbestandsdaten aus dem lokalen Speicher
+            let inventoryData = JSON.parse(localStorage.getItem('inventoryData') || '{}');
 
-        // === Kassen-ID Funktionen (Unverändert) ===
-        function loadCashRegisterId() {
-            const storedId = localStorage.getItem('cashRegisterId');
-            if (storedId) {
-                currentCashRegisterId = storedId;
-                currentCashRegisterCartId = `${storedId}-Warenkorb`;
+            // Füge Lagerbestandsdaten zu den Produkten hinzu
+            products = productsFromStorage.map(p => {
+                const inv = inventoryData[p.id] || {};
+                return {
+                    ...p,
+                    stock: inv.stock !== undefined ? inv.stock : (p.stock !== undefined ? p.stock : 100),
+                    inventoryEnabled: inv.inventoryEnabled !== undefined ? inv.inventoryEnabled : (p.inventoryEnabled !== undefined ? p.inventoryEnabled : false)
+                };
+            });
+
+            // Wenn keine Produkte im Speicher, initialisiere mit Beispieldaten
+            if (products.length === 0) {
+            try {
+                const response = await fetch(`${window.location.origin}/api/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(products),
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                }
+                console.log("Produkte erfolgreich in der Datenbank gespeichert.");
+            } catch (error) {
+                console.error("Fehler beim Speichern der Produkte in der API.", error);
             }
-            document.getElementById('cart-id-display').textContent = currentCashRegisterId;
+        }
+        
+        // Funktion zum Speichern des Warenkorbs in der API (verwendet currentCashRegisterCartId)
+        async function saveCartToApi(isCheckout = false, isFinished = false) {
+            try {
+                if (!currentCashRegisterCartId) {
+                    console.error("Warenkorb-ID der Kasse fehlt. Kann nicht speichern.");
+                    return;
+                }
+
+                // Zwischensumme und Gesamtbetrag direkt vor dem Senden berechnen
+                let currentSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                let currentTotal = currentSubtotal - depositReturn;
+
+                const response = await fetch(`${window.location.origin}/api/cart?cartId=${currentCashRegisterCartId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cart: cart,
+                        depositReturn: depositReturn,
+                        receivedAmount: receivedAmount,
+                        subtotal: currentSubtotal,
+                        total: currentTotal,
+                        isCheckout: isCheckout,
+                        isFinished: isFinished
+                    }),
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                }
+                console.log("Warenkorb erfolgreich in der Datenbank gespeichert.");
+            } catch (error) {
+                console.error("Fehler beim Speichern des Warenkorbs in der API.", error);
+            }
         }
 
-        function saveCashRegisterId() {
-            const input = document.getElementById('cash-register-id-input');
-            const newId = input.value.trim();
-            if (newId && newId !== currentCashRegisterId) {
-                localStorage.setItem('cashRegisterId', newId);
-                currentCashRegisterId = newId;
-                currentCashRegisterCartId = `${newId}-Warenkorb`;
-                document.getElementById('cart-id-display').textContent = currentCashRegisterId;
-                alert(`Kassen-ID auf "${newId}" gespeichert. Warenkorb-ID ist jetzt "${currentCashRegisterCartId}".`);
-                closeSettingsMenu();
-                // Warenkorb neu laden, um den neuen ID-basierten Warenkorb zu verwenden
-                fetchCartFromApi(currentCashRegisterCartId);
-            } else if (newId === currentCashRegisterId) {
-                closeSettingsMenu();
+        // === Neue Funktion zum Speichern von Verkäufen ===
+        async function saveSaleToApi(saleData) {
+            try {
+                const response = await fetch(`${window.location.origin}/api/sales`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(saleData),
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                }
+                const savedSale = await response.json();
+                console.log("Verkauf erfolgreich gespeichert:", savedSale);
+                return savedSale;
+            } catch (error) {
+                console.error("Fehler beim Speichern des Verkaufs:", error);
+            }
+        }
+
+        // === Swipe-Logik für die Produktseiten ===
+        function handleTouchStart(event) {
+            touchstartX = event.changedTouches[0].screenX;
+            isSwiping = true;
+            event.currentTarget.style.transition = 'none';
+        }
+
+        function handleTouchMove(event) {
+            if (!isSwiping) return;
+            const currentX = event.changedTouches[0].screenX;
+            const swipeDistance = currentX - touchstartX;
+            event.currentTarget.style.transform = `translateX(${swipeDistance}px)`;
+        }
+
+        function handleTouchEnd(event) {
+            if (!isSwiping) return;
+            const touchendX = event.changedTouches[0].screenX;
+            const swipeDistance = touchstartX - touchendX;
+            const totalPages = Math.ceil(products.length / itemsPerPage);
+            const productGrid = event.currentTarget;
+            isSwiping = false;
+
+            productGrid.style.transition = 'transform 0.3s ease-out';
+
+            if (swipeDistance > swipeThreshold && currentPage < totalPages - 1) {
+                currentPage++;
+                renderProducts();
+                productGrid.style.transform = 'translateX(0)';
+            } else if (swipeDistance < -swipeThreshold && currentPage > 0) {
+                currentPage--;
+                renderProducts();
+                productGrid.style.transform = 'translateX(0)';
             } else {
-                alert("Bitte geben Sie eine gültige Kassen-ID ein.");
+                productGrid.style.transform = 'translateX(0)';
             }
         }
 
-        // === Produkt-Rendering (Minimalinvasive Änderung) ===
+        // === Warenkorb-Wischgeste-Logik - Verbessert ===
+        function handleCartTouchStart(event, itemId) {
+            const target = event.target;
+            if (target.tagName === 'BUTTON' || target.closest('button')) {
+                return;
+            }
+            
+            cartTouchStartX = event.changedTouches[0].clientX;
+            cartTouchStartY = event.changedTouches[0].clientY;
+            cartIsSwiping = false;
+            cartSwipeStarted = false;
+            currentSwipingItem = itemId;
+            cartTouchStartTime = Date.now();
+        }
+
+        function handleCartTouchMove(event, itemWrapper) {
+            if (!currentSwipingItem) return;
+            
+            const target = event.target;
+            if (target.tagName === 'BUTTON' || target.closest('button')) {
+                return;
+            }
+            
+            const currentX = event.changedTouches[0].clientX;
+            const currentY = event.changedTouches[0].clientY;
+            const deltaX = currentX - cartTouchStartX;
+            const deltaY = currentY - cartTouchStartY;
+            const absDeltaX = Math.abs(deltaX);
+            const absDeltaY = Math.abs(deltaY);
+            
+            // Verbesserte Swipe-Erkennung: Horizontal muss deutlich größer als Vertikal sein
+            if (absDeltaX > 15 && absDeltaX > absDeltaY * 2 && deltaX < 0) {
+                if (!cartSwipeStarted) {
+                    cartSwipeStarted = true;
+                    itemWrapper.style.transition = 'none';
+                }
+                cartIsSwiping = true;
+                event.preventDefault();
+                
+                const swipeDistance = Math.max(deltaX, -220);
+                itemWrapper.style.transform = `translateX(${swipeDistance}px)`;
+                
+                // Smooth Farbübergang basierend auf Swipe-Fortschritt
+                const swipeProgress = Math.min(Math.abs(swipeDistance) / 80, 1);
+                itemWrapper.style.setProperty('--swipe-progress', swipeProgress);
+                
+                if (Math.abs(swipeDistance) > 80) {
+                    itemWrapper.classList.add('swiping');
+                } else {
+                    itemWrapper.classList.remove('swiping');
+                }
+            }
+        }
+
+        function handleCartTouchEnd(event, itemId, itemWrapper) {
+            if (!currentSwipingItem || currentSwipingItem !== itemId) return;
+            
+            const target = event.target;
+            if (target.tagName === 'BUTTON' || target.closest('button')) {
+                currentSwipingItem = null;
+                cartIsSwiping = false;
+                cartSwipeStarted = false;
+                itemWrapper.style.transition = '';
+                itemWrapper.style.transform = 'translateX(0)';
+                itemWrapper.classList.remove('swiping');
+                return;
+            }
+            
+            const currentX = event.changedTouches[0].clientX;
+            const deltaX = currentX - cartTouchStartX;
+            const absDeltaX = Math.abs(deltaX);
+            
+            // Smooth Rückanimation
+            itemWrapper.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease';
+            
+            // Nur löschen wenn es wirklich ein Swipe war
+            if (cartSwipeStarted && absDeltaX > 80 && deltaX < 0) {
+                itemWrapper.style.transform = 'translateX(-220px)';
+                itemWrapper.style.opacity = '0';
+                
+                setTimeout(() => {
+                    removeAllFromCart(itemId);
+                }, 300);
+            } else {
+                itemWrapper.style.transform = 'translateX(0)';
+                itemWrapper.classList.remove('swiping');
+            }
+            
+            currentSwipingItem = null;
+            cartIsSwiping = false;
+            cartSwipeStarted = false;
+        }
+
+        // === Produktanzeige-Logik ===
         function renderProducts() {
-            const grid = document.getElementById("product-grid");
-            if (!grid) return;
-            grid.innerHTML = "";
+            const productGrid = document.getElementById("product-grid");
+            const dotIndicator = document.getElementById("dot-indicator");
+            
+            if (!productGrid || !dotIndicator) return;
 
-            const start = currentPage * productsPerPage;
-            const end = start + productsPerPage;
-            const productsOnPage = products.slice(start, end);
+            // Filter Produkte, die nicht auf Lager sind, wenn Bestandsverwaltung aktiv ist
+            const availableProducts = products.filter(p => !p.inventoryEnabled || p.stock > 0);
 
-            productsOnPage.forEach(product => {
+            productGrid.innerHTML = "";
+            dotIndicator.innerHTML = "";
+
+            const totalPages = Math.ceil(availableProducts.length / itemsPerPage);
+            const startIndex = currentPage * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+
+            const productsToRender = availableProducts.slice(startIndex, endIndex);
+
+            productsToRender.forEach(product => {
                 const tile = document.createElement("div");
-                tile.className = "product-tile";
+                const isOutOfStock = product.inventoryEnabled && product.stock <= 0;
+                
+                tile.className = `product-tile ${isOutOfStock ? 'out-of-stock' : ''}`;
                 tile.style.backgroundColor = product.color;
                 tile.onclick = () => addToCart(product);
 
-                // NEU: Lagerbestands-Warnung
-                let stockWarningHtml = '';
-                if (product.stockEnabled && product.stock < 10) {
-                    stockWarningHtml = `<div class="stock-warning"><i class="fas fa-exclamation-triangle"></i> ${product.stock}</div>`;
-                }
-
                 tile.innerHTML = `
-                    ${stockWarningHtml}
                     <h4>${product.name}</h4>
-                    <span>${product.price.toFixed(2).replace('.', ',')} €</span>
+                    <span>€ ${product.price.toFixed(2)}</span>
+                    ${product.inventoryEnabled ? `<div class="stock-indicator">${product.stock} auf Lager</div>` : ''}
                 `;
-                grid.appendChild(tile);
+                productGrid.appendChild(tile);
             });
 
-            renderPageDots();
+            // Seitenindikatoren rendern
+            for (let i = 0; i < totalPages; i++) {
+                const dot = document.createElement("div");
+                dot.className = `page-dot ${i === currentPage ? 'active' : ''}`;
+                dot.onclick = () => goToPage(i);
+                dotIndicator.appendChild(dot);
+            }
+
+            // Pfeile aktivieren/deaktivieren
+            document.getElementById("prev-page").disabled = currentPage === 0;
+            document.getElementById("next-page").disabled = currentPage >= totalPages - 1;
         }
+            const productGrid = document.getElementById("product-grid");
+            const dotIndicator = document.getElementById("dot-indicator");
+            
+            if (!productGrid || !dotIndicator) return;
 
-        function renderPageDots() {
-            const dotsContainer = document.getElementById("page-indicator-dots");
-            if (!dotsContainer) return;
-            dotsContainer.innerHTML = "";
+            productGrid.innerHTML = "";
+            dotIndicator.innerHTML = "";
 
-            const totalPages = Math.ceil(products.length / productsPerPage);
+            const totalPages = Math.ceil(products.length / itemsPerPage);
+            const startIndex = currentPage * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, products.length);
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const product = products[i];
+                const tile = document.createElement("div");
+                tile.className = "product-tile";
+                tile.style.setProperty('--tile-color', product.color);
+                tile.onclick = () => addToCart(product);
+
+                // Set the background color on the ::before pseudo-element via inline style
+                const beforeStyle = document.createElement('style');
+                beforeStyle.textContent = `
+                    .product-tile:nth-child(${i - startIndex + 1})::before {
+                        background-color: ${product.color};
+                    }
+                `;
+                document.head.appendChild(beforeStyle);
+
+                tile.innerHTML = `
+                    <h4>${product.name}</h4>
+                    <span>${product.price.toFixed(2)} €</span>
+                `;
+
+                productGrid.appendChild(tile);
+            }
 
             for (let i = 0; i < totalPages; i++) {
                 const dot = document.createElement("div");
                 dot.className = `page-dot ${i === currentPage ? 'active' : ''}`;
-                dot.onclick = () => {
-                    currentPage = i;
-                    renderProducts();
-                };
-                dotsContainer.appendChild(dot);
+                dotIndicator.appendChild(dot);
             }
         }
 
-        // === Warenkorb-Funktionen (Minimalinvasive Änderung) ===
+        // === Warenkorb-Logik ===
         function addToCart(product) {
-            // NEU: Bestandsprüfung
-            if (product.stockEnabled) {
-                const currentCartQuantity = cart.filter(item => item.id === product.id).reduce((sum, item) => sum + item.quantity, 0);
-                if (product.stock <= currentCartQuantity) {
-                    alert(`Fehler: Der Artikel "${product.name}" ist ausverkauft!`);
+            // Prüfe, ob Bestandsverwaltung aktiv ist und der Bestand > 0
+            const productInList = products.find(p => p.id === product.id);
+            if (productInList && productInList.inventoryEnabled) {
+                if (productInList.stock <= 0) {
+                    alert(`Produkt "${product.name}" ist ausverkauft.`);
+                    return;
+                }
+
+                // Prüfe, ob die Menge im Warenkorb den Bestand überschreitet
+                const itemInCart = cart.find(item => item.id === product.id);
+                if (itemInCart && itemInCart.quantity >= productInList.stock) {
+                    alert(`Der maximale Bestand von ${productInList.stock} für "${product.name}" ist erreicht.`);
                     return;
                 }
             }
 
             const existingItem = cart.find(item => item.id === product.id);
+            const existingItem = cart.find(item => item.id === product.id);
             if (existingItem) {
                 existingItem.quantity++;
             } else {
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    color: product.color,
-                    quantity: 1
-                });
+                cart.push({ ...product, quantity: 1 });
             }
             renderCart();
             saveCartToApi();
@@ -1537,7 +1685,7 @@
                         <div class="cart-item">
                             <div class="cart-item-details">
                                 <h4>${item.name}</h4>
-                                <span>${item.quantity}x ${item.price.toFixed(2).replace('.', ',')} €</span>
+                                <span>${item.quantity}x ${item.price.toFixed(2)} €</span>
                             </div>
                             <div class="cart-item-controls">
                                 <button onclick="removeFromCart(${item.id})">−</button>
@@ -1546,7 +1694,7 @@
                                 <button onclick="showNumpadForQuantity(${item.id})" style="margin-left: 0.3rem;"><i class="fas fa-keyboard"></i></button>
                             </div>
                             <div class="cart-item-price">
-                                ${(item.price * item.quantity).toFixed(2).replace('.', ',')} €
+                                ${(item.price * item.quantity).toFixed(2)} €
                             </div>
                         </div>
                     `;
@@ -1556,184 +1704,58 @@
             updateTotal();
         }
 
-        // === Kassen- und API-Funktionen ===
-        function updateTotal() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const total = subtotal - depositReturn + donationAmount;
-
-            document.getElementById("subtotal").textContent = subtotal.toFixed(2).replace('.', ',') + " €";
-            document.getElementById("deposit-return").textContent = depositReturn.toFixed(2).replace('.', ',') + " €";
-            document.getElementById("total").textContent = total.toFixed(2).replace('.', ',') + " €";
-            document.getElementById("checkout-total-display").textContent = total.toFixed(2).replace('.', ',') + " €";
-
-            updateChangeDisplay();
-        }
-
-        // === WICHTIGE ÄNDERUNG: finishCheckout (Bestandsreduzierung) ===
-        async function finishCheckout() {
-            const total = parseFloat(document.getElementById("total").textContent.replace(' €', '').replace(',', '.'));
-            const change = receivedAmount - total;
-
-            if (receivedAmount < total) {
-                alert("Der erhaltene Betrag ist zu gering.");
-                return;
-            }
-
-            // NEU: Lagerbestände aktualisieren
-            const productsToUpdate = {};
-            cart.forEach(item => {
-                productsToUpdate[item.id] = item.quantity;
-            });
-
-            if (Object.keys(productsToUpdate).length > 0) {
-                await updateStock(productsToUpdate);
-            }
-
-            // Warenkorb leeren und API aktualisieren
-            cart = [];
-            depositReturn = 0;
-            receivedAmount = 0;
-            donationAmount = 0;
-            
-            renderCart();
-            saveCartToApi();
-            closeCheckoutMenu();
-            
-            alert(`Zahlung erfolgreich! Rückgeld: ${change.toFixed(2).replace('.', ',')} €`);
-        }
-
-        // === NEUE FUNKTIONEN FÜR LAGERBESTAND (Minimal) ===
-
-        function toggleStockInput() {
-            const toggle = document.getElementById("product-stock-enabled-toggle");
-            const inputGroup = document.getElementById("product-stock-input-group");
-            if (toggle.checked) {
-                inputGroup.style.display = "block";
-            } else {
-                inputGroup.style.display = "none";
-            }
-        }
-
-        function showNumpadForQuantity(productId) {
-            numpadTarget = 'quantity';
-            numpadProductId = productId;
-            document.getElementById("numpad-display").textContent = "0";
-            document.getElementById("numpad-modal").style.display = "flex";
-            document.getElementById("numpad-modal").classList.add("active");
-            document.querySelector('#numpad-modal .modal-header h3').textContent = "Menge eingeben";
-        }
-
-        function numpadConfirm() {
-            const value = document.getElementById("numpad-display").textContent.replace(',', '.');
-            const num = parseFloat(value);
-
-            if (numpadTarget === 'quantity' && numpadProductId !== null) {
-                if (isNaN(num) || num <= 0 || !Number.isInteger(num)) {
-                    alert("Bitte geben Sie eine gültige ganze Zahl > 0 ein.");
-                    return;
-                }
-
-                const product = products.find(p => p.id === numpadProductId);
-                const cartItem = cart.find(item => item.id === numpadProductId);
-
-                if (product && cartItem) {
-                    // NEU: Bestandsprüfung bei Mengenänderung
-                    if (product.stockEnabled) {
-                        const maxQuantity = product.stock;
-                        if (num > maxQuantity) {
-                            alert(`Fehler: Maximaler Bestand für "${product.name}" ist ${maxQuantity}.`);
-                            return;
-                        }
-                    }
-
-                    cartItem.quantity = num;
-                    renderCart();
-                    saveCartToApi();
-                }
-                numpadProductId = null;
-            } else if (numpadTarget === 'deposit') {
-                // Bestehende Logik
-                totalDeposit += num;
-                depositReturn = totalDeposit * 0.15;
-                document.getElementById("current-deposit-display").textContent = `${totalDeposit} Gläser`;
-                updateTotal();
-            } else if (numpadTarget === 'payment') {
-                // Bestehende Logik
-                receivedAmount = num;
-                updateChangeDisplay();
-            }
-
-            closeNumpad();
-        }
-
-        async function updateStock(productsToUpdate) {
-            // Führt die Bestandsreduzierung durch und speichert die Produkte über die API
-            let updated = false;
-            products = products.map(product => {
-                if (productsToUpdate[product.id]) {
-                    const quantitySold = productsToUpdate[product.id];
-                    // Prüfe, ob stockEnabled existiert und true ist
-                    if (product.stockEnabled) {
-                        product.stock = Math.max(0, product.stock - quantitySold);
-                        updated = true;
-                    }
-                }
-                return product;
-            });
-
-            if (updated) {
-                await saveProducts();
-            }
-        }
-
-        // === Ende NEUE FUNKTIONEN ===
-
-        // === Warenkorb-API-Simulation (Unverändert) ===
-        function getCartFromStorage(cartId) {
-            const storedCart = localStorage.getItem(`cart_${cartId}`);
-            return storedCart ? JSON.parse(storedCart) : { cart: [], depositReturn: 0, receivedAmount: 0 };
-        }
-
-        function saveCartToStorage(cartId, cartData) {
-            localStorage.setItem(`cart_${cartId}`, JSON.stringify(cartData));
-        }
-
-        async function saveCartToApi() {
-            // Simuliere API-Speicherung
-            const cartData = {
-                cart: cart,
-                depositReturn: depositReturn,
-                receivedAmount: receivedAmount
-            };
-            saveCartToStorage(currentCashRegisterCartId, cartData);
-            // In einer echten Anwendung würde dies ein POST/PUT an den Server sein
-        }
-
-        async function fetchCartFromApi(cartId) {
-            try {
-                // Simuliere API-Abruf
-                const data = getCartFromStorage(cartId);
-                if (data) {
-                    cart = data.cart || [];
-                    depositReturn = data.depositReturn || 0;
-                    receivedAmount = data.receivedAmount || 0;
-                    renderCart();
-                    updateTotal();
-                }
-            } catch (error) {
-                console.error("Fehler beim Laden des Warenkorbs von der API.", error);
-            }
-        }
-
-        function setupCartAPI() {
-            // Simuliere API-Endpunkte für Warenkorb (falls benötigt, aber hier direkt über Funktionen)
-        }
-
-        // === Spenden-Funktionalität (Unverändert) ===
+        // === Spenden-Funktionalität ===
         let donationAmount = 0;
         let donationPollInterval = null;
+        let inventoryPollInterval = null;
 
         function startDonationPolling() {
+            // Alle 2 Sekunden nach Spenden-Updates prüfen
+            donationPollInterval = setInterval(async () => {
+                await checkForDonationUpdates();
+            }, 2000);
+        }
+
+        function stopDonationPolling() {
+            if (donationPollInterval) {
+                clearInterval(donationPollInterval);
+                donationPollInterval = null;
+            }
+        }
+
+        function startInventoryPolling() {
+            // Alle 5 Sekunden nach Bestands-Updates prüfen
+            inventoryPollInterval = setInterval(async () => {
+                await checkForInventoryUpdates();
+            }, 5000);
+        }
+
+        function stopInventoryPolling() {
+            if (inventoryPollInterval) {
+                clearInterval(inventoryPollInterval);
+                inventoryPollInterval = null;
+            }
+        }
+
+        async function checkForInventoryUpdates() {
+            try {
+                const response = await fetch(`${window.location.origin}/api/inventory`);
+                if (response.ok) {
+                    const newInventoryData = await response.json();
+                    let inventoryData = JSON.parse(localStorage.getItem('inventoryData') || '{}');
+                    
+                    // Prüfe, ob sich der Bestand geändert hat
+                    if (JSON.stringify(inventoryData) !== JSON.stringify(newInventoryData)) {
+                        localStorage.setItem('inventoryData', JSON.stringify(newInventoryData));
+                        await loadProducts(); // Produkte neu laden, um den aktualisierten Bestand zu übernehmen
+                        renderProducts(); // Produkt-Grid neu rendern
+                        console.log("Lagerbestand erfolgreich synchronisiert.");
+                    }
+                }
+            } catch (error) {
+                console.error('Fehler beim Prüfen von Bestands-Updates:', error);
+            }
+        }
             // Alle 2 Sekunden nach Spenden-Updates prüfen
             donationPollInterval = setInterval(async () => {
                 await checkForDonationUpdates();
@@ -1791,24 +1813,21 @@
                 Neue Spende: ${amount.toFixed(2).replace('.', ',')} €
             `;
 
-            // Füge CSS-Animation hinzu (falls noch nicht vorhanden)
-            if (!document.querySelector('style[data-animation="slideInRight"]')) {
-                const style = document.createElement('style');
-                style.setAttribute('data-animation', 'slideInRight');
-                style.textContent = `
-                    @keyframes slideInRight {
-                        from {
-                            opacity: 0;
-                            transform: translateX(100%);
-                        }
-                        to {
-                            opacity: 1;
-                            transform: translateX(0);
-                        }
+            // Füge CSS-Animation hinzu
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInRight {
+                    from {
+                        opacity: 0;
+                        transform: translateX(100%);
                     }
-                `;
-                document.head.appendChild(style);
-            }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
 
             document.body.appendChild(notification);
 
@@ -1819,11 +1838,17 @@
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
                     }
+                    if (style.parentNode) {
+                        style.parentNode.removeChild(style);
+                    }
                 }, 300);
             }, 3000);
         }
 
-        // === API-Endpunkte für Spenden (Simuliert) ===
+        // === API-Endpunkte für Spenden ===
+        // Simulierte API-Endpunkte (in einer echten Anwendung würden diese auf einem Server laufen)
+        
+        // Simulierter lokaler Speicher für Spenden
         function getDonationFromStorage(cartId) {
             const donations = JSON.parse(localStorage.getItem('donations') || '{}');
             return donations[cartId] || { donationAmount: 0, timestamp: null };
@@ -1838,7 +1863,8 @@
             localStorage.setItem('donations', JSON.stringify(donations));
         }
 
-        function setupDonationAPI() {
+        // Simuliere API-Server für Entwicklungszwecke
+        function setupSimulatedAPI() {
             // Überschreibe fetch für lokale API-Simulation
             const originalFetch = window.fetch;
             window.fetch = function(url, options) {
@@ -1858,6 +1884,103 @@
                 }
                 
                 // API-Route: POST /api/donation
+                if (urlObj.pathname === '/api/inventory' && options && options.method === 'POST') {
+                    try {
+                        const data = JSON.parse(options.body);
+                        if (data.updates && Array.isArray(data.updates)) {
+                            let inventoryData = JSON.parse(localStorage.getItem('inventoryData') || '{}');
+                            let products = JSON.parse(localStorage.getItem('products') || '[]');
+                            
+                            data.updates.forEach(update => {
+                                if (update.id && typeof update.stock === 'number' && typeof update.inventoryEnabled === 'boolean') {
+                                    inventoryData[update.id] = {
+                                        stock: update.stock,
+                                        inventoryEnabled: update.inventoryEnabled
+                                    };
+                                    // Aktualisiere auch das Produkt-Array im localStorage, falls nötig (für den Fall, dass ein Produkt neu ist)
+                                    const productIndex = products.findIndex(p => p.id === update.id);
+                                    if (productIndex > -1) {
+                                        products[productIndex].stock = update.stock;
+                                        products[productIndex].inventoryEnabled = update.inventoryEnabled;
+                                    }
+                                }
+                            });
+
+                            localStorage.setItem('inventoryData', JSON.stringify(inventoryData));
+                            localStorage.setItem('products', JSON.stringify(products)); // Aktualisiere Produkte mit neuen Bestandsdaten
+                            
+                            return Promise.resolve(new Response('{"success": true}', {
+                                status: 200,
+                                headers: { 'Content-Type': 'application/json' }
+                            }));
+                        }
+                        return Promise.resolve(new Response('{"error": "Invalid inventory update data"}', { status: 400 }));
+                    } catch (e) {
+                        return Promise.resolve(new Response('{"error": "Invalid JSON for inventory update"}', { status: 400 }));
+                    }
+                }
+
+                // API-Route: GET /api/inventory
+                if (urlObj.pathname === '/api/inventory' && (!options || options.method === 'GET')) {
+                    const inventoryData = localStorage.getItem('inventoryData') || '{}';
+                    return Promise.resolve(new Response(inventoryData, {
+                        status: 200,
+                        headers: { 'Content-Type': 'application/json' }
+                    }));
+                }
+
+                // API-Route: POST /api/inventory/reduce
+                if (urlObj.pathname === '/api/inventory/reduce' && options && options.method === 'POST') {
+                    try {
+                        const data = JSON.parse(options.body);
+                        if (data.items && Array.isArray(data.items)) {
+                            let inventoryData = JSON.parse(localStorage.getItem('inventoryData') || '{}');
+                            let products = JSON.parse(localStorage.getItem('products') || '[]');
+                            
+                            const updates = [];
+                            let hasError = false;
+
+                            data.items.forEach(item => {
+                                const productId = item.id;
+                                const quantity = item.quantity;
+                                
+                                const inv = inventoryData[productId] || {};
+                                const product = products.find(p => p.id === productId);
+
+                                if (product && product.inventoryEnabled && inv.inventoryEnabled) {
+                                    const currentStock = inv.stock !== undefined ? inv.stock : product.stock;
+                                    if (currentStock >= quantity) {
+                                        const newStock = currentStock - quantity;
+                                        inventoryData[productId] = {
+                                            stock: newStock,
+                                            inventoryEnabled: true
+                                        };
+                                        updates.push({ id: productId, oldStock: currentStock, newStock: newStock });
+                                    } else {
+                                        // Bestand nicht ausreichend
+                                        hasError = true;
+                                        console.error(`Bestand für Produkt ${productId} (${product.name}) nicht ausreichend. Benötigt: ${quantity}, Verfügbar: ${currentStock}`);
+                                    }
+                                }
+                            });
+
+                            if (hasError) {
+                                // Im echten Szenario würde hier eine Transaktion rückgängig gemacht oder eine Warnung ausgegeben
+                                return Promise.resolve(new Response('{"error": "Insufficient stock for one or more items"}', { status: 409 }));
+                            }
+
+                            localStorage.setItem('inventoryData', JSON.stringify(inventoryData));
+                            
+                            return Promise.resolve(new Response(JSON.stringify({ success: true, updates: updates }), {
+                                status: 200,
+                                headers: { 'Content-Type': 'application/json' }
+                            }));
+                        }
+                        return Promise.resolve(new Response('{"error": "Invalid inventory reduction data"}', { status: 400 }));
+                    } catch (e) {
+                        return Promise.resolve(new Response('{"error": "Invalid JSON for inventory reduction"}', { status: 400 }));
+                    }
+                }
                 if (urlObj.pathname === '/api/donation' && options && options.method === 'POST') {
                     try {
                         const data = JSON.parse(options.body);
@@ -1873,293 +1996,317 @@
                         return Promise.resolve(new Response('{"error": "Invalid JSON"}', { status: 400 }));
                     }
                 }
-
-                // API-Route: GET /api/products
-                if (urlObj.pathname === '/api/products' && (!options || options.method === 'GET')) {
-                    const products = getProductsFromStorage();
-                    return Promise.resolve(new Response(JSON.stringify(products), {
-                        status: 200,
-                        headers: { 'Content-Type': 'application/json' }
-                    }));
-                }
-
-                // API-Route: POST /api/products
-                if (urlObj.pathname === '/api/products' && options && options.method === 'POST') {
-                    try {
-                        const data = JSON.parse(options.body);
-                        if (Array.isArray(data)) {
-                            saveProductsToStorage(data);
-                            return Promise.resolve(new Response('{"success": true}', {
-                                status: 200,
-                                headers: { 'Content-Type': 'application/json' }
-                            }));
-                        }
-                        return Promise.resolve(new Response('{"error": "Invalid data, expected array"}', { status: 400 }));
-                    } catch (e) {
-                        return Promise.resolve(new Response('{"error": "Invalid JSON"}', { status: 400 }));
-                    }
-                }
-
+                
                 // API-Route: GET /api/cart
                 if (urlObj.pathname === '/api/cart' && (!options || options.method === 'GET')) {
                     const cartId = urlObj.searchParams.get('cartId');
-                    if (cartId) {
-                        const cartData = getCartFromStorage(cartId);
-                        return Promise.resolve(new Response(JSON.stringify(cartData), {
+                    if (cartId && cartId === currentCashRegisterCartId) {
+                        return Promise.resolve(new Response('{"exists": true}', {
                             status: 200,
                             headers: { 'Content-Type': 'application/json' }
                         }));
                     }
-                    return Promise.resolve(new Response('{"error": "cartId required"}', { status: 400 }));
-                }
-
-                // API-Route: POST /api/cart
-                if (urlObj.pathname === '/api/cart' && options && options.method === 'POST') {
-                    try {
-                        const data = JSON.parse(options.body);
-                        if (data.cartId && data.cart) {
-                            saveCartToStorage(data.cartId, data);
-                            return Promise.resolve(new Response('{"success": true}', {
-                                status: 200,
-                                headers: { 'Content-Type': 'application/json' }
-                            }));
-                        }
-                        return Promise.resolve(new Response('{"error": "Invalid data"}', { status: 400 }));
-                    } catch (e) {
-                        return Promise.resolve(new Response('{"error": "Invalid JSON"}', { status: 400 }));
-                    }
+                    return Promise.resolve(new Response('{"error": "Cart not found"}', { status: 404 }));
                 }
                 
-                // Führe den ursprünglichen Fetch aus, wenn keine API-Route übereinstimmt
-                return originalFetch(url, options);
+                // Für alle anderen Anfragen die ursprüngliche fetch-Funktion verwenden
+                return originalFetch.apply(this, arguments);
             };
         }
 
-        function setupProductAPI() {
-            // Die Produkt-API-Simulation ist jetzt in setupDonationAPI integriert,
-            // um alle simulierten Endpunkte an einem Ort zu haben.
+        function updateTotal() {
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            let total = subtotal - depositReturn + donationAmount;
+
+            const subtotalEl = document.getElementById("subtotal");
+            const depositReturnEl = document.getElementById("deposit-return");
+            const donationEl = document.getElementById("donation");
+            const totalEl = document.getElementById("total");
+
+            if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2) + " €";
+            if (depositReturnEl) depositReturnEl.textContent = depositReturn.toFixed(2) + " €";
+            if (donationEl) donationEl.textContent = donationAmount.toFixed(2) + " €";
+            if (totalEl) totalEl.textContent = total.toFixed(2) + " €";
         }
 
-        // === Touch-Funktionen für Warenkorb (Unverändert) ===
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let isSwiping = false;
-
-        function handleCartTouchStart(e, itemId) {
-            if (e.touches.length === 1) {
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-                isSwiping = false;
-            }
-        }
-
-        function handleCartTouchMove(e, li) {
-            if (e.touches.length === 1) {
-                const touchMoveX = e.touches[0].clientX;
-                const touchMoveY = e.touches[0].clientY;
-                const diffX = touchMoveX - touchStartX;
-                const diffY = touchMoveY - touchStartY;
-
-                // Nur horizontale Wischgeste verfolgen
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
-                    isSwiping = true;
-                    e.preventDefault(); // Verhindert vertikales Scrollen
-                    
-                    const swipeDistance = Math.min(0, Math.max(-150, diffX)); // Nur nach links wischen
-                    const progress = Math.abs(swipeDistance) / 150;
-
-                    li.style.setProperty('--swipe-progress', progress);
-                    li.querySelector('.cart-item').style.transform = `translateX(${swipeDistance}px)`;
-                    li.classList.add('swiping');
-                }
-            }
-        }
-
-        function handleCartTouchEnd(e, itemId, li) {
-            li.classList.remove('swiping');
-            li.style.setProperty('--swipe-progress', 0);
-            li.querySelector('.cart-item').style.transform = `translateX(0)`;
-
-            if (isSwiping) {
-                const touchEndX = e.changedTouches[0].clientX;
-                const diffX = touchEndX - touchStartX;
-
-                if (diffX < -100) { // Weit genug nach links gewischt
-                    removeAllFromCart(itemId);
-                }
-            }
-            isSwiping = false;
-        }
-
-        // === Modal-Funktionen (Unverändert, außer openProductEditModal, saveProduct, renderProductManagementList) ===
-
+        // === Logik für Pfandrückgabe-Menü ===
         function showDepositMenu() {
-            document.getElementById("deposit-modal").style.display = "flex";
-            document.getElementById("deposit-modal").classList.add("active");
+            const modal = document.getElementById("deposit-modal");
+            if (!modal) return;
+            modal.style.display = "flex";
+            const currentDepositDisplay = document.getElementById("current-deposit-display");
+            if(currentDepositDisplay) {
+                currentDepositDisplay.textContent = `${(depositReturn / DEPOSIT_VALUE).toFixed(0)} Gläser`;
+            }
         }
 
         function closeDepositMenu() {
-            document.getElementById("deposit-modal").style.display = "none";
-            document.getElementById("deposit-modal").classList.remove("active");
+            const modal = document.getElementById("deposit-modal");
+            if (!modal) return;
+            modal.style.display = "none";
         }
 
         function addQuickDeposit(count) {
-            totalDeposit += count;
-            depositReturn = totalDeposit * 0.15; // Angenommen 0.15€ pro Glas
-            document.getElementById("current-deposit-display").textContent = `${totalDeposit} Gläser`;
+            depositReturn += count * DEPOSIT_VALUE;
             updateTotal();
+            closeDepositMenu();
+            saveCartToApi();
         }
 
         function resetTotalDeposit() {
-            totalDeposit = 0;
             depositReturn = 0;
-            document.getElementById("current-deposit-display").textContent = `0 Gläser`;
             updateTotal();
+            const currentDepositDisplay = document.getElementById("current-deposit-display");
+            if(currentDepositDisplay) {
+                currentDepositDisplay.textContent = `0 Gläser`;
+            }
+            saveCartToApi();
         }
 
+        // === Logik für den Bezahlvorgang ===
         function showCheckoutMenu() {
-            if (cart.length === 0) {
-                alert("Der Warenkorb ist leer.");
-                return;
-            }
-            document.getElementById("checkout-modal").style.display = "flex";
-            document.getElementById("checkout-modal").classList.add("active");
-            updateChangeDisplay();
+            const modal = document.getElementById("checkout-modal");
+            if (!modal) return;
+            modal.style.display = "flex";
+            updateCheckoutDisplay();
         }
 
         function closeCheckoutMenu() {
-            document.getElementById("checkout-modal").style.display = "none";
-            document.getElementById("checkout-modal").classList.remove("active");
+            const modal = document.getElementById("checkout-modal");
+            if (!modal) return;
+            modal.style.display = "none";
         }
 
         function addQuickPayment(amount) {
             receivedAmount += amount;
-            updateChangeDisplay();
+            updateCheckoutDisplay();
         }
 
         function resetReceivedAmount() {
             receivedAmount = 0;
-            updateChangeDisplay();
+            updateCheckoutDisplay();
         }
 
-        function updateChangeDisplay() {
-            const total = parseFloat(document.getElementById("total").textContent.replace(' €', '').replace(',', '.'));
-            const change = receivedAmount - total;
+        function updateCheckoutDisplay() {
+            const totalEl = document.getElementById("total");
+            const totalDue = totalEl ? parseFloat(totalEl.textContent.replace('€', '').replace(',', '.')) : 0;
+            const change = receivedAmount - totalDue;
 
-            document.getElementById("received-amount-display").textContent = receivedAmount.toFixed(2).replace('.', ',') + " €";
-            document.getElementById("change-display").textContent = change.toFixed(2).replace('.', ',') + " €";
-
+            const checkoutTotalDisplay = document.getElementById("checkout-total-display");
+            const receivedAmountDisplay = document.getElementById("received-amount-display");
             const changeDisplay = document.getElementById("change-display");
-            if (change < 0) {
-                changeDisplay.style.color = '#e74c3c'; // Rot
-            } else {
-                changeDisplay.style.color = '#4CAF50'; // Grün
-            }
+
+            if (checkoutTotalDisplay) checkoutTotalDisplay.textContent = totalDue.toFixed(2).replace('.', ',') + " €";
+            if (receivedAmountDisplay) receivedAmountDisplay.textContent = receivedAmount.toFixed(2).replace('.', ',') + " €";
+            if (changeDisplay) changeDisplay.textContent = change.toFixed(2).replace('.', ',') + " €";
+
+            saveCartToApi(true);
         }
 
-        let numpadValue = "0";
-        let numpadIsDecimal = false;
+        async function finishCheckout() {
+            const totalEl = document.getElementById("total");
+            const totalDue = totalEl ? parseFloat(totalEl.textContent.replace('€', '').replace(',', '.')) : 0;
+
+            if (receivedAmount < totalDue) {
+                alert("Nicht genug Geld erhalten!");
+                return;
+            }
+
+            // Verkaufsdaten für die API vorbereiten
+            const saleData = {
+                items: cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                })),
+                subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                depositReturn: depositReturn,
+                total: totalDue,
+                receivedAmount: receivedAmount,
+                cartId: currentCashRegisterCartId
+            };
+
+            // Bestand reduzieren
+            const inventoryItems = cart.map(item => ({
+                id: item.id,
+                quantity: item.quantity
+            }));
+
+            try {
+                const response = await fetch(`${window.location.origin}/api/inventory/reduce`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ items: inventoryItems })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Fehler bei der Bestandsreduzierung: ${errorData.error || 'Unbekannter Fehler'}`);
+                    return;
+                }
+            } catch (error) {
+                console.error('Fehler beim Senden der Bestandsreduzierung an die API:', error);
+                alert('Ein Fehler ist bei der Bestandsreduzierung aufgetreten. Bitte versuchen Sie es erneut.');
+                return;
+            }
+
+            // Verkauf in der Datenbank speichern
+            await saveSaleToApi(saleData);
+
+            console.log("Bezahlung abgeschlossen.");
+
+            // Warenkorb zurücksetzen
+            cart = [];
+            depositReturn = 0;
+            receivedAmount = 0;
+            updateTotal();
+            renderCart();
+            closeCheckoutMenu();
+            
+            // Warenkorb als abgeschlossen markieren und leeren
+            await saveCartToApi(false, true);
+        }
+
+        // === Logik für den Nummernblock (manuelle Eingabe) ===
+        function showNumpadForQuantity(itemId) {
+            closeDepositMenu();
+            closeCheckoutMenu();
+            const modal = document.getElementById("numpad-modal");
+            if (!modal) return;
+            modal.style.display = "flex";
+
+            const receivedInputDisplay = document.getElementById("received-input-display");
+            manualInputType = 'quantity';
+            manualQuantityInput = "";
+            editingCartItemId = itemId;
+            if(receivedInputDisplay) receivedInputDisplay.textContent = "0";
+        }
 
         function showNumpad(isDeposit) {
-            numpadTarget = isDeposit ? 'deposit' : 'payment';
-            numpadValue = "0";
-            numpadIsDecimal = false;
-            document.getElementById("numpad-display").textContent = "0,00";
-            document.getElementById("numpad-modal").style.display = "flex";
-            document.getElementById("numpad-modal").classList.add("active");
-            document.querySelector('#numpad-modal .modal-header h3').textContent = "Manuelle Eingabe";
+            closeDepositMenu();
+            closeCheckoutMenu();
+            const modal = document.getElementById("numpad-modal");
+            if (!modal) return;
+            modal.style.display = "flex";
+
+            const receivedInputDisplay = document.getElementById("received-input-display");
+
+            if (isDeposit) {
+                manualInputType = 'deposit';
+                manualDepositInput = "";
+                if(receivedInputDisplay) receivedInputDisplay.textContent = "0";
+            } else {
+                manualInputType = 'checkout';
+                manualReceivedInput = "";
+                if(receivedInputDisplay) receivedInputDisplay.textContent = "0";
+            }
         }
 
         function closeNumpad() {
-            document.getElementById("numpad-modal").style.display = "none";
-            document.getElementById("numpad-modal").classList.remove("active");
-            numpadTarget = null;
+            const modal = document.getElementById("numpad-modal");
+            if (!modal) return;
+            modal.style.display = "none";
         }
 
-        function numpadInput(key) {
-            if (key === ',') {
-                if (!numpadIsDecimal) {
-                    numpadIsDecimal = true;
+        function numpadInput(value) {
+            const display = document.getElementById("received-input-display");
+            if (!display) return;
+
+            if (manualInputType === 'deposit') {
+                if (value === 'clear') {
+                    manualDepositInput = "";
+                } else if (value === ',') {
+                    return;
+                } else if (manualDepositInput === "" && value === "0") {
+                    return;
+                } else {
+                    manualDepositInput += value;
                 }
-            } else {
-                if (numpadTarget === 'quantity') {
-                    // Für Menge: nur ganze Zahlen
-                    if (numpadValue === "0") {
-                        numpadValue = key;
-                    } else {
-                        numpadValue += key;
+                display.textContent = manualDepositInput === "" ? "0" : manualDepositInput;
+            } else if (manualInputType === 'checkout') {
+                if (value === 'clear') {
+                    manualReceivedInput = "";
+                } else if (value === ',') {
+                    // Allow comma as first character for decimal numbers less than 1
+                    if (manualReceivedInput === "") {
+                        manualReceivedInput = "0.";
+                    } else if (!manualReceivedInput.includes('.')) {
+                        manualReceivedInput += '.';
                     }
                 } else {
-                    // Für Währung: zwei Dezimalstellen
-                    const numStr = numpadValue.replace(',', '');
-                    if (numStr.length < 5) { // Maximal 999,99
-                        if (numpadValue === "0") {
-                            numpadValue = key;
+                    // Allow leading zero for decimal numbers
+                    if (manualReceivedInput.includes('.') && manualReceivedInput.split('.')[1].length >= 2) {
+                        return; // Limit to 2 decimal places
+                    }
+                    manualReceivedInput += value;
+                }
+                display.textContent = manualReceivedInput.replace('.', ',') === "" ? "0" : manualReceivedInput.replace('.', ',');
+            } else if (manualInputType === 'quantity') {
+                if (value === 'clear') {
+                    manualQuantityInput = "";
+                } else if (value === ',') {
+                    return;
+                } else if (manualQuantityInput === "" && value === "0") {
+                    return;
+                } else {
+                    manualQuantityInput += value;
+                }
+                display.textContent = manualQuantityInput === "" ? "0" : manualQuantityInput;
+            }
+        }
+
+        function confirmManualInput() {
+            if (manualInputType === 'deposit') {
+                const count = parseInt(manualDepositInput, 10);
+                if (!isNaN(count) && count > 0) {
+                    depositReturn += count * DEPOSIT_VALUE;
+                    updateTotal();
+                }
+                closeNumpad();
+                showDepositMenu();
+                saveCartToApi();
+            } else if (manualInputType === 'checkout') {
+                const amount = parseFloat(manualReceivedInput);
+                if (!isNaN(amount) && amount >= 0) {
+                    receivedAmount = amount;
+                    updateCheckoutDisplay();
+                }
+                closeNumpad();
+                showCheckoutMenu();
+            } else if (manualInputType === 'quantity') {
+                const newQuantity = parseInt(manualQuantityInput, 10);
+                if (!isNaN(newQuantity) && newQuantity >= 0 && editingCartItemId !== null) {
+                    const itemIndex = cart.findIndex(item => item.id === editingCartItemId);
+                    if (itemIndex > -1) {
+                        if (newQuantity === 0) {
+                            cart.splice(itemIndex, 1);
                         } else {
-                            numpadValue += key;
+                            cart[itemIndex].quantity = newQuantity;
                         }
+                        renderCart();
+                        saveCartToApi();
                     }
                 }
+                closeNumpad();
+                editingCartItemId = null;
             }
-
-            let displayValue;
-            if (numpadTarget === 'quantity') {
-                displayValue = numpadValue;
-            } else {
-                const numStr = numpadValue.replace(',', '');
-                if (numStr.length < 3) {
-                    displayValue = "0," + numStr.padStart(2, '0');
-                } else {
-                    displayValue = numStr.slice(0, -2) + ',' + numStr.slice(-2);
-                }
-            }
-
-            document.getElementById("numpad-display").textContent = displayValue;
         }
 
-        function numpadDelete() {
-            if (numpadValue.length > 1) {
-                numpadValue = numpadValue.slice(0, -1);
-            } else {
-                numpadValue = "0";
-            }
-
-            let displayValue;
-            if (numpadTarget === 'quantity') {
-                displayValue = numpadValue;
-            } else {
-                const numStr = numpadValue.replace(',', '');
-                if (numStr.length < 3) {
-                    displayValue = "0," + numStr.padStart(2, '0');
-                } else {
-                    displayValue = numStr.slice(0, -2) + ',' + numStr.slice(-2);
-                }
-            }
-            document.getElementById("numpad-display").textContent = displayValue;
-        }
-
-        // numpadConfirm wurde oben für Lagerbestand erweitert
-
-        function showSettingsMenu() {
-            document.getElementById('cash-register-id-input').value = currentCashRegisterId;
-            document.getElementById("settings-modal").style.display = "flex";
-            document.getElementById("settings-modal").classList.add("active");
-        }
-
-        function closeSettingsMenu() {
-            document.getElementById("settings-modal").style.display = "none";
-            document.getElementById("settings-modal").classList.remove("active");
-        }
-
+        // === Logik für die Produktverwaltung ===
         function showProductManagementMenu() {
-            document.getElementById("product-management-modal").style.display = "flex";
-            document.getElementById("product-management-modal").classList.add("active");
+            const modal = document.getElementById("product-management-modal");
+            if (!modal) return;
+            modal.style.display = "flex";
             renderProductManagementList();
         }
 
         function closeProductManagementMenu() {
-            document.getElementById("product-management-modal").style.display = "none";
-            document.getElementById("product-management-modal").classList.remove("active");
+            const modal = document.getElementById("product-management-modal");
+            if (!modal) return;
+            modal.style.display = "none";
         }
 
         function renderProductManagementList() {
@@ -2171,16 +2318,10 @@
                 const li = document.createElement("li");
                 li.className = "product-management-item";
 
-                // NEU: Lagerbestands-Info im Management-Menü
-                const stockInfo = product.stockEnabled 
-                    ? `<span style="color: ${product.stock < 10 ? '#e74c3c' : '#4CAF50'}; font-weight: 600; margin-left: 1rem;">Lager: ${product.stock}</span>`
-                    : `<span style="color: #a8b8cc; margin-left: 1rem;">Lager: Aus</span>`;
-
                 li.innerHTML = `
                     <div class="product-management-item-details">
                         <h4>${product.name}</h4>
-                        <span>€ ${product.price.toFixed(2).replace('.', ',')}</span>
-                        ${stockInfo}
+                        <span>€ ${product.price.toFixed(2)}</span>
                     </div>
                     <div class="product-management-item-actions">
                         <button title="Nach oben" onclick="moveProductUp(${product.id}, event)">
@@ -2202,18 +2343,18 @@
             });
         }
 
-        // openProductEditModal (Minimalinvasive Änderung)
         function openProductEditModal(productId) {
             const modal = document.getElementById("product-edit-modal");
             if (!modal) return;
             modal.style.display = "flex";
-            modal.classList.add("active");
 
             const title = document.getElementById("product-edit-title");
+            const stockInput = document.getElementById("product-stock-input");
+            const inventoryToggle = document.getElementById("inventory-enabled-toggle");
             const nameInput = document.getElementById("product-name-input");
             const priceInput = document.getElementById("product-price-input");
-            const stockEnabledToggle = document.getElementById("product-stock-enabled-toggle");
             const stockInput = document.getElementById("product-stock-input");
+            const inventoryToggle = document.getElementById("inventory-enabled-toggle");
             const colorGrid = document.getElementById("color-picker-grid");
 
             colorGrid.innerHTML = "";
@@ -2232,8 +2373,8 @@
                 title.textContent = "Neues Produkt";
                 nameInput.value = "";
                 priceInput.value = "";
-                stockEnabledToggle.checked = false; // NEU
-                stockInput.value = 0; // NEU
+                stockInput.value = 100; // Standardwert
+                inventoryToggle.checked = false;
                 editingProductColor = pastelColors[0];
             } else {
                 editingProductId = productId;
@@ -2242,13 +2383,11 @@
                     title.textContent = "Produkt bearbeiten";
                     nameInput.value = product.name;
                     priceInput.value = product.price.toFixed(2);
-                    // NEU: Lagerbestandsfelder setzen
-                    stockEnabledToggle.checked = product.stockEnabled || false;
-                    stockInput.value = product.stock || 0;
+                    stockInput.value = product.stock;
+                    inventoryToggle.checked = product.inventoryEnabled;
                     editingProductColor = product.color;
                 }
             }
-            toggleStockInput(); // Zeige/Verstecke das Bestandsfeld basierend auf dem Toggle-Status
             updateColorSelection();
         }
 
@@ -2256,7 +2395,6 @@
             const modal = document.getElementById("product-edit-modal");
             if (!modal) return;
             modal.style.display = "none";
-            modal.classList.remove("active");
         }
 
         function updateColorSelection() {
@@ -2266,38 +2404,54 @@
             });
         }
 
-        // saveProduct (Minimalinvasive Änderung)
-        async function saveProduct() {
-            const nameInput = document.getElementById("product-name-input");
-            const priceInput = document.getElementById("product-price-input");
-            const stockEnabledToggle = document.getElementById("product-stock-enabled-toggle");
-            const stockInput = document.getElementById("product-stock-input");
+        function saveInventoryToApi() {
+            const inventoryToSave = products.reduce((acc, p) => {
+                acc[p.id] = {
+                    stock: p.stock,
+                    inventoryEnabled: p.inventoryEnabled
+                };
+                return acc;
+            }, {});
+            localStorage.setItem('inventoryData', JSON.stringify(inventoryToSave));
+        }
+
+        function saveProduct() {
+            // Speichere nur die Produkt-Metadaten (ohne stock/inventoryEnabled)
+            const productsToSave = products.map(p => {
+                const { stock, inventoryEnabled, ...rest } = p;
+                return rest;
+            });
+            localStorage.setItem('products', JSON.stringify(productsToSave));
+            
+            // Speichere Lagerbestandsdaten separat
+            const inventoryToSave = products.reduce((acc, p) => {
+                acc[p.id] = {
+                    stock: p.stock,
+                    inventoryEnabled: p.inventoryEnabled
+                };
+                return acc;
+            }, {});
+            localStorage.setItem('inventoryData', JSON.stringify(inventoryToSave));
+        }
 
             const name = nameInput.value.trim();
             const price = parseFloat(priceInput.value);
-            const stockEnabled = stockEnabledToggle.checked; // NEU
-            const stock = stockEnabled ? parseInt(stockInput.value) : 0; // NEU
+            const stock = parseInt(stockInput.value, 10);
+            const inventoryEnabled = inventoryToggle.checked;
 
             if (!name || isNaN(price) || price < 0) {
                 alert("Bitte geben Sie einen gültigen Namen und Preis ein.");
-                return;
-            }
-            if (stockEnabled && (isNaN(stock) || stock < 0)) {
-                alert("Bitte geben Sie einen gültigen Lagerbestand ein.");
                 return;
             }
 
             if (editingProductId === null) {
                 // Neues Produkt
                 const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                products.push({ 
-                    id: newId, 
-                    name, 
-                    price, 
-                    color: editingProductColor,
-                    stockEnabled: stockEnabled, // NEU
-                    stock: stock // NEU
-                });
+                products.push({ id: newId, name, price, color: editingProductColor,
+                stock: stock,
+                inventoryEnabled: inventoryEnabled,
+                stock: stock,
+                inventoryEnabled: inventoryEnabled });
             } else {
                 // Produkt bearbeiten
                 const product = products.find(p => p.id === editingProductId);
@@ -2305,8 +2459,10 @@
                     product.name = name;
                     product.price = price;
                     product.color = editingProductColor;
-                    product.stockEnabled = stockEnabled; // NEU
-                    product.stock = stock; // NEU
+                product.stock = stock;
+                product.inventoryEnabled = inventoryEnabled;
+                product.stock = stock;
+                product.inventoryEnabled = inventoryEnabled;
                 }
             }
 
@@ -2342,6 +2498,24 @@
                 [products[index], products[index + 1]] = [products[index + 1], products[index]];
                 renderProductManagementList();
                 saveProducts();
+            }
+        }
+
+        async function fetchCartFromApi(cartId) {
+            try {
+                const response = await fetch(`${window.location.origin}/api/cart?cartId=${cartId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data) {
+                        cart = data.cart || [];
+                        depositReturn = data.depositReturn || 0;
+                        receivedAmount = data.receivedAmount || 0;
+                        renderCart();
+                        updateTotal();
+                    }
+                }
+            } catch (error) {
+                console.error("Fehler beim Laden des Warenkorbs von der API.", error);
             }
         }
     </script>
