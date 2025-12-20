@@ -987,7 +987,14 @@
             <div class="product-grid-container">
                 <div class="product-grid" id="product-grid"></div>
             </div>
-    
+            <div class="page-controls">
+                <button class="settings-button" onclick="showProductManagementMenu()">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <div class="page-indicator-dots" id="dot-indicator"></div>
+                <a href="verwaltung.html" class="management-link">
+                    <i class="fas fa-chart-bar"></i> Verwaltung
+                </a>
             </div>
             <div class="cart-id-display">
                 <span>Warenkorb-ID: </span>
@@ -1021,15 +1028,15 @@
 
     <!-- Modals -->
     <div id="product-management-modal" class="modal-overlay">
-        <div class="">
-            <div class="">
-                <h3></h3>
-                <button class="modal-close" onclick="closeProductManagementMenu()">×</>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Produkte verwalten</h3>
+                <button class="modal-close" onclick="closeProductManagementMenu()">×</button>
             </div>
-            <ul id="" class="">
+            <ul id="product-management-list" class="product-management-list">
             </ul>
-            <div class="">
-                <button class="add-product-button" onclick="openProductEditModal('new')"><i class="fas fa-plus"></i> </>
+            <div class="product-management-actions">
+                <button class="add-product-button" onclick="openProductEditModal('new')"><i class="fas fa-plus"></i> Neues Produkt</button>
             </div>
         </div>
     </div>
@@ -1038,16 +1045,16 @@
         <div class="product-edit-modal-content">
             <div class="modal-header">
                 <h3 id="product-edit-title">Produkt bearbeiten</h3>
-                <button class="modal-close" onclick="closeProductEditModal()">×</>
+                <button class="modal-close" onclick="closeProductEditModal()">×</button>
             </div>
             <div>
-                <label for="product-name-input"></label>
+                <label for="product-name-input">Produktname</label>
                 <input type="text" id="product-name-input" placeholder="z.B. Kaffee">
-                <label for="product-price-input"> (€)</label>
+                <label for="product-price-input">Preis (€)</label>
                 <input type="number" step="0.01" id="product-price-input" placeholder="z.B. 2.50">
-                <label> </label>
+                <label>Farbe wählen</label>
                 <div id="color-picker-grid" class="color-picker-grid"></div>
-                <button class="save-product-button" onclick="saveProduct()"><i class="fas fa-save"></i> Speichern</>
+                <button class="save-product-button" onclick="saveProduct()"><i class="fas fa-save"></i> Speichern</button>
             </div>
         </div>
     </div>
@@ -1076,7 +1083,68 @@
             </div>
         </div>
     </div>
-    
+
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Bezahlen</h3>
+                <button class="modal-close" onclick="closeCheckoutMenu()">×</button>
+            </div>
+            <div class="checkout-summary">
+                <div class="summary-row">
+                    <h4>Gesamtbetrag:</h4>
+                    <span id="checkout-total-display">0,00 €</span>
+                </div>
+                <div class="summary-row">
+                    <h4>Erhalten:</h4>
+                    <span id="received-amount-display">0,00 €</span>
+                </div>
+                <div class="summary-row">
+                    <h4>Rückgeld:</h4>
+                    <span id="change-display">0,00 €</span>
+                </div>
+            </div>
+            <div class="checkout-grid">
+                <button onclick="addQuickPayment(0.5)">0.5 €</button>
+                <button onclick="addQuickPayment(2)">2 €</button>
+                <button onclick="addQuickPayment(5)">5 €</button>
+                <button onclick="addQuickPayment(10)">10 €</button>
+                <button onclick="addQuickPayment(20)">20 €</button>
+                <button onclick="addQuickPayment(50)">50 €</button>
+            </div>
+            <div class="checkout-actions">
+                <button class="manual-input-button" onclick="showNumpad(false)"><i class="fas fa-keyboard"></i> Manuelle Eingabe</button>
+                <button class="reset" onclick="resetReceivedAmount()"><i class="fas fa-redo"></i> Zurücksetzen</button>
+                <button class="finish" onclick="finishCheckout()"><i class="fas fa-check"></i> Abschließen</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="numpad-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Manuelle Eingabe</h3>
+                <button class="modal-close" onclick="closeNumpad()">×</button>
+            </div>
+            <div id="received-input-display">0</div>
+            <div class="numpad">
+                <button onclick="numpadInput('1')">1</button>
+                <button onclick="numpadInput('2')">2</button>
+                <button onclick="numpadInput('3')">3</button>
+                <button onclick="numpadInput('4')">4</button>
+                <button onclick="numpadInput('5')">5</button>
+                <button onclick="numpadInput('6')">6</button>
+                <button onclick="numpadInput('7')">7</button>
+                <button onclick="numpadInput('8')">8</button>
+                <button onclick="numpadInput('9')">9</button>
+                <button onclick="numpadInput('clear')">C</button>
+                <button onclick="numpadInput('0')">0</button>
+                <button onclick="numpadInput(',')">,</button>
+                <button class="enter" onclick="confirmManualInput()">Enter</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // === Konstanten für die Farbauswahl und den Pfandwert ===
         const pastelColors = [
