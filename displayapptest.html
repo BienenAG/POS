@@ -1038,14 +1038,14 @@
                     customerSummaryDiv.querySelector("#customer-subtotal").textContent = `${subtotal.toFixed(2).replace(".", ",")} €`;
                     customerSummaryDiv.querySelector("#customer-deposit-return").textContent = `${depositReturn.toFixed(2).replace(".", ",")} €`;
                     
-                    const voucherRow = customerSummaryDiv.querySelector("#customer-voucher-row");
-                    const voucherAmountEl = customerSummaryDiv.querySelector("#customer-voucher-amount");
+                    const voucherRow = document.getElementById("customer-voucher-row");
+                    const voucherAmountEl = document.getElementById("customer-voucher-amount");
                     if (voucherRow && voucherAmountEl) {
                         if (currentVoucherAmount > 0) {
-                            voucherRow.style.display = "flex";
+                            voucherRow.setAttribute("style", "display: flex !important; color: #7a5a2d;");
                             voucherAmountEl.textContent = `- ${currentVoucherAmount.toFixed(2).replace(".", ",")} €`;
                         } else {
-                            voucherRow.style.display = "none";
+                            voucherRow.setAttribute("style", "display: none !important;");
                         }
                     }
                     
