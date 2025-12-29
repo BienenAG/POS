@@ -1351,7 +1351,18 @@
 
                 // Zwischensumme und Gesamtbetrag direkt vor dem Senden berechnen
                 let currentSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                let currentTotal = currentSubtotal - depositReturn;
+                
+                // Gutschein berechnen
+                let currentVoucherAmount = 0;
+                if (voucherType === 'percent') {
+                    currentVoucherAmount = currentSubtotal * (voucherDiscount / 100);
+                } else {
+                    currentVoucherAmount = voucherDiscount;
+                }
+                currentVoucherAmount = Math.min(currentVoucherAmount, currentSubtotal);
+                
+                // Gesamtbetrag: (Zwischensumme - Gutschein) - Pfand
+                let currentTotal = (currentSubtotal - currentVoucherAmount) - depositReturn;
 
                 const response = await fetch(`${window.location.origin}/api/cart?cartId=${currentCashRegisterCartId}`, {
                     method: 'POST',
