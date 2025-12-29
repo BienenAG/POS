@@ -1826,6 +1826,7 @@
         function updateTotal() {
             let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             
+            // 1. Gutschein berechnen (maximal bis die Zwischensumme 0 ist)
             let currentVoucherAmount = 0;
             if (voucherType === 'percent') {
                 currentVoucherAmount = subtotal * (voucherDiscount / 100);
@@ -1834,7 +1835,11 @@
             }
             currentVoucherAmount = Math.min(currentVoucherAmount, subtotal);
             
-            let total = subtotal - depositReturn + donationAmount - currentVoucherAmount;
+            // 2. Zwischensumme nach Gutschein (kann nicht negativ sein)
+            let subtotalAfterVoucher = subtotal - currentVoucherAmount;
+            
+            // 3. Pfand und Spende abziehen (Pfand kann den Betrag ins Negative führen)
+            let total = subtotalAfterVoucher - depositReturn + donationAmount;
 
             const subtotalEl = document.getElementById("subtotal");
             const depositReturnEl = document.getElementById("deposit-return");
@@ -1856,7 +1861,8 @@
                 }
             }
             
-            if (totalEl) totalEl.textContent = Math.max(0, total).toFixed(2).replace('.', ',') + " €";
+            // Gesamtbetrag anzeigen (kann negativ sein durch Pfand)
+            if (totalEl) totalEl.textContent = total.toFixed(2).replace('.', ',') + " €";
         }
 
         function toggleVoucherInput() {
