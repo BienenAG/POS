@@ -493,18 +493,17 @@
         #deposit-button:hover {
             background: linear-gradient(135deg, #c4dce8 0%, #b4d2e0 100%);
         }
-
+        
         #voucher-button {
             background: linear-gradient(135deg, #f0e8d4 0%, #e8dcc4 100%);
             color: #7a5a2d;
             border: 1.5px solid #e0ccb4;
         }
-
+        
         #voucher-button:hover {
             background: linear-gradient(135deg, #e8dcc4 0%, #e0d2b4 100%);
         }
 
-        /* Voucher Input Styles */
         .voucher-input-container {
             display: none;
             margin-top: 0.75rem;
@@ -512,12 +511,6 @@
             background: linear-gradient(135deg, #fdfbf7 0%, #f9f6f0 100%);
             border-radius: 0.75rem;
             border: 1.5px solid #f0e8d4;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .voucher-input-group {
@@ -534,12 +527,6 @@
             font-size: 0.9rem;
             font-family: 'Inter', sans-serif;
             outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .voucher-input-group input:focus {
-            border-color: #d4c4a8;
-            box-shadow: 0 0 0 3px rgba(212, 196, 168, 0.2);
         }
 
         .voucher-type-toggle {
@@ -558,7 +545,6 @@
             font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
             background: transparent;
             color: #7a8a9e;
         }
@@ -579,11 +565,6 @@
             font-weight: 600;
             font-size: 0.85rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .voucher-apply-btn:hover {
-            background: #6a4a1d;
         }
         
         /* Modal Styles - Clean & Frosty */
@@ -1123,7 +1104,7 @@
             
             <div id="voucher-input-container" class="voucher-input-container">
                 <div class="voucher-input-group">
-                    <input type="number" id="voucher-value" placeholder="Wert eingeben..." step="0.01" min="0">
+                    <input type="number" id="voucher-value" placeholder="Wert..." step="0.01" min="0">
                     <div class="voucher-type-toggle">
                         <button id="voucher-type-euro" class="active" onclick="setVoucherType('euro')">€</button>
                         <button id="voucher-type-percent" onclick="setVoucherType('percent')">%</button>
@@ -1267,9 +1248,8 @@
         let currentPage = 0;
         const itemsPerPage = 16;
         let depositReturn = 0;
-        let donationAmount = 0; // Falls nicht vorhanden, initialisieren
         let voucherDiscount = 0;
-        let voucherType = 'euro'; // 'euro' or 'percent'
+        let voucherType = 'euro';
         let manualInputType = '';
         let manualDepositInput = "";
         let receivedAmount = 0;
@@ -1381,6 +1361,8 @@
                     body: JSON.stringify({
                         cart: cart,
                         depositReturn: depositReturn,
+                        voucherDiscount: voucherDiscount,
+                        voucherType: voucherType,
                         receivedAmount: receivedAmount,
                         subtotal: currentSubtotal,
                         total: currentTotal,
@@ -1844,15 +1826,12 @@
         function updateTotal() {
             let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             
-            // Gutschein berechnen
             let currentVoucherAmount = 0;
             if (voucherType === 'percent') {
                 currentVoucherAmount = subtotal * (voucherDiscount / 100);
             } else {
                 currentVoucherAmount = voucherDiscount;
             }
-            
-            // Sicherstellen, dass der Gutschein nicht höher als die Zwischensumme ist
             currentVoucherAmount = Math.min(currentVoucherAmount, subtotal);
             
             let total = subtotal - depositReturn + donationAmount - currentVoucherAmount;
@@ -1880,15 +1859,10 @@
             if (totalEl) totalEl.textContent = Math.max(0, total).toFixed(2).replace('.', ',') + " €";
         }
 
-        // === Gutschein Logik ===
         function toggleVoucherInput() {
             const container = document.getElementById("voucher-input-container");
-            if (container.style.display === "block") {
-                container.style.display = "none";
-            } else {
-                container.style.display = "block";
-                document.getElementById("voucher-value").focus();
-            }
+            container.style.display = (container.style.display === "block") ? "none" : "block";
+            if (container.style.display === "block") document.getElementById("voucher-value").focus();
         }
 
         function setVoucherType(type) {
@@ -1899,14 +1873,10 @@
 
         function applyVoucher() {
             const val = parseFloat(document.getElementById("voucher-value").value);
-            if (isNaN(val) || val < 0) {
-                voucherDiscount = 0;
-            } else {
-                voucherDiscount = val;
-            }
+            voucherDiscount = (isNaN(val) || val < 0) ? 0 : val;
             updateTotal();
             document.getElementById("voucher-input-container").style.display = "none";
-            saveCartToApi();
+            if (typeof saveCartToApi === 'function') saveCartToApi();
         }
 
         // === Logik für Pfandrückgabe-Menü ===
@@ -2016,6 +1986,7 @@
             cart = [];
             depositReturn = 0;
             receivedAmount = 0;
+            voucherDiscount = 0;
             updateTotal();
             renderCart();
             closeCheckoutMenu();
